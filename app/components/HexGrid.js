@@ -1,8 +1,5 @@
-// import { connect } from 'react-redux';
-// import { bindActionCreators } from 'redux';
-// import { addSelected, generateDeck } from '../actions'
 import React from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, Animated} from 'react-native';
 import Svg from 'react-native-svg-uri';
 import Hex from './Hex'
 
@@ -11,32 +8,93 @@ export default class HexGrid extends React.Component {
     super(props)
     this.state = {
       numberOfCards: [],
-      chosenCards: []
+      animatedValue: []
     }
   }
 
   componentWillMount() {
-    for (let i = 0; i < this.props.tiles; i++) {
-      this.state.numberOfCards.push(this.props.deck.shift())
+    this.drawFromDeck(this.props.tiles);
+  }
+
+
+  componentWillReceiveProps(oldProps) {
+    let cardsToReplace = 0;
+    let oldCards = this.state.numberOfCards.slice();
+
+    if (oldProps.destroy) {
+      oldProps.chosen.forEach((card, i) => {
+        exists = this.state.numberOfCards.indexOf(card)
+        if (exists !== -1) {
+          this.state.numberOfCards.splice(exists, 1);
+          cardsToReplace++;
+        }
+      })
+
+      this.modifyOldCardsAnimation(oldCards);
+      this.drawFromDeck(cardsToReplace);
     }
   }
 
-  selectCard(card) {
-
+  modifyOldCardsAnimation(oldCards) {
+    this.state.numberOfCards.forEach((card, i) => {
+      let differenceInPosition = Math.abs(this.state.numberOfCards.indexOf(card) - oldCards.indexOf(card))
+      console.log(card, differenceInPosition)
+      this.state.animatedValue[i] = {
+        value: new Animated.Value(0),
+        position: differenceInPosition * -65
+      }
+    })
   }
 
+  drawFromDeck(num) {
+    for (let i = 0; i < num; i++) {
+      let newCardIndex = this.state.numberOfCards.push(this.props.deck.shift()) - 1;
+      this.state.animatedValue[newCardIndex] = {
+        value: new Animated.Value(0),
+        position: -150
+      }
+    }
+    this.animate()
+  }
 
-
+  animate() {
+    const animations = this.state.animatedValue.map((item, i) => {
+      return Animated.spring(
+        this.state.animatedValue[i].value,
+        {
+          toValue: 1,
+          speed: 20,
+          bounciness: 12,
+          useNativeDriver: true
+        }
+      )
+    })
+    Animated.stagger(100, animations).start()
+  }
 
   render() {
     return (
-      <View style={styles.row}>
+      <Animated.View style={styles.row}>
         {this.state.numberOfCards.map((card, i) => (
-          this.state.chosenCards.includes(card) ?
-          <Hex image={require('../assets/media.svg')} card={card} key={i}/> :
-          <Hex image={require('../assets/hex.svg')} card={card} key={i}/>
+          <Hex
+            card={card}
+            key={i}
+            x={this.props.x}
+            y={i}
+            add={this.props.add}
+            chosen={this.props.chosen}
+            destroy={this.props.destroy}
+            animate={{
+                    transform: [{
+                      translateY: this.state.animatedValue[i].value.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [this.state.animatedValue[i].position, 0]
+                      })
+                    }]
+                  }}
+          />
         ))}
-      </View>
+      </Animated.View>
 
     )
   }
