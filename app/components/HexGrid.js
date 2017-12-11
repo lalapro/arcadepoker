@@ -1,7 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, Animated} from 'react-native';
+import { StyleSheet, Text, View, Image, Animated, Dimensions } from 'react-native';
 import Svg from 'react-native-svg-uri';
 import Hex from './Hex'
+
+
+const {height, width} = Dimensions.get('window');
 
 export default class HexGrid extends React.Component {
   constructor(props){
@@ -15,6 +18,20 @@ export default class HexGrid extends React.Component {
   componentWillMount() {
     this.drawFromDeck(this.props.tiles);
   }
+
+  setTileResponders(e) {
+    // console.log(e.nativeEvent.layout.height)
+    let difference = 0;
+    for (let i = this.props.tiles - 1; i >= 0; i--) {
+      let obj = {
+        x: e.nativeEvent.layout.x + e.nativeEvent.layout.width / 2 + e.nativeEvent.layout.width / 6,
+        y: (e.nativeEvent.layout.y + height / 5 + 15) + (65 * difference)
+      }
+      difference++;
+      this.props.layoutCreators([this.props.x, i], obj)
+    }
+  }
+
 
 
   componentWillReceiveProps(oldProps) {
@@ -38,7 +55,6 @@ export default class HexGrid extends React.Component {
   modifyOldCardsAnimation(oldCards) {
     this.state.numberOfCards.forEach((card, i) => {
       let differenceInPosition = Math.abs(this.state.numberOfCards.indexOf(card) - oldCards.indexOf(card))
-      console.log(card, differenceInPosition)
       this.state.animatedValue[i] = {
         value: new Animated.Value(0),
         position: differenceInPosition * -65
@@ -57,6 +73,8 @@ export default class HexGrid extends React.Component {
     this.animate()
   }
 
+
+
   animate() {
     const animations = this.state.animatedValue.map((item, i) => {
       return Animated.spring(
@@ -69,12 +87,12 @@ export default class HexGrid extends React.Component {
         }
       )
     })
-    Animated.stagger(100, animations).start()
+    Animated.stagger(180, animations).start()
   }
 
   render() {
     return (
-      <Animated.View style={styles.row}>
+      <View style={styles.row} onLayout={this.setTileResponders.bind(this)}>
         {this.state.numberOfCards.map((card, i) => (
           <Hex
             card={card}
@@ -84,17 +102,18 @@ export default class HexGrid extends React.Component {
             add={this.props.add}
             chosen={this.props.chosen}
             destroy={this.props.destroy}
+            selectedTiles={this.props.selectedTiles}
             animate={{
-                    transform: [{
-                      translateY: this.state.animatedValue[i].value.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [this.state.animatedValue[i].position, 0]
-                      })
-                    }]
-                  }}
+              transform: [{
+                translateY: this.state.animatedValue[i].value.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [this.state.animatedValue[i].position, 0]
+                })
+              }]
+            }}
           />
         ))}
-      </Animated.View>
+      </View>
 
     )
   }
@@ -104,22 +123,11 @@ export default class HexGrid extends React.Component {
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'column',
-    justifyContent: 'space-between',
-    margin: -10
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: -13,
+    marginRight: -25,
   },
-  card: {
-    width: 75,
-    height: 75,
-    marginTop: -10
-  },
-  text: {
-    position: 'relative',
-    left: 30,
-    top: -47,
-    backgroundColor: 'transparent',
-    color: 'white',
-    fontSize: 20
-  }
 });
 
 // const mapStateToProps = (store) => {

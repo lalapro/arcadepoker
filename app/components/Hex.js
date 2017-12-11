@@ -1,18 +1,20 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, PanResponder, Animated} from 'react-native';
-import Svg from 'react-native-svg-uri';
+import { StyleSheet, Text, View, Image, PanResponder, Animated, Dimensions, TouchableWithoutFeedback } from 'react-native';
+import SVG from 'react-native-svg-uri';
 
+const {height, width} = Dimensions.get('window');
 
 export default class HexGrid extends React.Component {
   constructor(props){
     super(props)
     this.state = {
       isHighlighted: false,
+      hexPosition: `${this.props.x},${this.props.y}`,
       cardStyle: {
         position: 'relative',
-        width: 75,
-        height: 75,
-        marginTop: -10,
+        width: 95,
+        height: 95,
+        marginBottom: -30,
       }
     }
   }
@@ -25,31 +27,35 @@ export default class HexGrid extends React.Component {
     }
   }
 
+  componentDidMount() {
+  }
+
+
   componentWillReceiveProps(oldProps) {
+    if (oldProps.selectedTiles.indexOf(this.state.hexPosition) !== -1) {
+      this.setState({isHighlighted: true})
+      this.props.add(this.props.card)
+    }
     if (oldProps.destroy) {
+      // console.log('eh?')
       this.setState({isHighlighted: false})
     }
   }
 
 
-  highlight() {
-    if (this.props.chosen.length < 5) {
-      this.props.add(this.props.card)
-      this.setState({isHighlighted: !this.state.isHighlighted})
-    }
-  }
 
 
   render() {
+    // console.log(this.state.isHighlighted)
     return (
       this.state.isHighlighted ? (
-        <Animated.View style={[this.state.cardStyle, this.props.animate]} onTouchStart={this.highlight.bind(this)}>
-          <Svg source={require('../assets/media.svg')}/>
+        <Animated.View style={[this.state.cardStyle, this.props.animate]}>
+          <SVG source={require('../assets/media.svg')}/>
           <Text style={styles.text}>{this.props.card}</Text>
         </Animated.View>
       ) : (
-        <Animated.View style={[this.state.cardStyle, this.props.animate]} onTouchStart={this.highlight.bind(this)}>
-          <Svg source={require('../assets/hex.svg')}/>
+        <Animated.View style={[this.state.cardStyle, this.props.animate]} >
+          <SVG source={require('../assets/hex.svg')}/>
           <Text style={styles.text}>{this.props.card}</Text>
         </Animated.View>
       )
@@ -64,19 +70,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     margin: -10
   },
-  card: {
-    position: 'relative',
-    width: 75,
-    height: 75,
-    marginTop: -10,
-    // top: 75
-  },
   text: {
     position: 'relative',
     left: 30,
     top: -47,
     backgroundColor: 'transparent',
     color: 'white',
-    fontSize: 20
+    fontSize: 20,
+    // zIndex: 20
+  },
+  image: {
+    height: 95,
+    width: 95,
+    zIndex: 90
   }
 });
