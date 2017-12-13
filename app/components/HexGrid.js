@@ -25,7 +25,7 @@ export default class HexGrid extends React.Component {
     for (let i = this.props.tiles - 1; i >= 0; i--) {
       let obj = {
         x: e.nativeEvent.layout.x + e.nativeEvent.layout.width / 2 + e.nativeEvent.layout.width / 6,
-        y: (e.nativeEvent.layout.y + height / 5 + 15) + (65 * difference)
+        y: (e.nativeEvent.layout.y + height / 5 + 10) + (65 * difference)
       }
       difference++;
       this.props.layoutCreators([this.props.x, i], obj)
@@ -37,16 +37,22 @@ export default class HexGrid extends React.Component {
   componentWillReceiveProps(oldProps) {
     let cardsToReplace = 0;
     let oldCards = this.state.numberOfCards.slice();
-
     if (oldProps.destroy) {
-      oldProps.chosen.forEach((card, i) => {
-        exists = this.state.numberOfCards.indexOf(card)
-        if (exists !== -1) {
-          this.state.numberOfCards.splice(exists, 1);
-          cardsToReplace++;
+      oldProps.chosen.forEach((card) => {
+        // let exists = false;
+        for (let i = 0; i < this.state.numberOfCards.length; i++) {
+          if (this.state.numberOfCards[i].card === card) {
+            this.state.numberOfCards.splice(i, 1);
+            cardsToReplace++;
+          }
         }
+        // exists = this.state.numberOfCards.indexOf(card)
+        // if (exists !== -1) {
+        //   this.state.numberOfCards.splice(exists, 1);
+        //   cardsToReplace++;
+        // }
       })
-
+      // console.log(cardsToReplace)
       this.modifyOldCardsAnimation(oldCards);
       this.drawFromDeck(cardsToReplace);
     }
@@ -62,6 +68,12 @@ export default class HexGrid extends React.Component {
     })
   }
 
+  getRandomIntInclusive(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
+  }
+
   drawFromDeck(num) {
     for (let i = 0; i < num; i++) {
       let newCardIndex = this.state.numberOfCards.push(this.props.deck.shift()) - 1;
@@ -70,6 +82,7 @@ export default class HexGrid extends React.Component {
         position: -150
       }
     }
+    // let suite = getRandomIntInclusive(0, 3);
     this.animate()
   }
 
@@ -87,7 +100,7 @@ export default class HexGrid extends React.Component {
         }
       )
     })
-    Animated.stagger(180, animations).start()
+    Animated.stagger(100, animations).start()
   }
 
   render() {
@@ -103,6 +116,7 @@ export default class HexGrid extends React.Component {
             chosen={this.props.chosen}
             destroy={this.props.destroy}
             selectedTiles={this.props.selectedTiles}
+            reHighlight={this.props.reHighlight}
             animate={{
               transform: [{
                 translateY: this.state.animatedValue[i].value.interpolate({
@@ -126,7 +140,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: -13,
-    marginRight: -25,
+    marginRight: -10,
   },
 });
 

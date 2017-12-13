@@ -12,19 +12,31 @@ export default class HexGrid extends React.Component {
       hexPosition: `${this.props.x},${this.props.y}`,
       cardStyle: {
         position: 'relative',
-        width: 95,
-        height: 95,
-        marginBottom: -30,
-      }
+        width: 85,
+        height: 85,
+        marginBottom: -27,
+      },
+      cardStyle2: {
+        position: 'relative',
+        width: 85,
+        height: 85,
+        marginBottom: -27,
+      },
+      suite: 0
     }
   }
 
   componentWillMount() {
     if (this.props.x === 2) {
       this.state.cardStyle.top = (this.props.y - 1) * -130
+      this.state.cardStyle2.top = (this.props.y - 1) * -130
     } else if(this.props.x !== 0 && this.props.x !== 4){
       this.state.cardStyle.top = (this.props.y - 1.5) * -130
+      this.state.cardStyle2.top = (this.props.y - 1.5) * -130
     }
+
+    let suite = this.getRandomIntInclusive(0, 3);
+    this.setState({suite})
   }
 
   componentDidMount() {
@@ -34,35 +46,45 @@ export default class HexGrid extends React.Component {
   componentWillReceiveProps(oldProps) {
     if (oldProps.selectedTiles.indexOf(this.state.hexPosition) !== -1) {
       this.setState({isHighlighted: true})
-      this.props.add(this.props.card)
-    }
-    if (oldProps.destroy) {
-      // console.log('eh?')
+      this.props.add(this.props.card.card)
+    } else {
       this.setState({isHighlighted: false})
     }
+
+  }
+
+  getRandomIntInclusive(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
   }
 
 
-
-
   render() {
-    // console.log(this.state.isHighlighted)
+    console.log(this.props.card)
     return (
       this.state.isHighlighted ? (
         <Animated.View style={[this.state.cardStyle, this.props.animate]}>
-          <SVG source={require('../assets/media.svg')}/>
-          <Text style={styles.text}>{this.props.card}</Text>
+          <Image source={this.props.card.highlight} style={{width: 85, height: 85, resizeMode: 'contain'}}/>
         </Animated.View>
       ) : (
         <Animated.View style={[this.state.cardStyle, this.props.animate]} >
-          <SVG source={require('../assets/hex.svg')}/>
-          <Text style={styles.text}>{this.props.card}</Text>
+          <Image source={this.props.card.image} style={{width: 85, height: 85, resizeMode: 'contain'}}/>
         </Animated.View>
       )
     )
   }
 }
 
+
+
+
+const assets = [
+  [0, require("../assets/heart.png"), require('../assets/heart2.png')],
+  [1, require('../assets/clubs.png'), require('../assets/clubs2.png')],
+  [2, require('../assets/cards/diamond1.png'), require('../assets/cards/diamond1-highlight.png')],
+  [3, require('../assets/spades.png'), require('../assets/spades2.png')]
+]
 
 const styles = StyleSheet.create({
   row: {
@@ -72,12 +94,11 @@ const styles = StyleSheet.create({
   },
   text: {
     position: 'relative',
-    left: 30,
+    left: 35,
     top: -47,
     backgroundColor: 'transparent',
     color: 'white',
     fontSize: 20,
-    // zIndex: 20
   },
   image: {
     height: 95,
