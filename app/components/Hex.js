@@ -62,7 +62,9 @@ export default class HexGrid extends React.Component {
 
 
   render() {
-    // console.log(this.props.card)
+    if (this.props.x === 3 && this.props.y === 3) {
+      console.log(this.props.card)
+    }
     return (
       this.state.isHighlighted ? (
         <Animated.View style={[this.state.cardStyle, this.props.animate]}>

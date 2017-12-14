@@ -51,7 +51,8 @@ export default class HexGrid extends React.Component {
       })
       // console.log(cardsToReplace)
       this.modifyOldCardsAnimation(oldCards);
-      this.drawFromDeck(cardsToReplace);
+      this.drawFromDeck(cardsToReplace)
+      // setTimeout(() => {this.drawFromDeck(cardsToReplace)}, 2000);
     }
   }
 
@@ -72,7 +73,7 @@ export default class HexGrid extends React.Component {
   }
 
   drawFromDeck(num) {
-    console.log(this.state.numberOfCards, num)
+    // console.log(this.state.numberOfCards, num)
     for (let i = 0; i < num; i++) {
       let newCardIndex = this.state.numberOfCards.push(this.props.deck.shift()) - 1;
       this.state.animatedValue[newCardIndex] = {
