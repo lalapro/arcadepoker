@@ -35,22 +35,19 @@ export default class HexGrid extends React.Component {
 
 
   componentWillReceiveProps(oldProps) {
+    // lag somewhere here
+    //
     let cardsToReplace = 0;
-    let oldCards = this.state.numberOfCards.slice();
     if (oldProps.destroy) {
+      // console.log(oldProps.chosen, 'oldprops')
+      // console.log(this.state.numberOfCards, 'this.state')
+      let oldCards = this.state.numberOfCards.slice();
       oldProps.chosen.forEach((card) => {
-        // let exists = false;
-        for (let i = 0; i < this.state.numberOfCards.length; i++) {
-          if (this.state.numberOfCards[i].card === card) {
-            this.state.numberOfCards.splice(i, 1);
-            cardsToReplace++;
-          }
+        exists = this.state.numberOfCards.indexOf(card)
+        if (exists !== -1) {
+          this.state.numberOfCards.splice(exists, 1);
+          cardsToReplace++;
         }
-        // exists = this.state.numberOfCards.indexOf(card)
-        // if (exists !== -1) {
-        //   this.state.numberOfCards.splice(exists, 1);
-        //   cardsToReplace++;
-        // }
       })
       // console.log(cardsToReplace)
       this.modifyOldCardsAnimation(oldCards);
@@ -75,6 +72,7 @@ export default class HexGrid extends React.Component {
   }
 
   drawFromDeck(num) {
+    console.log(this.state.numberOfCards, num)
     for (let i = 0; i < num; i++) {
       let newCardIndex = this.state.numberOfCards.push(this.props.deck.shift()) - 1;
       this.state.animatedValue[newCardIndex] = {

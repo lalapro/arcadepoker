@@ -33,7 +33,7 @@ export default class Game extends React.Component {
       reHighlight: false,
       destroy: false,
       newTileDetected: false,
-      bgColor: 'black'
+      bgColor: 'lightgreen'
     }
 
   }
@@ -137,7 +137,7 @@ export default class Game extends React.Component {
 
   destroy() {
     this.setState({
-      destroy: true
+      destroy: true,
     }, () => {
       this.setState({
         destroy: false,
@@ -168,26 +168,26 @@ export default class Game extends React.Component {
     }
   }
 
-
-  testGoogle = async () => {
-    // let redirect = `https://auth.expo.io/@lalapro/habitation`;
-    let redirect = `https://www.google.com`;
-    let clientID = "153167299359-2cpffomr751msrk0gnenekd8kq8jipcc.apps.googleusercontent.com"
-    await AuthSession.startAsync({
-        authUrl:
-        `https://accounts.google.com/o/oauth2/v2/auth` +
-        `?scope=https://www.googleapis.com/auth/calendar` +
-        `&response_type=token` +
-        `&redirect_uri=${redirect}` +
-        `&client_id=${clientID}`
-    })
-    .then(result => {
-      console.log('got something back', result.type)
-    })
-    .catch(err => {
-        console.error(err, ' first')
-    })
-  }
+  //
+  // testGoogle = async () => {
+  //   // let redirect = `https://auth.expo.io/@lalapro/habitation`;
+  //   let redirect = `https://www.google.com`;
+  //   let clientID = "153167299359-2cpffomr751msrk0gnenekd8kq8jipcc.apps.googleusercontent.com"
+  //   await AuthSession.startAsync({
+  //       authUrl:
+  //       `https://accounts.google.com/o/oauth2/v2/auth` +
+  //       `?scope=https://www.googleapis.com/auth/calendar` +
+  //       `&response_type=token` +
+  //       `&redirect_uri=${redirect}` +
+  //       `&client_id=${clientID}`
+  //   })
+  //   .then(result => {
+  //     console.log('got something back', result.type)
+  //   })
+  //   .catch(err => {
+  //       console.error(err, ' first')
+  //   })
+  // }
 
   changeBg() {
     if (this.state.bgColor === 'black') {
@@ -203,7 +203,9 @@ export default class Game extends React.Component {
 
 
   render() {
-    // console.log(this.state.chosenCards)
+    // if (this.state.destroy) {
+      // console.log(this.state.chosenCards)
+    // }
     const boxes = Object.values(this.state.tileResponders);
     return (
       <View style={[styles.container, {backgroundColor: this.state.bgColor}]}>

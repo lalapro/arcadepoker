@@ -40,13 +40,14 @@ export default class HexGrid extends React.Component {
   }
 
   componentDidMount() {
+
   }
 
 
   componentWillReceiveProps(oldProps) {
     if (oldProps.selectedTiles.indexOf(this.state.hexPosition) !== -1) {
       this.setState({isHighlighted: true})
-      this.props.add(this.props.card.card)
+      this.props.add(this.props.card)
     } else {
       this.setState({isHighlighted: false})
     }
@@ -61,7 +62,7 @@ export default class HexGrid extends React.Component {
 
 
   render() {
-    console.log(this.props.card)
+    // console.log(this.props.card)
     return (
       this.state.isHighlighted ? (
         <Animated.View style={[this.state.cardStyle, this.props.animate]}>
@@ -78,13 +79,6 @@ export default class HexGrid extends React.Component {
 
 
 
-
-const assets = [
-  [0, require("../assets/heart.png"), require('../assets/heart2.png')],
-  [1, require('../assets/clubs.png'), require('../assets/clubs2.png')],
-  [2, require('../assets/cards/diamond1.png'), require('../assets/cards/diamond1-highlight.png')],
-  [3, require('../assets/spades.png'), require('../assets/spades2.png')]
-]
 
 const styles = StyleSheet.create({
   row: {
