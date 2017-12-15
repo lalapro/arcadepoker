@@ -3,7 +3,6 @@ import { StyleSheet, Text, View, Button, PanResponder, Dimensions, Image, Animat
 import HexGrid from './HexGrid.js';
 import recordPositions from './recordPositions';
 import adjacentTiles from '../helpers/adjacentTiles';
-import { AuthSession } from 'expo';
 import shuffledDeck from '../helpers/shuffledDeck';
 import calculateScore from '../helpers/calculateScore';
 import handAnimations from '../helpers/handAnimations';
