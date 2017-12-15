@@ -57,14 +57,11 @@ export default class HexGrid extends React.Component {
   getRandomIntInclusive(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
 
   render() {
-    if (this.props.x === 3 && this.props.y === 3) {
-      console.log(this.props.card)
-    }
     return (
       this.state.isHighlighted ? (
         <Animated.View style={[this.state.cardStyle, this.props.animate]}>

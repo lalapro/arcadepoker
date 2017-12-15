@@ -1,18 +1,13 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, PanResponder, Dimensions, Image} from 'react-native';
+import { StyleSheet, Text, View, Button, PanResponder, Dimensions, Image, Animated} from 'react-native';
 import HexGrid from './HexGrid.js';
 import recordPositions from './recordPositions';
 import adjacentTiles from '../helpers/adjacentTiles';
 import { AuthSession } from 'expo';
 import shuffledDeck from '../helpers/shuffledDeck';
+import calculateScore from '../helpers/calculateScore';
+import handAnimations from '../helpers/handAnimations';
 
-
-
-const DECK = [];
-
-for (let i = 0; i < 52; i++) {
-  DECK[i] = i
-}
 
 
 const {height, width} = Dimensions.get('window');
@@ -22,7 +17,7 @@ export default class Game extends React.Component {
   constructor(props){
     super(props)
     this.state = {
-      deck: shuffledDeck,
+      deck: shuffledDeck(),
       currentTile: null,
       startingTiles: [1, 4, 3, 4, 1],
       selectedTiles: [],
@@ -33,6 +28,9 @@ export default class Game extends React.Component {
       reHighlight: false,
       destroy: false,
       newTileDetected: false,
+      completedHands: [],
+      animatedHand: handAnimations,
+      lastCompletedHand: '',
       bgColor: 'lightgreen'
     }
 
@@ -40,6 +38,7 @@ export default class Game extends React.Component {
 
 
   componentWillMount() {
+
     // console.log(shuffledDeck)
     // let area = recordPositions(height, width);
     this._panResponder = PanResponder.create({
@@ -54,8 +53,8 @@ export default class Game extends React.Component {
           for(key in tileResponders) {
             // if touch gesture is between boxes...
             if (gestureState.numberActiveTouches === 1) {
-              insideX = gestureState.moveX >= tileResponders[key].x && gestureState.moveX <= (tileResponders[key].x + 35);
-              insideY = gestureState.moveY >= tileResponders[key].y && gestureState.moveY <= (tileResponders[key].y + 40);
+              insideX = gestureState.moveX >= tileResponders[key].x && gestureState.moveX <= (tileResponders[key].x + 40);
+              insideY = gestureState.moveY >= tileResponders[key].y && gestureState.moveY <= (tileResponders[key].y + 55);
               if (insideX && insideY) {
                 let newTileDetected = true;
                 if (this.state.selectedTiles.indexOf(key) === -1) { // if not exists...
@@ -75,8 +74,8 @@ export default class Game extends React.Component {
           for (let i = 0; i < neighborTiles.length; i++) {
             if (gestureState.numberActiveTouches === 1) {
               key = neighborTiles[i]
-              insideX = gestureState.moveX >= tileResponders[key].x && gestureState.moveX <= (tileResponders[key].x + 35);
-              insideY = gestureState.moveY >= tileResponders[key].y && gestureState.moveY <= (tileResponders[key].y + 40);
+              insideX = gestureState.moveX >= tileResponders[key].x && gestureState.moveX <= (tileResponders[key].x + 40);
+              insideY = gestureState.moveY >= tileResponders[key].y && gestureState.moveY <= (tileResponders[key].y + 55);
               if (insideX && insideY) {
                 let newTileDetected = true;
                 if (this.state.selectedTiles.indexOf(key) === -1) { // if not exists...
@@ -102,10 +101,6 @@ export default class Game extends React.Component {
       }
     });
   }
-
-
-
-
 
   removeLastTile(key) {
     this.state.selectedTiles.pop();
@@ -136,8 +131,12 @@ export default class Game extends React.Component {
   }
 
   destroy() {
+    // this.animateCompletedHand()
+
     this.setState({
       destroy: true,
+      pressed: true,
+      lastCompletedHand: calculateScore(this.state.chosenCards)
     }, () => {
       this.setState({
         destroy: false,
@@ -145,6 +144,7 @@ export default class Game extends React.Component {
         selectedTiles: [],
         currentTile: null,
       })
+      setTimeout(() => {this.setState({pressed: false})}, 1000)
     });
   }
 
@@ -201,12 +201,23 @@ export default class Game extends React.Component {
     }
   }
 
+  animateCompletedHand() {
+    this.state.completedHands.push(calculateScore(this.state.chosenCards))
+    this.state.animatedHand = new Animated.Value(0);
+    Animated.spring(                  // Animate over time
+      this.state.animatedHand,            // The animated value to drive
+      {
+        toValue: 1,                   // Animate to opacity: 1 (opaque)
+        speed: 20,              // Make it take a while
+        bounciness: 12
+      }
+    ).start();
+
+  }
+
 
   render() {
-    // if (this.state.destroy) {
-      // console.log(this.state.chosenCards)
-    // }
-    const boxes = Object.values(this.state.tileResponders);
+    // const boxes = Object.values(this.state.tileResponders);
     return (
       <View style={[styles.container, {backgroundColor: this.state.bgColor}]}>
         <View style={[styles.topBanner, {backgroundColor: this.state.bgColor}]}>
@@ -230,13 +241,18 @@ export default class Game extends React.Component {
               key={i}
             />
           ))}
+          {this.state.pressed ? (
+            <View style={{position: 'absolute'}}>
+              <Image source={this.state.animatedHand[this.state.lastCompletedHand]} style={{width: 300, height: 100, resizeMode: 'contain'}}/>
+            </View>
+          ) : null}
         </View>
         <View style={[styles.botBanner, {backgroundColor: this.state.bgColor}]}>
           <Button onPress={() => {this.changeBg()}} title="Destroy"/>
         </View>
         {/* {boxes.map((tiles, i) => {
           return (
-              <View style={{width: 40, height: 50, top: tiles.y, left: tiles.x ,backgroundColor:'red', position: 'absolute'}} key={i}/>
+              <View style={{width: 40, height: 55, top: tiles.y, left: tiles.x ,backgroundColor:'red', position: 'absolute'}} key={i}/>
           )
         })} */}
       </View>

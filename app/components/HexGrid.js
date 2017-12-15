@@ -25,7 +25,7 @@ export default class HexGrid extends React.Component {
     for (let i = this.props.tiles - 1; i >= 0; i--) {
       let obj = {
         x: e.nativeEvent.layout.x + e.nativeEvent.layout.width / 2 + e.nativeEvent.layout.width / 6,
-        y: (e.nativeEvent.layout.y + height / 5 + 10) + (65 * difference)
+        y: (e.nativeEvent.layout.y + height / 5 ) + (65 * difference)
       }
       difference++;
       this.props.layoutCreators([this.props.x, i], obj)
@@ -81,6 +81,9 @@ export default class HexGrid extends React.Component {
         position: -150
       }
     }
+    this.setState({
+      numberOfCards: this.state.numberOfCards
+    })
     // let suite = getRandomIntInclusive(0, 3);
     this.animate()
   }
@@ -99,7 +102,7 @@ export default class HexGrid extends React.Component {
         }
       )
     })
-    Animated.stagger(100, animations).start()
+    Animated.stagger(50, animations).start()
   }
 
   render() {

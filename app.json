@@ -1,5 +1,15 @@
 {
-  "expo": {
-    "sdkVersion": "23.0.0"
-  }
-}
+   "expo": {
+    "name": "Vidya Poker",
+    "icon": "./app/assets/cards/A.png",
+    "version": "0.1.0",
+    "slug": "vidyapoker",
+    "sdkVersion": "23.0.0",
+    "ios": {
+      "bundleIdentifier": "com.lalpro.vidyapoker"
+    },
+    "android": {
+      "package": "com.yourcompany.yourappname"
+    }
+   }
+ }

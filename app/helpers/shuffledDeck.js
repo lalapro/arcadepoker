@@ -52,22 +52,22 @@ const DECK = [
     highlight: require("../assets/cards/diamond10-highlight.png")
   },
   {
-    value: "J♦",
+    value: "11♦",
     image: require("../assets/cards/diamond11.png"),
     highlight: require("../assets/cards/diamond11-highlight.png")
   },
   {
-    value: "Q♦",
+    value: "12♦",
     image: require("../assets/cards/diamond12.png"),
     highlight: require("../assets/cards/diamond12-highlight.png")
   },
   {
-    value: "K♦",
+    value: "13♦",
     image: require("../assets/cards/diamond13.png"),
     highlight: require("../assets/cards/diamond13-highlight.png")
   },
   {
-    value: "A♣",
+    value: "1♣",
     image: require("../assets/cards/clubs1.png"),
     highlight: require("../assets/cards/clubs1-highlight.png")
   },
@@ -117,22 +117,22 @@ const DECK = [
     highlight: require("../assets/cards/clubs10-highlight.png")
   },
   {
-    value: "J♣",
+    value: "11♣",
     image: require("../assets/cards/clubs11.png"),
     highlight: require("../assets/cards/clubs11-highlight.png")
   },
   {
-    value: "Q♣",
+    value: "12♣",
     image: require("../assets/cards/clubs12.png"),
     highlight: require("../assets/cards/clubs12-highlight.png")
   },
   {
-    value: "K♣",
+    value: "13♣",
     image: require("../assets/cards/clubs13.png"),
     highlight: require("../assets/cards/clubs13-highlight.png")
   },
   {
-    value: "A♥",
+    value: "1♥",
     image: require("../assets/cards/heart1.png"),
     highlight: require("../assets/cards/heart1-highlight.png")
   },
@@ -182,22 +182,22 @@ const DECK = [
     highlight: require("../assets/cards/heart10-highlight.png")
   },
   {
-    value: "J♥",
+    value: "11♥",
     image: require("../assets/cards/heart11.png"),
     highlight: require("../assets/cards/heart11-highlight.png")
   },
   {
-    value: "Q♥",
+    value: "12♥",
     image: require("../assets/cards/heart12.png"),
     highlight: require("../assets/cards/heart12-highlight.png")
   },
   {
-    value: "K♥",
+    value: "13♥",
     image: require("../assets/cards/heart13.png"),
     highlight: require("../assets/cards/heart13-highlight.png")
   },
   {
-    value: "A♠",
+    value: "1♠",
     image: require("../assets/cards/spades1.png"),
     highlight: require("../assets/cards/spades1-highlight.png")
   },
@@ -247,25 +247,24 @@ const DECK = [
     highlight: require("../assets/cards/spades10-highlight.png")
   },
   {
-    value: "J♠",
+    value: "11♠",
     image: require("../assets/cards/spades11.png"),
     highlight: require("../assets/cards/spades11-highlight.png")
   },
   {
-    value: "Q♠",
+    value: "12♠",
     image: require("../assets/cards/spades12.png"),
     highlight: require("../assets/cards/spades12-highlight.png")
   },
   {
-    value: "K♠",
+    value: "13♠",
     image: require("../assets/cards/spades13.png"),
     highlight: require("../assets/cards/spades13-highlight.png")
   },
 
-
 ];
 
-var shuffleDeck = function(deck) {
+var shuffle = function(deck) {
   let newDeck = [];
   let count = 0;
 
@@ -290,9 +289,20 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
 }
 
-DECK = shuffleDeck(DECK)
+
+
+let placeholders = [];
+
+for (let i = 0; i < 13; i++) {
+  placeholders.push({
+    value: "",
+    image: require("../assets/cards/empty.png"),
+    highlight: require("../assets/cards/empty.png")
+  })
+}
 
 
 
-
-export default DECK
+export default shuffledDeck = () => {
+  return shuffle(DECK).concat(placeholders)
+}
