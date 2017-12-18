@@ -1,11 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, PanResponder, Dimensions, Image, Animated} from 'react-native';
+import { StyleSheet, Text, View, Button, PanResponder, Dimensions, Image, Animated, TouchableOpacity } from 'react-native';
 import HexGrid from './HexGrid.js';
 import recordPositions from './recordPositions';
 import adjacentTiles from '../helpers/adjacentTiles';
 import shuffledDeck from '../helpers/shuffledDeck';
 import calculateScore from '../helpers/calculateScore';
 import handAnimations from '../helpers/handAnimations';
+import cardImages from '../helpers/cardImages';
 
 
 
@@ -30,16 +31,11 @@ export default class Game extends React.Component {
       completedHands: [],
       animatedHand: handAnimations,
       lastCompletedHand: '',
-      bgColor: 'lightgreen'
+      hoverHand: [],
+      restart: false,
+      bgColor: 'lightgreen',
+      totalScore: 0
     }
-
-  }
-
-
-  componentWillMount() {
-
-    // console.log(shuffledDeck)
-    // let area = recordPositions(height, width);
     this._panResponder = PanResponder.create({
       onMoveShouldSetPanResponder:(evt, gestureState) => true,
       onPanResponderMove: (evt, gestureState) => {
@@ -58,17 +54,12 @@ export default class Game extends React.Component {
                 let newTileDetected = true;
                 if (this.state.selectedTiles.indexOf(key) === -1) { // if not exists...
                   this.selectNewTile(key);
-                } else if (this.state.currentTile !== key) {
-                  if (newTileDetected) {
-                    this.removeLastTile(key)
-                    newTileDetected = false;
-                  }
                 }
               }
             }
           }
-        } else {
-
+        }
+        else {
           let neighborTiles = this.state.availableTiles
           for (let i = 0; i < neighborTiles.length; i++) {
             if (gestureState.numberActiveTouches === 1) {
@@ -79,11 +70,6 @@ export default class Game extends React.Component {
                 let newTileDetected = true;
                 if (this.state.selectedTiles.indexOf(key) === -1) { // if not exists...
                   this.selectNewTile(key);
-                } else if (this.state.currentTile !== key) {
-                  if (newTileDetected) {
-                    this.removeLastTile(key)
-                    newTileDetected = false;
-                  }
                 }
               }
             }
@@ -92,7 +78,7 @@ export default class Game extends React.Component {
       },
       onPanResponderTerminate: (evt) => true,
       onPanResponderRelease: (evt, gestureState) => {
-        if (this.state.chosenCards.length === 5) {
+        if (this.state.chosenCards.length === 5 && this.state.selectedTiles.length === 5) {
           this.destroy();
         } else {
           this.reset();
@@ -101,16 +87,34 @@ export default class Game extends React.Component {
     });
   }
 
-  removeLastTile(key) {
-    this.state.selectedTiles.pop();
-    this.state.chosenCards.pop();
+
+  restartGame() {
+    // console.log('restarting')
     this.setState({
-      selectedTiles: this.state.selectedTiles,
-      chosenCards: this.state.chosenCards,
-      currentTile: key,
-      availableTiles: adjacentTiles[key]
+      deck: shuffledDeck(),
+      currentTile: null,
+      startingTiles: [],
+      startingTiles: [1, 4, 3, 4, 1],
+      chosenCards:[],
+      adjacentTiles: adjacentTiles,
+      availableTiles: [],
+      reHighlight: false,
+      destroy: false,
+      newTileDetected: false,
+      completedHands: [],
+      animatedHand: handAnimations,
+      lastCompletedHand: '',
+      hoverHand: [],
+      bgColor: 'lightgreen',
+      restart: true,
+      totalScore: 0
+    }, () => {
+      this.setState({
+        restart: false
+      })
     })
   }
+
 
   selectNewTile(key) {
     this.setState({
@@ -131,11 +135,14 @@ export default class Game extends React.Component {
 
   destroy() {
     // this.animateCompletedHand()
+    this.state.completedHands.push(calculateScore(this.state.chosenCards))
+    hand = calculateScore(this.state.chosenCards);
 
     this.setState({
       destroy: true,
       pressed: true,
-      lastCompletedHand: calculateScore(this.state.chosenCards)
+      lastCompletedHand: hand[0],
+      totalScore: this.state.totalScore += hand[1],
     }, () => {
       this.setState({
         destroy: false,
@@ -143,8 +150,11 @@ export default class Game extends React.Component {
         selectedTiles: [],
         currentTile: null,
       })
-      setTimeout(() => {this.setState({pressed: false})}, 1000)
-    });
+      setTimeout(() => {this.setState({
+        pressed: false,
+        hoverHand: []
+      })}, 750)
+    }, () => {console.log(this.state.completedHands)});
   }
 
   reset() {
@@ -152,6 +162,7 @@ export default class Game extends React.Component {
       destroy: true,
       chosenCards: [],
       selectedTiles: [],
+      hoverHand: [],
       currentTile: null
     }, () => {
       this.setState({
@@ -162,8 +173,11 @@ export default class Game extends React.Component {
 
   addToChosenCards(card) {
     let alreadyChosen = this.state.chosenCards.indexOf(card);
-    if (alreadyChosen === -1) {
-      this.setState({chosenCards: [...this.state.chosenCards, card]})
+    if (alreadyChosen === -1 && this.state.chosenCards.length < 5) {
+      this.setState({
+        chosenCards: [...this.state.chosenCards, card],
+        hoverHand: [...this.state.hoverHand, card]
+      })
     }
   }
 
@@ -200,32 +214,73 @@ export default class Game extends React.Component {
     }
   }
 
-  animateCompletedHand() {
-    this.state.completedHands.push(calculateScore(this.state.chosenCards))
-    this.state.animatedHand = new Animated.Value(0);
-    Animated.spring(                  // Animate over time
-      this.state.animatedHand,            // The animated value to drive
-      {
-        toValue: 1,                   // Animate to opacity: 1 (opaque)
-        speed: 20,              // Make it take a while
-        bounciness: 12
-      }
-    ).start();
-
-  }
+  // animateCompletedHand() {
+  //   this.state.completedHands.push(calculateScore(this.state.chosenCards))
+  //   this.state.animatedHand = new Animated.Value(0);
+  //   Animated.spring(                  // Animate over time
+  //     this.state.animatedHand,            // The animated value to drive
+  //     {
+  //       toValue: 1,                   // Animate to opacity: 1 (opaque)
+  //       speed: 20,              // Make it take a while
+  //       bounciness: 12
+  //     }
+  //   ).start();
+  //
+  // }
 
 
   render() {
-    // const boxes = Object.values(this.state.tileResponders);
+    const boxes = Object.values(this.state.tileResponders);
     return (
       <View style={[styles.container, {backgroundColor: this.state.bgColor}]}>
-        <View style={[styles.topBanner, {backgroundColor: this.state.bgColor}]}>
-          <Image
-            style={{width: 350, height: 100, resizeMode: 'contain'}}
-            source={require('../assets/vidya-poker.png')}
-          />
+        <View style={[styles.topBanner, /*{backgroundColor: this.state.bgColor}*/]}>
+          <TouchableOpacity onPress={this.restartGame.bind(this)}>
+            <Image source={require('../assets/refresh.png')} style={{width: 50, height: 50}}/>
+          </TouchableOpacity>
+          <View style={{flexDirection: 'column'}}>
+            <Image
+              style={{width: 200, height: 50, resizeMode: 'contain'}}
+              source={require('../assets/vidya.png')}
+            />
+            <Image
+              style={{width: 200, height: 50, resizeMode: 'contain'}}
+              source={require('../assets/poker.png')}
+            />
+          </View>
+          <TouchableOpacity onPress={this.restartGame.bind(this)}>
+            <Image source={require('../assets/refresh.png')} style={{width: 50, height: 50}}/>
+          </TouchableOpacity>
         </View>
-        <View style={[styles.gameContainer, {backgroundColor: this.state.bgColor}]} {...this._panResponder.panHandlers} ref="mycomp">
+        <View style={[styles.showCase, /*{backgroundColor: this.state.bgColor}*/]}>
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={{fontSize: 50}}>{this.state.totalScore}</Text>
+          </View>
+          <View style={{flex: 1, flexDirection: 'row'}}>
+            {this.state.hoverHand.map((card, i) => {
+              if (i%2 === 0) {
+                return (
+                  <Image source={cardImages[card.value]}
+                    style={{top: 15, width: 65, height: 65, resizeMode: 'contain', marginRight: -15}}
+                    key={i}
+                  />
+                )
+              } else {
+                return (
+                  <Image source={cardImages[card.value]}
+                    style={{top:40, width: 65, height: 65, resizeMode: 'contain', marginRight: -15}}
+                    key={i}
+                  />
+                )
+              }
+            })}
+          </View>
+        </View>
+        <View style={[styles.gameContainer, {backgroundColor: 'transparent'}]} {...this._panResponder.panHandlers} ref="mycomp">
+          {this.state.pressed ? (
+            <View style={{position: 'absolute', zIndex: 99}}>
+              <Image source={this.state.animatedHand[this.state.lastCompletedHand]} style={{width: 300, height: 100, resizeMode: 'contain'}}/>
+            </View>
+          ) : null}
           {this.state.startingTiles.map((tiles, i) => (
             <HexGrid
               deck={this.state.deck}
@@ -236,18 +291,14 @@ export default class Game extends React.Component {
               layoutCreators={this.setLayout.bind(this)}
               selectedTiles={this.state.selectedTiles}
               reHighlight={this.state.reHighlight}
+              restart={this.state.restart}
               x={i}
               key={i}
             />
           ))}
-          {this.state.pressed ? (
-            <View style={{position: 'absolute'}}>
-              <Image source={this.state.animatedHand[this.state.lastCompletedHand]} style={{width: 300, height: 100, resizeMode: 'contain'}}/>
-            </View>
-          ) : null}
         </View>
-        <View style={[styles.botBanner, {backgroundColor: this.state.bgColor}]}>
-          <Button onPress={() => {this.changeBg()}} title="Destroy"/>
+        <View style={styles.botBanner}>
+
         </View>
         {/* {boxes.map((tiles, i) => {
           return (
@@ -267,27 +318,30 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   topBanner: {
-    flex: 1,
-    backgroundColor: 'black',
+    flex: 2,
+    flexDirection: 'row',
+    backgroundColor: 'lightgreen',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     width: "100%",
     zIndex: 99
   },
+  showCase: {
+    flex: 1,
+    backgroundColor: 'lightgreen',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: "100%",
+    flexDirection: 'column',
+    zIndex: 99
+  },
   gameContainer: {
-    flex: 3,
+    flex: 5,
     flexDirection: 'row',
     backgroundColor: 'black',
     alignItems: 'center',
     justifyContent: 'center',
     height: "100%",
-  },
-  innerGameContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    backgroundColor: 'lightblue',
-    width: "90%"
-
   },
   botBanner: {
     flex: 1,
@@ -295,7 +349,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: "100%",
-  },
+  }
 });
 
 

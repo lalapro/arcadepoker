@@ -13,6 +13,7 @@ export default class HexGrid extends React.Component {
       numberOfCards: [],
       animatedValue: []
     }
+
   }
 
   componentWillMount() {
@@ -25,7 +26,7 @@ export default class HexGrid extends React.Component {
     for (let i = this.props.tiles - 1; i >= 0; i--) {
       let obj = {
         x: e.nativeEvent.layout.x + e.nativeEvent.layout.width / 2 + e.nativeEvent.layout.width / 6,
-        y: (e.nativeEvent.layout.y + height / 5 ) + (65 * difference)
+        y: (e.nativeEvent.layout.y + (height / 9) * 3) + (65 * difference)
       }
       difference++;
       this.props.layoutCreators([this.props.x, i], obj)
@@ -36,7 +37,15 @@ export default class HexGrid extends React.Component {
 
   componentWillReceiveProps(oldProps) {
     // lag somewhere here
-    //
+    if(oldProps.restart) {
+      this.setState({
+        numberOfCards: [],
+        animatedValue: []
+      }, () => {
+        this.drawFromDeck(oldProps.tiles)
+      })
+    }
+
     let cardsToReplace = 0;
     if (oldProps.destroy) {
       // console.log(oldProps.chosen, 'oldprops')
@@ -54,6 +63,8 @@ export default class HexGrid extends React.Component {
       this.drawFromDeck(cardsToReplace)
       // setTimeout(() => {this.drawFromDeck(cardsToReplace)}, 2000);
     }
+
+
   }
 
   modifyOldCardsAnimation(oldCards) {

@@ -16,40 +16,39 @@ export default class HexGrid extends React.Component {
         height: 85,
         marginBottom: -27,
       },
-      cardStyle2: {
-        position: 'relative',
-        width: 85,
-        height: 85,
-        marginBottom: -27,
-      },
-      suite: 0
-    }
+      // cardStyle2: {
+      //   position: 'relative',
+      //   width: 85,
+      //   height: 85,
+      //   marginBottom: -27,
+      // },
+      // suite: 0
+    };
   }
 
   componentWillMount() {
     if (this.props.x === 2) {
-      this.state.cardStyle.top = (this.props.y - 1) * -130
-      this.state.cardStyle2.top = (this.props.y - 1) * -130
+      this.state.cardStyle.top = (this.props.y - 1) * -130;
+      // this.state.cardStyle2.top = (this.props.y - 1) * -130;
     } else if(this.props.x !== 0 && this.props.x !== 4){
-      this.state.cardStyle.top = (this.props.y - 1.5) * -130
-      this.state.cardStyle2.top = (this.props.y - 1.5) * -130
+      this.state.cardStyle.top = (this.props.y - 1.5) * -130;
+      // this.state.cardStyle2.top = (this.props.y - 1.5) * -130;
     }
 
-    let suite = this.getRandomIntInclusive(0, 3);
-    this.setState({suite})
+    // let suite = this.getRandomIntInclusive(0, 3);
+    // this.setState({ suite });
   }
 
   componentDidMount() {
-
   }
 
 
   componentWillReceiveProps(oldProps) {
     if (oldProps.selectedTiles.indexOf(this.state.hexPosition) !== -1) {
-      this.setState({isHighlighted: true})
-      this.props.add(this.props.card)
+      this.setState({isHighlighted: true});
+      this.props.add(this.props.card);
     } else {
-      this.setState({isHighlighted: false})
+      this.setState({isHighlighted: false});
     }
 
   }
