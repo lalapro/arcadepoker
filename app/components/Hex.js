@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, PanResponder, Animated, Dimensions, TouchableWithoutFeedback } from 'react-native';
-import SVG from 'react-native-svg-uri';
 
 const {height, width} = Dimensions.get('window');
 

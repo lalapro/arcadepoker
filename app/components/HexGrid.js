@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, Animated, Dimensions } from 'react-native';
-import Svg from 'react-native-svg-uri';
 import Hex from './Hex'
 
 
