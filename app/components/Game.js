@@ -1,23 +1,41 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, PanResponder, Dimensions, Image, Animated, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Button, PanResponder, Dimensions, Image, Animated, TouchableOpacity, AsyncStorage } from 'react-native';
+import { Font } from 'expo';
+import * as firebase from 'firebase';
+import Modal from 'react-native-modal';
 import HexGrid from './HexGrid.js';
 import recordPositions from './recordPositions';
-import adjacentTiles from '../helpers/adjacentTiles';
+import { adjacentTiles, keyTiles } from '../helpers/tileLogic';
 import shuffledDeck from '../helpers/shuffledDeck';
 import calculateScore from '../helpers/calculateScore';
 import handAnimations from '../helpers/handAnimations';
 import cardImages from '../helpers/cardImages';
-
-
+import DraggingLogic from '../helpers/draggingLogic';
+import HelpModal from '../modals/HelpModal';
+import FriendModal from '../modals/FriendModal';
+import HallOfFameModal from '../modals/HallOfFame';
+import GameOverModal from '../modals/GameOverModal';
 
 const {height, width} = Dimensions.get('window');
+
+// Initialize Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyCfeJUbf7LoN7IMIFp7zbE50QK6lMDeTR8",
+  authDomain: "arcade-poker.firebaseapp.com",
+  databaseURL: "https://arcade-poker.firebaseio.com/",
+  // storageBucket: "Highscore.appspot.com"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+var database = firebase.database();
 
 
 export default class Game extends React.Component {
   constructor(props){
     super(props)
     this.state = {
-      deck: shuffledDeck(),
+      deck: props.deck,
       currentTile: null,
       startingTiles: [1, 4, 3, 4, 1],
       selectedTiles: [],
@@ -32,9 +50,16 @@ export default class Game extends React.Component {
       animatedHand: handAnimations,
       lastCompletedHand: '',
       hoverHand: [],
+      emptyTiles: [],
       restart: false,
-      bgColor: 'lightgreen',
-      totalScore: 0
+      bgColor: 'black',
+      fontLoaded: false,
+      gameStarted: false,
+      hofModal: false,
+      blinky: false,
+      gameOverModal: false,
+      totalScore: 0,
+      highScore: 0
     }
     this._panResponder = PanResponder.create({
       onMoveShouldSetPanResponder:(evt, gestureState) => true,
@@ -52,9 +77,7 @@ export default class Game extends React.Component {
               insideY = gestureState.moveY >= tileResponders[key].y && gestureState.moveY <= (tileResponders[key].y + 55);
               if (insideX && insideY) {
                 let newTileDetected = true;
-                if (this.state.selectedTiles.indexOf(key) === -1) { // if not exists...
-                  this.selectNewTile(key);
-                }
+                this.selectNewTile(key);
               }
             }
           }
@@ -68,9 +91,7 @@ export default class Game extends React.Component {
               insideY = gestureState.moveY >= tileResponders[key].y && gestureState.moveY <= (tileResponders[key].y + 55);
               if (insideX && insideY) {
                 let newTileDetected = true;
-                if (this.state.selectedTiles.indexOf(key) === -1) { // if not exists...
-                  this.selectNewTile(key);
-                }
+                this.selectNewTile(key);
               }
             }
           }
@@ -87,9 +108,29 @@ export default class Game extends React.Component {
     });
   }
 
+  async componentDidMount() {
+    this.updateScore()
+    await Font.loadAsync({
+      'arcade': require('../assets/fonts/arcadeclassic.regular.ttf'),
+    });
+    this.setState({
+      fontLoaded: true,
+      blinky: true
+    })
+
+    this.insertCoin = setInterval(this.blinky.bind(this), 750)
+  }
+
+  blinky() {
+    this.setState({
+      blinky: !this.state.blinky
+    })
+  }
+
 
   restartGame() {
-    // console.log('restarting')
+    this.updateScore();
+    this.closeModal();
     this.setState({
       deck: shuffledDeck(),
       currentTile: null,
@@ -105,26 +146,32 @@ export default class Game extends React.Component {
       animatedHand: handAnimations,
       lastCompletedHand: '',
       hoverHand: [],
-      bgColor: 'lightgreen',
+      bgColor: 'black',
       restart: true,
-      totalScore: 0
+      emptyTiles: [],
+      gameStarted: false,
+      showScore: false,
+      totalScore: 0,
     }, () => {
       this.setState({
         restart: false
       })
     })
+    this.insertCoin = setInterval(this.blinky.bind(this), 750)
   }
 
 
   selectNewTile(key) {
+    if (this.state.selectedTiles.indexOf(key) === -1) {
+      this.setState({
+        selectedTiles: [...this.state.selectedTiles, key]
+      })
+    }
     this.setState({
-      selectedTiles: [...this.state.selectedTiles, key],
       currentTile: key,
       availableTiles: adjacentTiles[key]
     })
   }
-
-
 
   setLayout(pos, obj) {
     this.state.tileResponders[pos] = obj;
@@ -134,9 +181,9 @@ export default class Game extends React.Component {
   }
 
   destroy() {
-    // this.animateCompletedHand()
     this.state.completedHands.push(calculateScore(this.state.chosenCards))
     hand = calculateScore(this.state.chosenCards);
+
 
     this.setState({
       destroy: true,
@@ -144,18 +191,77 @@ export default class Game extends React.Component {
       lastCompletedHand: hand[0],
       totalScore: this.state.totalScore += hand[1],
     }, () => {
+      this.updateScore();
       this.setState({
         destroy: false,
         chosenCards: [],
         selectedTiles: [],
         currentTile: null,
       })
+      // connected to scoring animation and storing KEY TILES
       setTimeout(() => {this.setState({
         pressed: false,
         hoverHand: []
       })}, 750)
-    }, () => {console.log(this.state.completedHands)});
+    });
   }
+
+  addEmptyTiles(tile) {
+    if (!this.state.emptyTiles.includes(tile)) {
+      this.setState({
+        emptyTiles: [...this.state.emptyTiles, tile]
+      }, () => this.checkGameOver())
+    }
+  }
+
+  checkGameOver() {
+    if (this.state.emptyTiles.length === 5 || this.state.completedHands.length === 10) {
+      this.gameOver();
+    }
+  }
+
+  gameOver() {
+    setTimeout(() => this.switchModal('game over'), 500)
+  }
+
+  async updateScore() {
+    // AsyncStorage.setItem('highscore', '0');
+    let highScore = await AsyncStorage.getItem('highscore');
+    if (this.state.totalScore > this.state.highScore) {
+      let highScore = this.state.totalScore.toString();
+      this.setState({highScore})
+      AsyncStorage.setItem('highscore', highScore);
+      // store for friends
+      this.saveToDB(highScore)
+    } else if (highScore) {
+      highScore = Number(highScore)
+      this.setState({highScore: 0});
+    } else {
+      this.setState({
+        highScore: 0
+      })
+    }
+  }
+
+  saveToDB(highScore) {
+    let scoreToSave = {}
+    highScore = Number(highScore)
+    scoreToSave = {
+      score: highScore,
+      bestHand: 'Flush'
+    }
+    // scoresRef.child('kato').setWithPriority( score, -score );
+
+    database.ref('/highscores').child('lalapro').setWithPriority( scoreToSave, -highScore );
+  }
+
+//   scoresRef.limitToLast(10).once('value', function(snap) {
+//    var i = 0;
+//    snap.forEach(function(userSnap) {
+//       console.log('user %s is in position %d with %d points', snap.key(), i++, snap.val());
+//    });
+// });
+
 
   reset() {
     this.setState({
@@ -181,101 +287,209 @@ export default class Game extends React.Component {
     }
   }
 
-  //
-  // testGoogle = async () => {
-  //   // let redirect = `https://auth.expo.io/@lalapro/habitation`;
-  //   let redirect = `https://www.google.com`;
-  //   let clientID = "153167299359-2cpffomr751msrk0gnenekd8kq8jipcc.apps.googleusercontent.com"
-  //   await AuthSession.startAsync({
-  //       authUrl:
-  //       `https://accounts.google.com/o/oauth2/v2/auth` +
-  //       `?scope=https://www.googleapis.com/auth/calendar` +
-  //       `&response_type=token` +
-  //       `&redirect_uri=${redirect}` +
-  //       `&client_id=${clientID}`
-  //   })
-  //   .then(result => {
-  //     console.log('got something back', result.type)
-  //   })
-  //   .catch(err => {
-  //       console.error(err, ' first')
-  //   })
-  // }
-
-  changeBg() {
-    if (this.state.bgColor === 'black') {
+  startGame() {
+    clearInterval(this.insertCoin)
+    this.setState({
+      gameStarted: true,
+      animateStartOfGame: true
+    }, () => {
       this.setState({
-        bgColor: 'lightgreen'
+        animateStartOfGame: false
       })
+    })
+    setTimeout(() => {
+      this.setState({
+        showScore: true
+      })
+    }, 500)
+  }
+
+
+  closeModal(game) {
+    if (game === 'over') {
+      this.restartGame()
+    } else if (game === 'hof') {
+      this.switchModal('hof')
     } else {
       this.setState({
-        bgColor: 'black'
+        helpModal: false,
+        mainModal: false,
+        friendModal: false,
+        hofModal: false,
+        gameOverModal: false
       })
     }
   }
 
-  // animateCompletedHand() {
-  //   this.state.completedHands.push(calculateScore(this.state.chosenCards))
-  //   this.state.animatedHand = new Animated.Value(0);
-  //   Animated.spring(                  // Animate over time
-  //     this.state.animatedHand,            // The animated value to drive
-  //     {
-  //       toValue: 1,                   // Animate to opacity: 1 (opaque)
-  //       speed: 20,              // Make it take a while
-  //       bounciness: 12
-  //     }
-  //   ).start();
-  //
-  // }
+
+  switchModal(modal) {
+    this.closeModal();
+
+    if(modal === 'main') {
+      this.setState({
+        mainModal: true
+      })
+    } else if (modal === 'help') {
+      setTimeout(() => {
+        this.setState({
+          helpModal: true
+        })}, 450)
+    } else if (modal === 'friend') {
+      setTimeout(() => {
+        this.setState({
+          friendModal: true
+        })}, 450)
+    } else if (modal === 'hof') {
+      setTimeout(() => {
+        this.setState({
+          hofModal: true
+        })}, 450)
+    } else if (modal === 'game over') {
+      setTimeout(() => {
+        this.setState({
+          gameOverModal: true
+        })}, 450)
+    }
+  }
+
 
 
   render() {
     const boxes = Object.values(this.state.tileResponders);
     return (
       <View style={[styles.container, {backgroundColor: this.state.bgColor}]}>
-        <View style={[styles.topBanner, /*{backgroundColor: this.state.bgColor}*/]}>
-          <TouchableOpacity onPress={this.restartGame.bind(this)}>
-            <Image source={require('../assets/refresh.png')} style={{width: 50, height: 50}}/>
-          </TouchableOpacity>
-          <View style={{flexDirection: 'column'}}>
-            <Image
-              style={{width: 200, height: 50, resizeMode: 'contain'}}
-              source={require('../assets/vidya.png')}
-            />
-            <Image
-              style={{width: 200, height: 50, resizeMode: 'contain'}}
-              source={require('../assets/poker.png')}
-            />
+        {!this.state.gameStarted ? (
+          <View style={[styles.topBanner, /*{backgroundColor: this.state.bgColor}*/]}>
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+              {this.state.fontLoaded ? (
+                <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                  <Text style={{fontFamily: 'arcade', fontSize: 65, color: 'white'}}>
+                    ARCADE
+                  </Text>
+                  <Text style={{fontFamily: 'arcade', fontSize: 65, color: 'white'}}>
+                    POKER
+                  </Text>
+                  <Text style={{fontFamily: 'arcade', fontSize: 20, color: 'yellow'}}>
+                    Highscore: {this.state.highScore}
+                  </Text>
+                  <TouchableOpacity onPress={() => this.switchModal('hof')}>
+                    <Image source={require('../assets/trophy.png')} style={{width: 35, height: 35, resizeMode: 'contain'}}/>
+                  </TouchableOpacity>
+                </View>
+              ) : (null)}
+            </View>
           </View>
-          <TouchableOpacity onPress={this.restartGame.bind(this)}>
-            <Image source={require('../assets/refresh.png')} style={{width: 50, height: 50}}/>
-          </TouchableOpacity>
-        </View>
-        <View style={[styles.showCase, /*{backgroundColor: this.state.bgColor}*/]}>
-          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={{fontSize: 50}}>{this.state.totalScore}</Text>
+        ) : (null)}
+        {this.state.gameStarted ? (
+          <View style={styles.showCase}>
+            {this.state.fontLoaded && this.state.showScore ? (
+              <View style={{flex: 1, justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'black', flexDirection: 'row', width: "90%"}}>
+                <TouchableOpacity onPress={() => this.switchModal('hof')}>
+                  <Image source={require('../assets/trophy.png')} style={{width: 35, height: 35, resizeMode: 'contain'}}/>
+                </TouchableOpacity>
+                <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                  <Text style={{fontSize: 45, fontFamily: 'arcade', color: 'white'}}>
+                    Score: {this.state.totalScore}
+                  </Text>
+                  <Text style={{fontFamily: 'arcade', fontSize: 20, color: 'yellow'}}>
+                    Highscore: {this.state.highScore}
+                  </Text>
+                </View>
+                <TouchableOpacity onPress={() => this.switchModal('main')}>
+                  {this.state.fontLoaded ? (
+                    <Image source={require('../assets/menu.png')} style={{width: 35, height: 35, resizeMode: 'contain'}}/>
+                  ) : null}
+                </TouchableOpacity>
+              </View>
+            ) : null}
+            <View style={{flex: 1, flexDirection: 'row'}}>
+              {this.state.hoverHand.map((card, i) => {
+                if (i%2 === 0) {
+                  return (
+                    <Image source={cardImages[card.value]}
+                      style={{top: 15, width: 85, height: 85, resizeMode: 'contain', marginRight: -15}}
+                      key={i}
+                    />
+                  )
+                } else {
+                  return (
+                    <Image source={cardImages[card.value]}
+                      style={{top:40, width: 85, height: 85, resizeMode: 'contain', marginRight: -15}}
+                      key={i}
+                    />
+                  )
+                }
+              })}
+            </View>
+            <Modal
+              isVisible={this.state.mainModal}
+              animationIn={'slideInLeft'}
+              animationOut={'slideOutRight'}
+            >
+            {this.state.fontLoaded ? (
+              <View style={styles.mainModal}>
+                <TouchableOpacity onPress={() => this.switchModal('help')}>
+                  <Text style={{fontFamily: 'arcade', fontSize: 35}}>
+                    Help
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => this.switchModal('friend')}>
+                  <Text style={{fontFamily: 'arcade', fontSize: 35}}>
+                    Friends
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.restartGame.bind(this)}>
+                  <Text style={{fontFamily: 'arcade', fontSize: 35}}>
+                    Restart
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.closeModal.bind(this)}>
+                  <Text style={{fontFamily: 'arcade', fontSize: 35}}>
+                    Continue
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : (null)}
+            </Modal>
+            <Modal
+              isVisible={this.state.helpModal}
+              animationIn={'slideInUp'}
+              animationOut={'slideOutDown'}
+            >
+              <View style={styles.otherModal}>
+                <HelpModal close={this.closeModal.bind(this)}/>
+              </View>
+            </Modal>
+            <Modal
+              isVisible={this.state.friendModal}
+              animationIn={'slideInUp'}
+              animationOut={'slideOutDown'}
+            >
+              <View style={[styles.otherModal, {height: "20%"}]}>
+                <FriendModal close={this.closeModal.bind(this)}/>
+              </View>
+            </Modal>
+            <Modal
+              isVisible={this.state.gameOverModal}
+              animationIn={'slideInUp'}
+              animationOut={'slideOutDown'}
+            >
+              <View style={[styles.otherModal, {height: "40%"}]}>
+                <GameOverModal close={this.closeModal.bind(this)}/>
+              </View>
+            </Modal>
           </View>
-          <View style={{flex: 1, flexDirection: 'row'}}>
-            {this.state.hoverHand.map((card, i) => {
-              if (i%2 === 0) {
-                return (
-                  <Image source={cardImages[card.value]}
-                    style={{top: 15, width: 65, height: 65, resizeMode: 'contain', marginRight: -15}}
-                    key={i}
-                  />
-                )
-              } else {
-                return (
-                  <Image source={cardImages[card.value]}
-                    style={{top:40, width: 65, height: 65, resizeMode: 'contain', marginRight: -15}}
-                    key={i}
-                  />
-                )
-              }
-            })}
+        ) : (null)}
+        <Modal
+          isVisible={this.state.hofModal}
+          animationIn={'slideInUp'}
+          animationOut={'slideOutDown'}
+        >
+          <View style={[styles.otherModal, {height: "80%"}]}>
+            <HallOfFameModal close={this.closeModal.bind(this)} database={database}/>
           </View>
-        </View>
-        <View style={[styles.gameContainer, {backgroundColor: 'transparent'}]} {...this._panResponder.panHandlers} ref="mycomp">
+        </Modal>
+        <View style={styles.gameContainer} {...this._panResponder.panHandlers} ref="mycomp">
           {this.state.pressed ? (
             <View style={{position: 'absolute', zIndex: 99}}>
               <Image source={this.state.animatedHand[this.state.lastCompletedHand]} style={{width: 300, height: 100, resizeMode: 'contain'}}/>
@@ -292,17 +506,37 @@ export default class Game extends React.Component {
               selectedTiles={this.state.selectedTiles}
               reHighlight={this.state.reHighlight}
               restart={this.state.restart}
+              gameStarted={this.state.animateStartOfGame}
+              addEmpty={this.addEmptyTiles.bind(this)}
+              hoverHand={this.state.hoverHand}
               x={i}
               key={i}
             />
           ))}
         </View>
+        {!this.state.gameStarted ? (
+          <View style={{flex: 1.5, backgroundColor: 'purple'}}>
+          </View>
+        ) : (null)}
         <View style={styles.botBanner}>
-
+          {!this.state.gameStarted && this.state.fontLoaded && this.state.blinky ? (
+            <Text style={styles.font} onPress={this.startGame.bind(this)}>
+              Press Start
+            </Text>
+          ) : (
+            !this.state.gameStarted ? (
+              <Text style={{fontSize: 60}} onPress={this.startGame.bind(this)}>
+                Jabroni Code
+              </Text>
+            ) : (
+              //ad space
+              null
+            )
+          )}
         </View>
         {/* {boxes.map((tiles, i) => {
           return (
-              <View style={{width: 40, height: 55, top: tiles.y, left: tiles.x ,backgroundColor:'red', position: 'absolute'}} key={i}/>
+              <View style={{width: 40, height: 55, top: tiles.y, left: tiles.x ,backgroundColor:'red', position: 'absolute', zIndex: 999}} key={i}/>
           )
         })} */}
       </View>
@@ -320,15 +554,20 @@ const styles = StyleSheet.create({
   topBanner: {
     flex: 2,
     flexDirection: 'row',
-    backgroundColor: 'lightgreen',
+    backgroundColor: 'black',
     alignItems: 'center',
     justifyContent: 'space-between',
     width: "100%",
     zIndex: 99
   },
+  titleCard: {
+    width: 200,
+    height: 50,
+    resizeMode: 'contain'
+  },
   showCase: {
-    flex: 1,
-    backgroundColor: 'lightgreen',
+    flex: 3.5,
+    backgroundColor: 'black',
     alignItems: 'center',
     justifyContent: 'center',
     width: "100%",
@@ -336,12 +575,13 @@ const styles = StyleSheet.create({
     zIndex: 99
   },
   gameContainer: {
-    flex: 5,
+    flex: 4,
     flexDirection: 'row',
     backgroundColor: 'black',
     alignItems: 'center',
     justifyContent: 'center',
     height: "100%",
+    zIndex: 99
   },
   botBanner: {
     flex: 1,
@@ -349,20 +589,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: "100%",
-  }
+  },
+  mainModal: {
+    backgroundColor: 'white',
+    padding: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+  },
+  otherModal: {
+    backgroundColor: 'white',
+    padding: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    height: "60%"
+  },
+  font: {
+    fontSize: 40,
+    fontFamily: 'arcade',
+    color: 'white'
+  },
 });
-
-
-// const mapStateToProps = (store) => {
-//   return {
-//     deck: store.deck,
-//     selectedCards: store.selectedCards
-//   }
-// }
-//
-// const mapDispatcherToProps = (dispatch) => ({
-//   saveDeck: bindActionCreators(generateDeck, dispatch)
-// })
-//
-//
-// export default connect(mapStateToProps, mapDispatcherToProps)(Game);

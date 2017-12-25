@@ -1,5 +1,5 @@
 {
-  "name": "vidyapoker",
+  "name": "arcadepoker",
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
@@ -22,6 +22,8 @@
     "expo": "^23.0.4",
     "react": "16.0.0",
     "react-native": "0.50.3",
+    "react-native-firebase": "^3.2.0",
+    "react-native-modal": "^4.1.1",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",

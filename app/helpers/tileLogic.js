@@ -14,4 +14,9 @@ let adjacentTiles = {
   "4,0": ["3,1","3,2"]
 }
 
-export default adjacentTiles
+let keyTiles = ["1,3", "2,0", "2,1", "2,2", "3,3"]
+
+export {
+  adjacentTiles,
+  keyTiles
+}

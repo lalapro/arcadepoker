@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, PanResponder, Animated, Dimensions, TouchableWithoutFeedback } from 'react-native';
-
+import { keyTiles } from '../helpers/tileLogic'
 const {height, width} = Dimensions.get('window');
 
 export default class HexGrid extends React.Component {
@@ -15,31 +15,17 @@ export default class HexGrid extends React.Component {
         height: 85,
         marginBottom: -27,
       },
-      // cardStyle2: {
-      //   position: 'relative',
-      //   width: 85,
-      //   height: 85,
-      //   marginBottom: -27,
-      // },
-      // suite: 0
     };
   }
 
   componentWillMount() {
     if (this.props.x === 2) {
       this.state.cardStyle.top = (this.props.y - 1) * -130;
-      // this.state.cardStyle2.top = (this.props.y - 1) * -130;
     } else if(this.props.x !== 0 && this.props.x !== 4){
       this.state.cardStyle.top = (this.props.y - 1.5) * -130;
-      // this.state.cardStyle2.top = (this.props.y - 1.5) * -130;
     }
-
-    // let suite = this.getRandomIntInclusive(0, 3);
-    // this.setState({ suite });
   }
 
-  componentDidMount() {
-  }
 
 
   componentWillReceiveProps(oldProps) {
@@ -49,15 +35,11 @@ export default class HexGrid extends React.Component {
     } else {
       this.setState({isHighlighted: false});
     }
+    if(oldProps.card.value === "" && keyTiles.includes(this.state.hexPosition) && oldProps.hoverHand.length > 0) {
+      this.props.addEmpty(this.state.hexPosition)
+    }
 
   }
-
-  getRandomIntInclusive(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
 
   render() {
     return (

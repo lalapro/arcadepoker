@@ -25,7 +25,7 @@ export default class HexGrid extends React.Component {
     for (let i = this.props.tiles - 1; i >= 0; i--) {
       let obj = {
         x: e.nativeEvent.layout.x + e.nativeEvent.layout.width / 2 + e.nativeEvent.layout.width / 6,
-        y: (e.nativeEvent.layout.y + (height / 9) * 3) + (65 * difference)
+        y: (e.nativeEvent.layout.y + (height / 8.5) * 3.5) + (65 * difference)
       }
       difference++;
       this.props.layoutCreators([this.props.x, i], obj)
@@ -63,7 +63,21 @@ export default class HexGrid extends React.Component {
       // setTimeout(() => {this.drawFromDeck(cardsToReplace)}, 2000);
     }
 
+    if(oldProps.gameStarted) {
+      this.animateStartOfGame(this.state.numberOfCards)
+    }
 
+
+  }
+
+  animateStartOfGame(startingCards) {
+    for(let i = 0; i < startingCards.length; i++) {
+      this.state.animatedValue[i] = {
+        value: new Animated.Value(0),
+        position: -150
+      }
+    }
+    this.animate()
   }
 
   modifyOldCardsAnimation(oldCards) {
@@ -85,10 +99,11 @@ export default class HexGrid extends React.Component {
   drawFromDeck(num) {
     // console.log(this.state.numberOfCards, num)
     for (let i = 0; i < num; i++) {
-      let newCardIndex = this.state.numberOfCards.push(this.props.deck.shift()) - 1;
+      let nextCard = this.props.deck.shift();
+      let newCardIndex = this.state.numberOfCards.push(nextCard) - 1;
       this.state.animatedValue[newCardIndex] = {
         value: new Animated.Value(0),
-        position: -150
+        position: -100
       }
     }
     this.setState({
@@ -129,6 +144,8 @@ export default class HexGrid extends React.Component {
             destroy={this.props.destroy}
             selectedTiles={this.props.selectedTiles}
             reHighlight={this.props.reHighlight}
+            addEmpty={this.props.addEmpty}
+            hoverHand={this.props.hoverHand}
             animate={{
               transform: [{
                 translateY: this.state.animatedValue[i].value.interpolate({

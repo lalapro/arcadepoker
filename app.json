@@ -1,12 +1,15 @@
 {
    "expo": {
-    "name": "Vidya Poker",
+    "name": "Arcade Poker",
     "icon": "./app/assets/cards/A.png",
     "version": "0.1.0",
-    "slug": "vidyapoker",
+    "slug": "arcadepoker",
     "sdkVersion": "23.0.0",
+    "facebookScheme": "fb183752602209264",
+    "facebookAppId": "183752602209264",
+    "facebookDisplayName": "Arcade Poker",
     "ios": {
-      "bundleIdentifier": "com.lalpro.vidyapoker"
+      "bundleIdentifier": "com.lalapro.arcadepoker"
     },
     "android": {
       "package": "com.yourcompany.yourappname"
