@@ -72,10 +72,17 @@ export default class HallOfFame extends React.Component {
       } else if (newChallenger) {
         positionToInject = 0;
         leaderBoard = [];
+        while(leaderBoard.length < 100) {
+          leaderBoard.push(["0", ["id", 'AAA']])
+        }
         leaderBoard.splice(positionToInject, 0, [scoreToInject, [deviceId, this.state.text]]);
         leaderBoard.pop();
         const insertName = setInterval(this.blinky.bind(this), 750)
         this.setState({insertName})
+      } else {
+        while(leaderBoard.length < 100) {
+          leaderBoard.push(["0", ["id", 'AAA']])
+        }
       }
       this.setState({leaderBoard, positionToInject, loadReady})
     })
@@ -91,17 +98,33 @@ export default class HallOfFame extends React.Component {
 
   switchBoard() {
     if (this.state.board1 === 'black') {
+      this.getFriendStats();
       this.setState({
         board1: 'white',
         board2: 'black',
         currentBoard: 'Friends'
       })
     } else {
+      this.getHighscores();
       this.setState({
         board1: 'black',
         board2: 'white',
         currentBoard: 'Top 100'
       })
+    }
+  }
+
+  async getFriendStats() {
+    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('183752602209264', {
+        permissions: ['public_profile', 'email', 'user_friends', 'user_photos'],
+      });
+    if (type === 'success') {
+      // Get the user's name using Facebook's Graph API
+      const response = await fetch(
+        `https://graph.facebook.com/me?access_token=${token}`);
+      console.log(
+        `Hi ${(await response.json()).name}!`,
+      );
     }
   }
 
@@ -124,7 +147,7 @@ export default class HallOfFame extends React.Component {
       let highscore = this.state.newChallenger.score;
       let name = this.state.fakeText;
       let timestamp = moment().format('MMMM Do YYYY, h:mm:ss a');
-      if (name === '') name = 'jabroni'
+      if (name === '') name = 'magikarp'
       scoreToSave = [deviceId, name]
       this.props.database.ref('/highscores').child(highscore).child(timestamp).set(scoreToSave)
 
@@ -286,9 +309,9 @@ export default class HallOfFame extends React.Component {
               </View>
               <View style={[styles.box, {width: "100%", flex: 2}]}>
                 {this.state.leaderBoard.map((hs, i) => (
-                    <Text style={[styles.font, {fontSize: 14, color: this.checkIfOwner(hs)}]} key={i}>
-                      {this.arcadifyScore(hs[0])}
-                    </Text>
+                  <Text style={[styles.font, {fontSize: 14, color: this.checkIfOwner(hs)}]} key={i}>
+                    {this.arcadifyScore(hs[0])}
+                  </Text>
                 ))}
               </View>
               <View style={[styles.box, {width: "100%", alignItems: 'flex-start'}]}>

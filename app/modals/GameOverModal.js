@@ -71,35 +71,57 @@ export default class FriendModal extends React.Component {
     return(
       this.state.fontLoaded ? (
         this.state.newChallenger ? (
-          <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={[styles.font, {fontSize: 30}]}>
-              Congratulations!!
-            </Text>
-            <Text style={[styles.font, {fontSize: 23}]}>
-              You've  made  the  Top  100!
-            </Text>
-            <TouchableOpacity onPress={() => this.props.close('challenger', this.state.challenger)}>
-              <Text style={[styles.font, {fontSize: 20}]}>
-                Click here
+          <View style={styles.box}>
+            <View style={styles.box}>
+              <Text style={[styles.font, {fontSize: 30}]}>
+                Congratulations!!
               </Text>
-            </TouchableOpacity>
+            </View>
+            <View style={styles.box}>
+              <Text style={[styles.font, {fontSize: 23}]}>
+                You've  made
+              </Text>
+              <Text style={[styles.font, {fontSize: 23}]}>
+                the  top  100!
+              </Text>
+            </View>
+            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+              <TouchableOpacity onPress={() => this.props.close('challenger', this.state.challenger)}>
+                <Image
+                  source={require('../assets/continue.png')}
+                  style={{width: 25, height: 25, resizeMode: 'contain'}}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         ) :
         (
-          <View>
-            <Text style={styles.font}>
-              Game  Over
-            </Text>
-            <TouchableOpacity onPress={() => this.props.close('hof')}>
-              <Text style={[styles.font, {fontSize: 20}]}>
-                View  highscores
+          <View style={{flex: 1}}>
+            <View style={{flex: 2, justifyContent: 'center', alignItems: 'center'}}>
+              <Text style={[styles.font, {fontSize: 65}]}>
+                Game
               </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.props.close('over')}>
-              <Text style={[styles.font, {fontSize: 20}]}>
-                Play  Again
+              <Text style={[styles.font, {fontSize: 65}]}>
+                Over
               </Text>
-            </TouchableOpacity>
+            </View>
+            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+              <TouchableOpacity onPress={() => this.props.close('hof')}>
+                <Text style={styles.font}>
+                  View  highscores
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => this.props.close('hof')}>
+                <Image source={require('../assets/trophy.png')} style={{width: 20, height: 20, resizeMode: 'contain'}}/>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.box}>
+              <TouchableOpacity onPress={() => this.props.close('over')}>
+                <Text style={styles.font}>
+                  Play  Again
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )
       ) : (null)
@@ -108,8 +130,13 @@ export default class FriendModal extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  box: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   font: {
     fontFamily: 'arcade',
-    fontSize: 40,
+    fontSize: 20,
   },
 })

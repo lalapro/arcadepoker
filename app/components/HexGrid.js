@@ -92,12 +92,6 @@ export default class HexGrid extends React.Component {
     })
   }
 
-  getRandomIntInclusive(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
-  }
-
   drawFromDeck(num) {
     // console.log(this.state.numberOfCards, num)
     for (let i = 0; i < num; i++) {
@@ -111,7 +105,7 @@ export default class HexGrid extends React.Component {
     this.setState({
       numberOfCards: this.state.numberOfCards
     })
-    // let suite = getRandomIntInclusive(0, 3);
+
     this.animate()
   }
 
