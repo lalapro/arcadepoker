@@ -37,11 +37,13 @@ export default class HallOfFame extends React.Component {
 
   getHighscores() {
     let newChallenger = this.props.newChallenger;
-    this.setState({newChallenger})
+    this.setState({newChallenger});
+    let deviceId = Constants.deviceId;
     let positionToInject = newChallenger.rank;
     let scoreToInject = newChallenger.score;
-    let blinky = false;
+    let loadReady = true;
     let leaderBoard = this.state.leaderBoard;
+
 
     this.props.database.ref('/highscores').limitToLast(100).once('value', (snap) => {
       if (snap.val()) {
@@ -50,34 +52,32 @@ export default class HallOfFame extends React.Component {
         leaderBoard.forEach(scoreEntry => {
           let keys = Object.keys(scoreEntry[1]) // get all instances of score
           for(let i = 0; i < keys.length; i++) { // for each key, store into array
-            if (newLeaderBoard.length < 50) {
+            if (newLeaderBoard.length < 100) {
               let eachUser = scoreEntry[1][keys[i]];
               newLeaderBoard.push([scoreEntry[0], eachUser]);
             }
           }
         })
         leaderBoard = newLeaderBoard;
-        console.log(leaderBoard.length)
         while(leaderBoard.length < 100) {
-          leaderBoard.push(["0000000", ""])
-          // leaderBoard.pop()
+          leaderBoard.push(["0", ["id", 'AAA']])
         }
         if (positionToInject > 0) {
           positionToInject = positionToInject - 1;
-          leaderBoard.splice(positionToInject, 0, [scoreToInject, this.state.text]);
-          blinky = true;
+          leaderBoard.splice(positionToInject, 0, [scoreToInject, [deviceId, this.state.text]]);
+          leaderBoard.pop();
           const insertName = setInterval(this.blinky.bind(this), 750)
           this.setState({insertName})
         }
       } else if (newChallenger) {
         positionToInject = 0;
         leaderBoard = [];
-        leaderBoard.splice(positionToInject, 0, [scoreToInject, this.state.text]);
-        blinky = true;
+        leaderBoard.splice(positionToInject, 0, [scoreToInject, [deviceId, this.state.text]]);
+        leaderBoard.pop();
         const insertName = setInterval(this.blinky.bind(this), 750)
         this.setState({insertName})
       }
-      this.setState({leaderBoard, positionToInject})
+      this.setState({leaderBoard, positionToInject, loadReady})
     })
   }
 
@@ -86,69 +86,6 @@ export default class HallOfFame extends React.Component {
       blinky: !this.state.blinky
     })
   }
-
-  arcadifyScore(num) {
-    if (!num) return '';
-    let digits = num.toString().split('');
-    while(digits.length < 7) {
-      digits.unshift('0');
-    }
-    return digits.join('')
-  }
-
-  arcadifyRank(num) {
-    if (!num) return '';
-    let digits = num.toString();
-    let lastDigit = digits[digits.length - 1]
-    if (lastDigit === '1' && digits.length === 1) {
-      return (
-        <View key={num} style={{flexDirection: 'row'}}>
-          <Text style={[styles.font, {fontSize: 14}]}>
-            {digits}
-          </Text>
-          <Text style={[styles.font, {fontSize: 12}]}>
-            st
-          </Text>
-        </View>
-      )
-    }
-    else if (lastDigit === '2' && digits.length === 1) {
-      return (
-        <View key={num} style={{flexDirection: 'row'}}>
-          <Text style={[styles.font, {fontSize: 14}]}>
-            {digits}
-          </Text>
-          <Text style={[styles.font, {fontSize: 12}]}>
-            nd
-          </Text>
-        </View>
-      )
-    } else if (lastDigit === '3' && digits.length === 1) {
-      return (
-        <View key={num} style={{flexDirection: 'row'}}>
-          <Text style={[styles.font, {fontSize: 14}]}>
-            {digits}
-          </Text>
-          <Text style={[styles.font, {fontSize: 12}]}>
-            rd
-          </Text>
-        </View>
-      )
-    } else {
-      return (
-        <View key={num} style={{flexDirection: 'row'}}>
-          <Text style={[styles.font, {fontSize: 14}]}>
-            {digits}
-          </Text>
-          <Text style={[styles.font, {fontSize: 12}]}>
-            th
-          </Text>
-        </View>
-      )
-    }
-  }
-
-
 
 
 
@@ -168,24 +105,42 @@ export default class HallOfFame extends React.Component {
     }
   }
 
+  scrollAnimate(e) {
+    if (this.state.positionToInject >= 0) {
+      let y = e.nativeEvent.target;
+      y = (y / 100) * (this.state.positionToInject);
+      console.log(y)
+      this.refs.scrollz.scrollTo({x: 0, y: y, animated: true})
+    }
+  }
+
 
   close() {
 
     if (this.state.positionToInject >= 0) {
       clearInterval(this.state.insertName);
+      this.checkIfPersonalHigh();
       let deviceId = Constants.deviceId;
-      let highscore = Number(this.state.newChallenger.score);
-      // let highscore = 70;
+      let highscore = this.state.newChallenger.score;
       let name = this.state.fakeText;
       let timestamp = moment().format('MMMM Do YYYY, h:mm:ss a');
+      if (name === '') name = 'jabroni'
       scoreToSave = [deviceId, name]
-      // AsyncStorage.setItem('deviceId', deviceId);
-      // AsyncStorage.setItem('highscore', this.props.newChallenger.score);
       this.props.database.ref('/highscores').child(highscore).child(timestamp).set(scoreToSave)
+
       this.props.close('over');
 
     } else {
       this.props.close();
+    }
+  }
+
+  async checkIfPersonalHigh() {
+    let personalHigh = await AsyncStorage.getItem('highscore');
+    if (this.state.newChallenger.score > personalHigh) {
+      AsyncStorage.setItem('highscore', this.state.newChallenger.score.toString())
+    } else if (personalHigh === undefined){
+      AsyncStorage.setItem('highscore', this.state.newChallenger.score.toString())
     }
   }
 
@@ -207,13 +162,81 @@ export default class HallOfFame extends React.Component {
     }
   }
 
+  checkIfOwner(arr) {
+    let deviceId = Constants.deviceId;
+    return arr[1][0] === deviceId ? 'yellow' : 'white';
+  }
+
+
+  arcadifyScore(num) {
+    if (!num) return '';
+    let digits = num.toString().split('');
+    while(digits.length < 7) {
+      digits.unshift('0');
+    }
+    return digits.join('')
+  }
+
+  arcadifyRank(num, arr) {
+    if (!num) return '';
+    let digits = num.toString();
+    let lastDigit = digits[digits.length - 1]
+    if (lastDigit === '1' && digits.length === 1) {
+      return (
+        <View key={num} style={{flexDirection: 'row'}}>
+          <Text style={[styles.font, {fontSize: 14, color: this.checkIfOwner(arr)}]}>
+            {digits}
+          </Text>
+          <Text style={[styles.font, {fontSize: 12, color: this.checkIfOwner(arr)}]}>
+            st
+          </Text>
+        </View>
+      )
+    }
+    else if (lastDigit === '2' && digits.length === 1) {
+      return (
+        <View key={num} style={{flexDirection: 'row'}}>
+          <Text style={[styles.font, {fontSize: 14, color: this.checkIfOwner(arr)}]}>
+            {digits}
+          </Text>
+          <Text style={[styles.font, {fontSize: 12, color: this.checkIfOwner(arr)}]}>
+            nd
+          </Text>
+        </View>
+      )
+    } else if (lastDigit === '3' && digits.length === 1) {
+      return (
+        <View key={num} style={{flexDirection: 'row'}}>
+          <Text style={[styles.font, {fontSize: 14, color: this.checkIfOwner(arr)}]}>
+            {digits}
+          </Text>
+          <Text style={[styles.font, {fontSize: 12, color: this.checkIfOwner(arr)}]}>
+            rd
+          </Text>
+        </View>
+      )
+    } else {
+      return (
+        <View key={num} style={{flexDirection: 'row'}}>
+          <Text style={[styles.font, {fontSize: 14, color: this.checkIfOwner(arr)}]}>
+            {digits}
+          </Text>
+          <Text style={[styles.font, {fontSize: 12, color: this.checkIfOwner(arr)}]}>
+            th
+          </Text>
+        </View>
+      )
+    }
+  }
+
+
 
 
 
 
   render() {
     return(
-      this.state.fontLoaded ? (
+      this.state.fontLoaded && this.state.loadReady ? (
         <View style={styles.container}>
           <View style={[styles.box, {backgroundColor:'black'}]}>
             <Text style={styles.font}>
@@ -253,17 +276,19 @@ export default class HallOfFame extends React.Component {
             <ScrollView
               style={{position: 'absolute', top: 0, left: 0, bottom: 0, right: 0}}
               contentContainerStyle={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: "100%"}}
+              ref={"scrollz"}
+              onLayout={(e) => this.scrollAnimate(e)}
             >
               <View style={[styles.box, {width: "100%"}]}>
                 {this.state.leaderBoard.map((hs, i) => (
-                  this.arcadifyRank(i + 1)
+                  this.arcadifyRank(i + 1, hs)
                 ))}
               </View>
               <View style={[styles.box, {width: "100%", flex: 2}]}>
                 {this.state.leaderBoard.map((hs, i) => (
-                  <Text style={[styles.font, {fontSize: 14}]} key={i}>
-                    {this.arcadifyScore(hs[0])}
-                  </Text>
+                    <Text style={[styles.font, {fontSize: 14, color: this.checkIfOwner(hs)}]} key={i}>
+                      {this.arcadifyScore(hs[0])}
+                    </Text>
                 ))}
               </View>
               <View style={[styles.box, {width: "100%", alignItems: 'flex-start'}]}>
@@ -275,13 +300,13 @@ export default class HallOfFame extends React.Component {
                           {this.state.textArray.map((char, x) => {
                             if (char === ' _') {
                               return (
-                                <Text style={[styles.font, {fontSize: 14}]} key={x} onPress={this.reFocus.bind(this)}>
+                                <Text style={[styles.font, {fontSize: 14, color: 'yellow'}]} key={x} onPress={this.reFocus.bind(this)}>
                                   {char}
                                 </Text>
                               )
                             } else {
                               return (
-                                <Text style={[styles.font, {fontSize: 14}]} key={x} onPress={this.reFocus.bind(this)}>
+                                <Text style={[styles.font, {fontSize: 14, color: 'yellow'}]} key={x} onPress={this.reFocus.bind(this)}>
                                   {char}
                                 </Text>
                               )
@@ -296,7 +321,7 @@ export default class HallOfFame extends React.Component {
                     )
                   }
                   return (
-                    <Text style={[styles.font, {fontSize: 14}]} key={i}>
+                    <Text style={[styles.font, {fontSize: 14, color: this.checkIfOwner(hs)}]} key={i}>
                       {hs[1][1]}
                     </Text>
                   )
@@ -320,7 +345,13 @@ export default class HallOfFame extends React.Component {
             ) : (null)}
           </View>
         </View>
-      ) : (null)
+      ) : (
+        <View style={{backgroundColor: 'grey'}}>
+          <Text style={styles.font}>
+            Loading...
+          </Text>
+        </View>
+      )
     )
   }
 }

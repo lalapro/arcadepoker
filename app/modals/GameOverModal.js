@@ -22,43 +22,32 @@ export default class FriendModal extends React.Component {
     })
   }
 
-  // async checkOwnHighscore() {
-  //   let ownHighscore = await AsyncStorage.getItem('highscore');
-  //   ownHighscore = Number(ownHighscore)
-  //   if (this.props.totalscore > ownHighscore) {
-  //     this.setState({
-  //       newPersonalHigh: true
-  //     })
-  //   }
-  // }
-
   checkHallOfFame() {
     this.props.database.ref('/highscores').limitToLast(100).once('value', (snap) => {
-
       if (snap.val()) {
-        let leaderBoard = Object.entries(snap.val());
+        let leaderBoard = Object.entries(snap.val()).reverse();
         let newLeaderBoard = [];
         leaderBoard.forEach(scoreEntry => {
           let keys = Object.keys(scoreEntry[1]) // get all instances of score
           for(let i = 0; i < keys.length; i++) { // for each key, store into array
-            let eachUser = scoreEntry[1][keys[i]];
-            newLeaderBoard.push([scoreEntry[0], eachUser]);
+            if (newLeaderBoard.length < 100) {
+              let eachUser = scoreEntry[1][keys[i]];
+              newLeaderBoard.push([scoreEntry[0], eachUser]);
+            }
           }
         })
-        leaderBoard = newLeaderBoard.reverse();
+        leaderBoard = newLeaderBoard;
         let position;
         for (let i = 0; i < leaderBoard.length; i++) {
           if (this.props.totalscore > leaderBoard[i][0]) {
             position = i + 1;
             this.hereComesANewChallenger(position);
-            // this.saveToDB();
             break;
           }
         }
         if (leaderBoard.length < 100 && position === undefined) {
           position = leaderBoard.length + 1;
           this.hereComesANewChallenger(position);
-          // this.saveToDB();
         }
       } else {
         this.hereComesANewChallenger(1);
@@ -72,18 +61,8 @@ export default class FriendModal extends React.Component {
       challenger: {
         rank: position,
         score: this.props.totalscore
-      }
+      },
     })
-  }
-
-  saveToDB() {
-    // let deviceId = Constants.deviceId;
-    // AsyncStorage.setItem('deviceId', deviceId)
-    // let scoreToSave = {
-    //   score: this.props.totalscore,
-    //   deviceId:
-    // }
-    // database.ref('/highscores').child(deviceId).setWithPriority( scoreToSave, -highscore );
   }
 
 
@@ -92,13 +71,16 @@ export default class FriendModal extends React.Component {
     return(
       this.state.fontLoaded ? (
         this.state.newChallenger ? (
-          <View>
-            <Text style={styles.font}>
-              Congratulations, you've made the leaderboard!
+          <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={[styles.font, {fontSize: 30}]}>
+              Congratulations!!
+            </Text>
+            <Text style={[styles.font, {fontSize: 23}]}>
+              You've  made  the  Top  100!
             </Text>
             <TouchableOpacity onPress={() => this.props.close('challenger', this.state.challenger)}>
               <Text style={[styles.font, {fontSize: 20}]}>
-                Click here to go to board
+                Click here
               </Text>
             </TouchableOpacity>
           </View>

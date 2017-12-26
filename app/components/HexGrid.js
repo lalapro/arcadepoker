@@ -21,6 +21,7 @@ export default class HexGrid extends React.Component {
 
   setTileResponders(e) {
     // console.log(e.nativeEvent.layout.height)
+
     let difference = 0;
     for (let i = this.props.tiles - 1; i >= 0; i--) {
       let obj = {
@@ -74,7 +75,8 @@ export default class HexGrid extends React.Component {
     for(let i = 0; i < startingCards.length; i++) {
       this.state.animatedValue[i] = {
         value: new Animated.Value(0),
-        position: -150
+        //TODO might have to make dynamic
+        position: -130
       }
     }
     this.animate()
