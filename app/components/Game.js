@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button, PanResponder, Dimensions, Image, Animated, TouchableOpacity, AsyncStorage } from 'react-native';
-import { Font } from 'expo';
+import { Font, Constants } from 'expo';
 import * as firebase from 'firebase';
 import Modal from 'react-native-modal';
 import HexGrid from './HexGrid.js';
@@ -16,6 +16,7 @@ import FriendModal from '../modals/FriendModal';
 import HallOfFameModal from '../modals/HallOfFame';
 import GameOverModal from '../modals/GameOverModal';
 
+
 const {height, width} = Dimensions.get('window');
 
 // Initialize Firebase
@@ -23,7 +24,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyCfeJUbf7LoN7IMIFp7zbE50QK6lMDeTR8",
   authDomain: "arcade-poker.firebaseapp.com",
   databaseURL: "https://arcade-poker.firebaseio.com/",
-  // storageBucket: "Highscore.appspot.com"
+  // storageBucket: "highscore.appspot.com"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -58,8 +59,9 @@ export default class Game extends React.Component {
       hofModal: false,
       blinky: false,
       gameOverModal: false,
-      totalScore: 0,
-      highScore: 0
+      totalscore: 0,
+      highscore: 0,
+      newChallenger: 0,
     }
     this._panResponder = PanResponder.create({
       onMoveShouldSetPanResponder:(evt, gestureState) => true,
@@ -151,7 +153,8 @@ export default class Game extends React.Component {
       emptyTiles: [],
       gameStarted: false,
       showScore: false,
-      totalScore: 0,
+      totalscore: 0,
+      newChallenger: 0
     }, () => {
       this.setState({
         restart: false
@@ -189,7 +192,7 @@ export default class Game extends React.Component {
       destroy: true,
       pressed: true,
       lastCompletedHand: hand[0],
-      totalScore: this.state.totalScore += hand[1],
+      totalscore: this.state.totalscore += hand[1],
     }, () => {
       this.updateScore();
       this.setState({
@@ -226,33 +229,30 @@ export default class Game extends React.Component {
 
   async updateScore() {
     // AsyncStorage.setItem('highscore', '0');
-    let highScore = await AsyncStorage.getItem('highscore');
-    if (this.state.totalScore > this.state.highScore) {
-      let highScore = this.state.totalScore.toString();
-      this.setState({highScore})
-      AsyncStorage.setItem('highscore', highScore);
-      // store for friends
-      this.saveToDB(highScore)
-    } else if (highScore) {
-      highScore = Number(highScore)
-      this.setState({highScore: 0});
+    let highscore = await AsyncStorage.getItem('highscore');
+    if (this.state.totalscore > this.state.highscore) {
+      let highscore = this.state.totalscore.toString();
+      this.setState({highscore})
+    } else if (highscore) {
+      highscore = Number(highscore)
+      // SHOULD SET TO highscore FROM ASYNCSTORAGE
+      this.setState({highscore: 0});
     } else {
       this.setState({
-        highScore: 0
+        highscore: 0
       })
     }
   }
 
-  saveToDB(highScore) {
+  saveToDB(highscore, deviceId) {
     let scoreToSave = {}
-    highScore = Number(highScore)
+    highscore = Number(highscore)
     scoreToSave = {
-      score: highScore,
-      bestHand: 'Flush'
+      score: highscore,
     }
     // scoresRef.child('kato').setWithPriority( score, -score );
 
-    database.ref('/highscores').child('lalapro').setWithPriority( scoreToSave, -highScore );
+    database.ref('/highscores').child('lalapro').setWithPriority( scoreToSave, -highscore );
   }
 
 //   scoresRef.limitToLast(10).once('value', function(snap) {
@@ -305,12 +305,17 @@ export default class Game extends React.Component {
   }
 
 
-  closeModal(game) {
+  closeModal(game, challenger) {
     if (game === 'over') {
-      this.restartGame()
+      // if (highscore && timestamp && scoreToSave) {
+      //   database.ref('/highscores').child(highscore).child(timestamp).set(scoreToSave)
+      // }
+      this.restartGame();
     } else if (game === 'hof') {
       this.switchModal('hof')
-    } else {
+    } else if (game === 'challenger') {
+      this.switchModal('challenger', challenger)
+    }  else {
       this.setState({
         helpModal: false,
         mainModal: false,
@@ -322,7 +327,7 @@ export default class Game extends React.Component {
   }
 
 
-  switchModal(modal) {
+  switchModal(modal, challenger) {
     this.closeModal();
 
     if(modal === 'main') {
@@ -349,6 +354,12 @@ export default class Game extends React.Component {
         this.setState({
           gameOverModal: true
         })}, 450)
+    } else if (modal === 'challenger') {
+      setTimeout(() => {
+        this.setState({
+          hofModal: true,
+          newChallenger: challenger
+        })}, 450)
     }
   }
 
@@ -370,7 +381,7 @@ export default class Game extends React.Component {
                     POKER
                   </Text>
                   <Text style={{fontFamily: 'arcade', fontSize: 20, color: 'yellow'}}>
-                    Highscore: {this.state.highScore}
+                    highscore: {this.state.highscore}
                   </Text>
                   <TouchableOpacity onPress={() => this.switchModal('hof')}>
                     <Image source={require('../assets/trophy.png')} style={{width: 35, height: 35, resizeMode: 'contain'}}/>
@@ -389,10 +400,10 @@ export default class Game extends React.Component {
                 </TouchableOpacity>
                 <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                   <Text style={{fontSize: 45, fontFamily: 'arcade', color: 'white'}}>
-                    Score: {this.state.totalScore}
+                    Score: {this.state.totalscore}
                   </Text>
                   <Text style={{fontFamily: 'arcade', fontSize: 20, color: 'yellow'}}>
-                    Highscore: {this.state.highScore}
+                    highscore: {this.state.highscore}
                   </Text>
                 </View>
                 <TouchableOpacity onPress={() => this.switchModal('main')}>
@@ -475,7 +486,11 @@ export default class Game extends React.Component {
               animationOut={'slideOutDown'}
             >
               <View style={[styles.otherModal, {height: "40%"}]}>
-                <GameOverModal close={this.closeModal.bind(this)}/>
+                <GameOverModal
+                  close={this.closeModal.bind(this)}
+                  totalscore={this.state.totalscore}
+                  database={database}
+                />
               </View>
             </Modal>
           </View>
@@ -486,7 +501,11 @@ export default class Game extends React.Component {
           animationOut={'slideOutDown'}
         >
           <View style={[styles.otherModal, {height: "80%"}]}>
-            <HallOfFameModal close={this.closeModal.bind(this)} database={database}/>
+            <HallOfFameModal
+              close={this.closeModal.bind(this)}
+              database={database}
+              newChallenger={this.state.newChallenger}
+            />
           </View>
         </Modal>
         <View style={styles.gameContainer} {...this._panResponder.panHandlers} ref="mycomp">
