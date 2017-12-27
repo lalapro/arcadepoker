@@ -139,7 +139,6 @@ export default class HexGrid extends React.Component {
             chosen={this.props.chosen}
             destroy={this.props.destroy}
             selectedTiles={this.props.selectedTiles}
-            reHighlight={this.props.reHighlight}
             addEmpty={this.props.addEmpty}
             hoverHand={this.props.hoverHand}
             animate={{

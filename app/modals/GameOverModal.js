@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button, TouchableOpacity, Image, AsyncStorage} from 'react-native';
 import { Font, Constants } from 'expo';
+import database from '../firebase/db'
 
 
 export default class FriendModal extends React.Component {
@@ -23,7 +24,7 @@ export default class FriendModal extends React.Component {
   }
 
   checkHallOfFame() {
-    this.props.database.ref('/highscores').limitToLast(100).once('value', (snap) => {
+    database.highscores.limitToLast(100).once('value', (snap) => {
       if (snap.val()) {
         let leaderBoard = Object.entries(snap.val()).reverse();
         let newLeaderBoard = [];

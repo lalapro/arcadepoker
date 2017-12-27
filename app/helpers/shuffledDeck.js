@@ -39,7 +39,7 @@ for (let i = 0; i < 13; i++) {
 
 
 
-export default shuffledDeck = () => {
+export default shuffledDeck = (mode) => {
   const DECK = [
     {
       value: "1♦",
@@ -303,5 +303,11 @@ export default shuffledDeck = () => {
     },
 
   ];
-  return shuffle(DECK).concat(placeholders)
+  if (mode === 'blitz') {
+    return shuffle(DECK)
+  } else if (mode === 'blanks') {
+    return placeholders
+  } else {
+    return shuffle(DECK).concat(placeholders)
+  }
 }

@@ -1,42 +1,29 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, PanResponder, Dimensions, Image, Animated, TouchableOpacity, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, Button, PanResponder, Dimensions, Image, Animated, TouchableOpacity, AsyncStorage, Alert } from 'react-native';
 import { Font, Constants } from 'expo';
-import * as firebase from 'firebase';
 import Modal from 'react-native-modal';
 import HexGrid from './HexGrid.js';
-import recordPositions from './recordPositions';
 import { adjacentTiles, keyTiles } from '../helpers/tileLogic';
 import shuffledDeck from '../helpers/shuffledDeck';
 import calculateScore from '../helpers/calculateScore';
 import handAnimations from '../helpers/handAnimations';
 import cardImages from '../helpers/cardImages';
-import DraggingLogic from '../helpers/draggingLogic';
 import HelpModal from '../modals/HelpModal';
-import FriendModal from '../modals/FriendModal';
 import HallOfFameModal from '../modals/HallOfFame';
 import GameOverModal from '../modals/GameOverModal';
+import facebookLogin from '../helpers/facebookLogin';
+import database from '../firebase/db.js';
 
 
 const {height, width} = Dimensions.get('window');
 
-// Initialize Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyCfeJUbf7LoN7IMIFp7zbE50QK6lMDeTR8",
-  authDomain: "arcade-poker.firebaseapp.com",
-  databaseURL: "https://arcade-poker.firebaseio.com/",
-  // storageBucket: "highscore.appspot.com"
-};
-
-firebase.initializeApp(firebaseConfig);
-
-var database = firebase.database();
 
 
 export default class Game extends React.Component {
   constructor(props){
     super(props)
     this.state = {
-      deck: props.deck,
+      deck: shuffledDeck().slice(),
       currentTile: null,
       startingTiles: [1, 4, 3, 4, 1],
       selectedTiles: [],
@@ -44,16 +31,13 @@ export default class Game extends React.Component {
       tileResponders: {},
       adjacentTiles: adjacentTiles,
       availableTiles: [],
-      reHighlight: false,
       destroy: false,
-      newTileDetected: false,
       completedHands: [],
       animatedHand: handAnimations,
       lastCompletedHand: '',
       hoverHand: [],
       emptyTiles: [],
       restart: false,
-      bgColor: 'black',
       fontLoaded: false,
       gameStarted: false,
       hofModal: false,
@@ -78,7 +62,6 @@ export default class Game extends React.Component {
               insideX = gestureState.moveX >= tileResponders[key].x && gestureState.moveX <= (tileResponders[key].x + 40);
               insideY = gestureState.moveY >= tileResponders[key].y && gestureState.moveY <= (tileResponders[key].y + 55);
               if (insideX && insideY) {
-                let newTileDetected = true;
                 this.selectNewTile(key);
               }
             }
@@ -92,7 +75,6 @@ export default class Game extends React.Component {
               insideX = gestureState.moveX >= tileResponders[key].x && gestureState.moveX <= (tileResponders[key].x + 40);
               insideY = gestureState.moveY >= tileResponders[key].y && gestureState.moveY <= (tileResponders[key].y + 55);
               if (insideX && insideY) {
-                let newTileDetected = true;
                 this.selectNewTile(key);
               }
             }
@@ -110,8 +92,22 @@ export default class Game extends React.Component {
     });
   }
 
+  noBlanks(arr) {
+    return arr.every(card => card["value"] !== "");
+  }
+
+
   async componentDidMount() {
-    this.updateScoreFromAsyncStorage()
+    Alert.alert(
+      'Alert Title',
+      'My Alert Msg',
+      [
+        {text: 'Ask me later', onPress: () => this.startDuel("-L1LVAPG_mFXlK5qFmN6")},
+        {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+      ],
+      { cancelable: true }
+    )
+    this.updateScoreFromAsyncStorage();
     await Font.loadAsync({
       'arcade': require('../assets/fonts/arcadeclassic.regular.ttf'),
     });
@@ -129,9 +125,10 @@ export default class Game extends React.Component {
     })
   }
 
-  noBlanks(arr) {
-    return arr.every(card => card["value"] !== "");
+  loginToFacebookFromHomeScreen() {
+    facebookLogin().then(resObj => this.updateScoreFromAsyncStorage())
   }
+
 
 
   restartGame() {
@@ -145,14 +142,11 @@ export default class Game extends React.Component {
       chosenCards:[],
       adjacentTiles: adjacentTiles,
       availableTiles: [],
-      reHighlight: false,
       destroy: false,
-      newTileDetected: false,
       completedHands: [],
       animatedHand: handAnimations,
       lastCompletedHand: '',
       hoverHand: [],
-      bgColor: 'black',
       restart: true,
       emptyTiles: [],
       gameStarted: false,
@@ -240,7 +234,21 @@ export default class Game extends React.Component {
 
   async updateScoreFromAsyncStorage() {
     let highscore = await AsyncStorage.getItem('highscore');
-    this.setState({highscore})
+    highscore = highscore || 0
+    this.setState({highscore}, () => {this.updateScoreFromFaceBook()})
+  }
+
+  async updateScoreFromFaceBook() {
+    let fbId = await AsyncStorage.getItem('fbId');
+    if (fbId) {
+      database.fbFriends.child(fbId).child('highscore').once('value', snap => {
+        let highscore = snap.val();
+        if (highscore > this.state.highscore) {
+          this.setState({highscore})
+          AsyncStorage.setItem('highscore', highscore.toString())
+        }
+      })
+    }
   }
 
 
@@ -299,7 +307,6 @@ export default class Game extends React.Component {
       this.setState({
         helpModal: false,
         mainModal: false,
-        friendModal: false,
         hofModal: false,
         gameOverModal: false
       })
@@ -318,11 +325,6 @@ export default class Game extends React.Component {
       setTimeout(() => {
         this.setState({
           helpModal: true
-        })}, 450)
-    } else if (modal === 'friend') {
-      setTimeout(() => {
-        this.setState({
-          friendModal: true
         })}, 450)
     } else if (modal === 'hof') {
       setTimeout(() => {
@@ -343,15 +345,26 @@ export default class Game extends React.Component {
     }
   }
 
+  startDuel(room) {
+    clearInterval(this.insertCoin)
+    if (room){
+      console.log('here?')
+      this.props.navigation.navigate('BlitzJoin', {room: room})
+    } else {
+      console.log('no room')
+      this.props.navigation.navigate('Blitz');
+    }
+  }
+
 
 
   render() {
     const boxes = Object.values(this.state.tileResponders);
     return (
-      <View style={[styles.container, {backgroundColor: this.state.bgColor}]}>
+      <View style={styles.container}>
         {!this.state.gameStarted ? (
-          <View style={[styles.topBanner, /*{backgroundColor: this.state.bgColor}*/]}>
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <View style={[styles.topBanner]}>
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', top: 15}}>
               {this.state.fontLoaded ? (
                 <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                   <Text style={{fontFamily: 'arcade', fontSize: 65, color: 'white'}}>
@@ -369,9 +382,17 @@ export default class Game extends React.Component {
           </View>
         ) : (null)}
         {!this.state.gameStarted ? (
-          <TouchableOpacity onPress={() => this.switchModal('hof')}>
-            <Image source={require('../assets/trophy.png')} style={{width: 35, height: 35, resizeMode: 'contain'}}/>
-          </TouchableOpacity>
+          <View style={{flexDirection: 'row', zIndex: 100, width: "40%", justifyContent: 'space-between'}}>
+            <TouchableOpacity onPress={() => this.loginToFacebookFromHomeScreen()}>
+              <Image source={require('../assets/facebook.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.switchModal('hof')}>
+              <Image source={require('../assets/trophy.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.startDuel()}>
+              <Image source={require('../assets/duel.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
+            </TouchableOpacity>
+          </View>
         ) : (null)}
         {this.state.gameStarted ? (
           <View style={styles.showCase}>
@@ -426,11 +447,6 @@ export default class Game extends React.Component {
                     Help
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => this.switchModal('friend')}>
-                  <Text style={{fontFamily: 'arcade', fontSize: 35}}>
-                    Friends
-                  </Text>
-                </TouchableOpacity>
                 <TouchableOpacity onPress={this.restartGame.bind(this)}>
                   <Text style={{fontFamily: 'arcade', fontSize: 35}}>
                     Restart
@@ -454,15 +470,6 @@ export default class Game extends React.Component {
               </View>
             </Modal>
             <Modal
-              isVisible={this.state.friendModal}
-              animationIn={'slideInUp'}
-              animationOut={'slideOutDown'}
-            >
-              <View style={[styles.otherModal, {height: "20%"}]}>
-                <FriendModal close={this.closeModal.bind(this)}/>
-              </View>
-            </Modal>
-            <Modal
               isVisible={this.state.gameOverModal}
               animationIn={'slideInUp'}
               animationOut={'slideOutDown'}
@@ -471,7 +478,6 @@ export default class Game extends React.Component {
                 <GameOverModal
                   close={this.closeModal.bind(this)}
                   totalscore={this.state.totalscore}
-                  database={database}
                 />
               </View>
             </Modal>
@@ -485,14 +491,15 @@ export default class Game extends React.Component {
           <View style={[styles.otherModal, {height: "80%"}]}>
             <HallOfFameModal
               close={this.closeModal.bind(this)}
-              database={database}
               newChallenger={this.state.newChallenger}
+              updateScore={this.updateScoreFromFaceBook.bind(this)}
             />
           </View>
         </Modal>
+
         <View style={styles.gameContainer} {...this._panResponder.panHandlers} ref="mycomp">
           {this.state.pressed ? (
-            <View style={{position: 'absolute', zIndex: 99}}>
+            <View style={{position: 'absolute', zIndex: 2}}>
               <Image source={this.state.animatedHand[this.state.lastCompletedHand]} style={{width: 300, height: 100, resizeMode: 'contain'}}/>
             </View>
           ) : null}
@@ -505,7 +512,6 @@ export default class Game extends React.Component {
               destroy={this.state.destroy}
               layoutCreators={this.setLayout.bind(this)}
               selectedTiles={this.state.selectedTiles}
-              reHighlight={this.state.reHighlight}
               restart={this.state.restart}
               gameStarted={this.state.animateStartOfGame}
               addEmpty={this.addEmptyTiles.bind(this)}
@@ -515,6 +521,7 @@ export default class Game extends React.Component {
             />
           ))}
         </View>
+        {/* prop up the starting board... */}
         {!this.state.gameStarted ? (
           <View style={{flex: 1.5, backgroundColor: 'purple'}}>
           </View>
@@ -559,7 +566,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     width: "100%",
-    zIndex: 99
+    zIndex: 80
   },
   titleCard: {
     width: 200,
