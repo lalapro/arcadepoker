@@ -1,320 +1,242 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, PanResponder, Dimensions, Image, Animated, TouchableOpacity, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, Button, PanResponder, Dimensions, Image, Animated, TouchableOpacity, AsyncStorage, AppState } from 'react-native';
 import { Font } from 'expo';
 import HexGrid from './HexGrid.js';
+import Swiper from 'react-native-swiper';
+import Modal from 'react-native-modal';
 import { adjacentTiles, keyTiles } from '../helpers/tileLogic';
 import shuffledDeck from '../helpers/shuffledDeck';
 import calculateScore from '../helpers/calculateScore';
 import handAnimations from '../helpers/handAnimations';
 import cardImages from '../helpers/cardImages';
-import database from '../firebase/db'
+import database from '../firebase/db';
+import ChallengeModal from '../modals/ChallengeModal';
+import HereComesANewChallengerModal from '../modals/HereComesANewChallengerModal';
+
 
 export default class Blitz extends React.Component {
   constructor(props){
     super(props)
     this.state = {
-      deck: shuffledDeck('blanks').slice(),
-      currentTile: null,
-      startingTiles: [1, 4, 3, 4, 1],
-      selectedTiles: [],
-      chosenCards:[],
-      tileResponders: {},
-      adjacentTiles: adjacentTiles,
-      availableTiles: [],
-      destroy: false,
-      completedHands: [],
-      animatedHand: handAnimations,
-      lastCompletedHand: '',
-      hoverHand: [],
-      emptyTiles: [],
-      restart: false,
+      fbId: null,
       fontLoaded: false,
-      gameStarted: false,
-      hofModal: false,
       blinky: false,
-      gameOverModal: false,
+      challengeModal: false,
+      hereComesANewChallenger: false,
       totalscore: 0,
       highscore: 0,
       newChallenger: 0,
+      appState: AppState.currentState,
+      online: false
     }
-    this._panResponder = PanResponder.create({
-      onMoveShouldSetPanResponder:(evt, gestureState) => this.state.gameStarted,
-      onPanResponderMove: (evt, gestureState) => {
-        // console.log(gestureState)
-        tileResponders = this.state.tileResponders;
-        currentTile = this.state.currentTile;
-        // console.log(this.generateAvailableTiles(this.state.currentTile))
-
-        if (currentTile === null) {
-          for(key in tileResponders) {
-            // if touch gesture is between boxes...
-            if (gestureState.numberActiveTouches === 1) {
-              insideX = gestureState.moveX >= tileResponders[key].x && gestureState.moveX <= (tileResponders[key].x + 40);
-              insideY = gestureState.moveY >= tileResponders[key].y && gestureState.moveY <= (tileResponders[key].y + 55);
-              if (insideX && insideY) {
-                this.selectNewTile(key);
-              }
-            }
-          }
-        }
-        else {
-          let neighborTiles = this.state.availableTiles
-          for (let i = 0; i < neighborTiles.length; i++) {
-            if (gestureState.numberActiveTouches === 1) {
-              key = neighborTiles[i]
-              insideX = gestureState.moveX >= tileResponders[key].x && gestureState.moveX <= (tileResponders[key].x + 40);
-              insideY = gestureState.moveY >= tileResponders[key].y && gestureState.moveY <= (tileResponders[key].y + 55);
-              if (insideX && insideY) {
-                this.selectNewTile(key);
-              }
-            }
-          }
-        }
-      },
-      onPanResponderTerminate: (evt) => true,
-      onPanResponderRelease: (evt, gestureState) => {
-        if (this.state.chosenCards.length === 5 && this.state.selectedTiles.length === 5 && this.noBlanks(this.state.chosenCards)) {
-          this.destroy();
-        } else {
-          this.reset();
-        }
-      }
-    });
   }
 
-  noBlanks(arr) {
-    return arr.every(card => card["value"] !== "");
-  }
 
   async componentDidMount() {
-    console.log('in blitz.js')
+    AppState.addEventListener('change', this._handleAppStateChange);
+    let fbId = await AsyncStorage.getItem('fbId');
     await Font.loadAsync({
       'arcade': require('../assets/fonts/arcadeclassic.regular.ttf'),
     });
     this.setState({
-      fontLoaded: true
-    })
-  }
-
-  selectNewTile(key) {
-    if (this.state.selectedTiles.indexOf(key) === -1) {
-      this.setState({
-        selectedTiles: [...this.state.selectedTiles, key]
-      })
-    }
-    this.setState({
-      currentTile: key,
-      availableTiles: adjacentTiles[key]
-    })
-  }
-
-  setLayout(pos, obj) {
-    this.state.tileResponders[pos] = obj;
-    this.setState({
-      tileResponders: this.state.tileResponders,
-    })
-  }
-
-  destroy() {
-    this.state.completedHands.push(calculateScore(this.state.chosenCards))
-    hand = calculateScore(this.state.chosenCards);
-
-
-    this.setState({
-      destroy: true,
-      pressed: true,
-      lastCompletedHand: hand[0],
-      totalscore: this.state.totalscore += hand[1],
+      fontLoaded: true,
+      fbId: fbId
     }, () => {
-      this.setState({
-        destroy: false,
-        chosenCards: [],
-        selectedTiles: [],
-        currentTile: null,
-      })
-      // connected to scoring animation and storing KEY TILES
-      setTimeout(() => {this.setState({
-        pressed: false,
-        hoverHand: []
-      })}, 750)
-    });
+      this.resetRequestStatus();
+      this.setOnlineStatus(true);
+      this.listenForChallenges();
+    })
   }
 
-  addEmptyTiles(tile) {
-    if (!this.state.emptyTiles.includes(tile)) {
-      this.setState({
-        emptyTiles: [...this.state.emptyTiles, tile]
-      }, () => this.checkGameOver())
-    }
-  }
 
-  checkGameOver() {
-    if (this.state.emptyTiles.length === 5 || this.state.completedHands.length === 10) {
-      this.gameOver();
-    }
-  }
 
-  gameOver() {
-    console.log('game over')
-  }
-
-  reset() {
+  closeModal(type, roomKey) {
+    console.log(roomKey, 'in close modal')
     this.setState({
-      destroy: true,
-      chosenCards: [],
-      selectedTiles: [],
-      hoverHand: [],
-      currentTile: null
-    }, () => {
-      this.setState({
-        destroy: false
-      })
+      challengeModal: false,
+      hereComesANewChallenger: false
     })
-  }
 
-  addToChosenCards(card) {
-    let alreadyChosen = this.state.chosenCards.indexOf(card);
-    if (alreadyChosen === -1 && this.state.chosenCards.length < 5) {
-      this.setState({
-        chosenCards: [...this.state.chosenCards, card],
-        hoverHand: [...this.state.hoverHand, card]
-      })
+    if (type === 'cancelChallenge') {
+      this.resetRequestStatus();
+    } else if (type === 'startGame') {
+      setTimeout(() => this.props.navigation.navigate('BlitzJoin'), 500)
     }
   }
 
-  startGame() {
-    let newRoomRef = database.gameRooms.push({
-      deck: shuffledDeck('blitz').slice()
-    })
-    newRoomRef.once('value', snap => {
-      this.setState({
-        deck: snap.val().deck.slice(),
-        gameStarted: true,
-        animateStartOfGame: true,
-        restart: true,
-      }, () => {
-        this.setState({
-          animateStartOfGame: false,
-          restart: false
+  async showModal(modal, challenger) {
+    if (modal === 'challenge') {
+      if (this.state.fbId === null) {
+        facebookLogin().then(resObj => {
+          this.setState({
+            fbId: resObj.user.user.id,
+            challengeModal: true
+          })
         })
-      })
+      } else {
+        this.setState({challengeModal: true})
+      }
+    } else if (modal === "challengeRecieved") {
       setTimeout(() => {
         this.setState({
-          showScore: true
+          hereComesANewChallenger: true,
+          challenger: challenger
         })
       }, 450)
-    })
+    }
   }
 
   goBack() {
-    this.props.navigation.goBack()
+    this.props.navigation.goBack();
   }
+
+  componentWillUnmount() {
+    console.log('unmounting?');
+    this.setOnlineStatus(false);
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  setOnlineStatus(bool) {
+    if (this.state.fbId !== null) {
+      database.gameRooms.child(this.state.fbId).child('online').set(bool);
+      this.setState({online: bool})
+    }
+  }
+
+  resetRequestStatus(friendId) {
+    if (friendId) {
+      database.gameRooms.child(friendId).child('requesting').set(false);
+    } else {
+      database.gameRooms.child(this.state.fbId).child('requesting').set(false);
+    }
+  }
+
+  _handleAppStateChange = (nextAppState) => {
+    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+      console.log('online true')
+      this.setOnlineStatus(true);
+    } else {
+      this.setOnlineStatus(false);
+      this.resetRequestStatus();
+    }
+    this.setState({appState: nextAppState});
+  }
+
+  listenForChallenges() {
+      database.gameRooms.child(this.state.fbId).child('requesting').on('value', data => {
+        // console.log('daya........', data, this.state.online, this.state.fbId)
+        let challenger = data.val();
+        if (this.state.online && this.state.fbId !== null && this.state.hereComesANewChallenger === false) {
+          if (typeof challenger === 'string') {
+            console.log('am i setting state outside of component???')
+            this.closeModal()
+            this.showModal("challengeRecieved", challenger);
+          }
+        }
+      })
+  }
+
+
+
 
   render() {
     return(
       <View style={styles.container}>
-        {!this.state.gameStarted ? (
-          <View style={[styles.topBanner]}>
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', top: 15}}>
-              {this.state.fontLoaded ? (
-                <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                  <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                    <Image
-                      source={require('../assets/bolt.png')}
-                      style={{width: 40, height: 40, resizeMode: 'contain'}}
-                    />
-                    <Text style={{fontFamily: 'arcade', fontSize: 65, color: 'white'}} onPress={this.startGame.bind(this)}>
-                      BLITZ
-                    </Text>
-                    <Image
-                      source={require('../assets/bolt.png')}
-                      style={{width: 40, height: 40, resizeMode: 'contain'}}
-                    />
-                  </View>
+        <View style={[styles.topBanner]}>
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', top: 15}}>
+            {this.state.fontLoaded ? (
+              <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
                   <Text style={{fontFamily: 'arcade', fontSize: 65, color: 'white'}}>
-                    POKER
+                    BLITZ
                   </Text>
                 </View>
-              ) : (null)}
-            </View>
-          </View>
-        ) : (null)}
-          {this.state.gameStarted ? (
-            <View style={styles.showCase}>
-              {this.state.fontLoaded && this.state.showScore ? (
-                <View style={{flex: 1, justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'black', flexDirection: 'row', width: "90%"}}>
-                  <TouchableOpacity onPress={() => this.switchModal('hof')}>
-                    <Image source={require('../assets/trophy.png')} style={{width: 35, height: 35, resizeMode: 'contain'}}/>
-                  </TouchableOpacity>
-                  <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                    <Text style={{fontSize: 45, fontFamily: 'arcade', color: 'white'}}>
-                      Score: {this.state.totalscore}
-                    </Text>
-                    <Text style={{fontFamily: 'arcade', fontSize: 20, color: 'yellow'}}>
-                      BLITZ MODE!
-                    </Text>
-                  </View>
-                  <TouchableOpacity onPress={this.goBack.bind(this)}>
-                    {this.state.fontLoaded ? (
-                      <Image source={require('../assets/menu.png')} style={{width: 35, height: 35, resizeMode: 'contain'}}/>
-                    ) : null}
-                  </TouchableOpacity>
-                </View>
-              ) : null}
-              <View style={{flex: 1, flexDirection: 'row'}}>
-                {this.state.hoverHand.map((card, i) => {
-                  if (i%2 === 0) {
-                    return (
-                      <Image source={cardImages[card.value]}
-                        style={{top: 15, width: 85, height: 85, resizeMode: 'contain', marginRight: -15}}
-                        key={i}
-                      />
-                    )
-                  } else {
-                    return (
-                      <Image source={cardImages[card.value]}
-                        style={{top:40, width: 85, height: 85, resizeMode: 'contain', marginRight: -15}}
-                        key={i}
-                      />
-                    )
-                  }
-                })}
+                <Text style={{fontFamily: 'arcade', fontSize: 65, color: 'white'}}>
+                  Mode
+                </Text>
               </View>
-            </View>
-          ) : (null)}
-          <View style={styles.gameContainer} {...this._panResponder.panHandlers} ref="mycomp">
-            {this.state.pressed ? (
-              <View style={{position: 'absolute', zIndex: 2}}>
-                <Image source={this.state.animatedHand[this.state.lastCompletedHand]} style={{width: 300, height: 100, resizeMode: 'contain'}}/>
-              </View>
-            ) : null}
-            {this.state.startingTiles.map((tiles, i) => (
-              <HexGrid
-                deck={this.state.deck}
-                tiles={tiles}
-                add={this.addToChosenCards.bind(this)}
-                chosen={this.state.chosenCards}
-                destroy={this.state.destroy}
-                layoutCreators={this.setLayout.bind(this)}
-                selectedTiles={this.state.selectedTiles}
-                restart={this.state.restart}
-                gameStarted={this.state.animateStartOfGame}
-                addEmpty={this.addEmptyTiles.bind(this)}
-                hoverHand={this.state.hoverHand}
-                x={i}
-                key={i}
-              />
-            ))}
+            ) : (null)}
           </View>
-          {!this.state.gameStarted ? (
-            <View style={{flex: 1.5, backgroundColor: 'purple'}}>
-            </View>
-          ) : (null)}
-          <View style={styles.botBanner}>
-            <Text style={{fontSize: 60}} onPress={this.startGame.bind(this)}>
-              Jabroni Code
-            </Text>
+        </View>
+        <Modal
+          isVisible={this.state.challengeModal}
+          animationIn={'slideInUp'}
+          animationOut={'slideOutDown'}
+        >
+          <View style={styles.otherModal}>
+            <ChallengeModal
+              close={this.closeModal.bind(this)}
+              fbId={this.state.fbId}
+            />
           </View>
+        </Modal>
+        <Modal
+          isVisible={this.state.hereComesANewChallenger}
+          animationIn={'slideInUp'}
+          animationOut={'slideOutDown'}
+        >
+          <View style={styles.otherModal}>
+            <HereComesANewChallengerModal
+              close={this.closeModal.bind(this)}
+              fbId={this.state.fbId}
+              challenger={this.state.challenger}
+            />
+          </View>
+        </Modal>
+        <View style={styles.gameContainer}>
+          {this.state.pressed ? (
+            <View style={{position: 'absolute', zIndex: 2}}>
+              <Image source={this.state.animatedHand[this.state.lastCompletedHand]} style={{width: 300, height: 100, resizeMode: 'contain'}}/>
+            </View>
+          ) : null}
+          <Swiper
+            showsButtons={true}
+            showsPagination={false}
+            nextButton={<Image source={require('../assets/next.png')} style={{width:20, height: 20, resizeMode: 'contain'}}/>}
+            prevButton={<Image source={require('../assets/prev.png')} style={{width:20, height: 20, resizeMode: 'contain'}}/>}
+          >
+            <View style={[styles.box]}>
+              <Text style={styles.font}>
+                1
+              </Text>
+            </View>
+            <View style={[styles.box]}>
+              <Text style={styles.font}>
+                2
+              </Text>
+            </View>
+            <View style={[styles.box]}>
+              <Text style={styles.font}>
+                3
+              </Text>
+            </View>
+          </Swiper>
+        </View>
+        <View style={[styles.box, {flex: 1.5}]}>
+          <View style={{flex: 1, flexDirection:'row', width: "100%", backgroundColor: 'lightblue'}}>
+            <View style={styles.box}>
+              <TouchableOpacity onPress={() => this.showModal('challenge')}>
+                <Text style={[styles.font, {fontSize: 20}]}>
+                  Challenge
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.box}>
+              <TouchableOpacity>
+                <Text style={[styles.font, {fontSize: 20}]}>
+                  Random
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={{flex: 1}}>
+            <TouchableOpacity onPress={this.goBack.bind(this)}>
+              <Text style={styles.font}>
+                Back
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
     )
   }
@@ -331,7 +253,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'black'
+    backgroundColor: 'black',
+    width: "100%"
   },
   font: {
     fontSize: 40,
@@ -371,5 +294,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: "100%",
+  },
+  otherModal: {
+    backgroundColor: 'white',
+    padding: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    height: "60%"
   },
 })

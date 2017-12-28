@@ -14,6 +14,7 @@ export default class HexGrid extends React.Component {
         width: 85,
         height: 85,
         marginBottom: -27,
+        zIndex: 99
       },
     };
   }

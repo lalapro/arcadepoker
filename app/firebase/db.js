@@ -15,5 +15,6 @@ var database = {};
 database.fbFriends = firebase.database().ref('/fbfriends');
 database.highscores = firebase.database().ref('/highscores');
 database.gameRooms = firebase.database().ref('/gameRooms');
+database.blitzGame = firebase.database().ref('/blitzGame');
 
 export default database;

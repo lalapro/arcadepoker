@@ -12,7 +12,7 @@
       "bundleIdentifier": "com.lalapro.arcadepoker"
     },
     "android": {
-      "package": "com.yourcompany.yourappname"
+      "package": "com.lalapro.arcadepoker"
     }
    }
  }

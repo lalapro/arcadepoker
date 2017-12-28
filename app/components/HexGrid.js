@@ -76,7 +76,7 @@ export default class HexGrid extends React.Component {
       this.state.animatedValue[i] = {
         value: new Animated.Value(0),
         //TODO might have to make dynamic
-        position: -130
+        position: -100
       }
     }
     this.animate()

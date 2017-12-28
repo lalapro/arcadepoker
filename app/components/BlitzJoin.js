@@ -9,11 +9,11 @@ import handAnimations from '../helpers/handAnimations';
 import cardImages from '../helpers/cardImages';
 import database from '../firebase/db'
 
-export default class Blitz extends React.Component {
+export default class BlitzJoin extends React.Component {
   constructor(props){
     super(props)
     this.state = {
-      deck: shuffledDeck('blanks').slice(),
+      deck: null,
       currentTile: null,
       startingTiles: [1, 4, 3, 4, 1],
       selectedTiles: [],
@@ -34,8 +34,7 @@ export default class Blitz extends React.Component {
       blinky: false,
       gameOverModal: false,
       totalscore: 0,
-      highscore: 0,
-      newChallenger: 0,
+      fbId: null
     }
     this._panResponder = PanResponder.create({
       onMoveShouldSetPanResponder:(evt, gestureState) => this.state.gameStarted,
@@ -86,14 +85,35 @@ export default class Blitz extends React.Component {
     return arr.every(card => card["value"] !== "");
   }
 
+  async componentWillMount() {
+    let fbId = await AsyncStorage.getItem('fbId');
+    database.gameRooms.child(fbId).child('blitzRoom').once('value', snap => {
+      let roomKey = snap.val();
+      database.blitzGame.child(roomKey).child('deck').once('value', snappy => {
+        let deck = snappy.val().slice();
+        this.setState({deck})
+      })
+    })
+    database.fbFriends.child(fbId).once('value', snap => {
+      let facebookData = snap.val();
+      let fbName = facebookData.name.slice(0, 10);
+      let fbPic = facebookData.fbPic;
+      let space = fbName.indexOf(' ');
+      if (space > 0) {
+        fbName = fbName.slice(0, space);
+      }
+      this.setState({fbName, fbPic});
+    })
+  }
+
   async componentDidMount() {
-    console.log('in blitz.js')
+
     await Font.loadAsync({
       'arcade': require('../assets/fonts/arcadeclassic.regular.ttf'),
     });
     this.setState({
       fontLoaded: true
-    })
+    }, () => this.startGame())
   }
 
   selectNewTile(key) {
@@ -183,27 +203,21 @@ export default class Blitz extends React.Component {
   }
 
   startGame() {
-    let room = this.props.navigation.state.params.room;
-    console.log(room)
-    database.gameRooms.child(room).once('value', snap => {
-      let sharedDeck = snap.val().deck.slice();
+    this.setState({
+      gameStarted: true,
+      animateStartOfGame: true,
+      restart: true,
+    }, () => {
       this.setState({
-        deck: sharedDeck,
-        gameStarted: true,
-        animateStartOfGame: true,
-        restart: true,
-      }, () => {
-        this.setState({
-          animateStartOfGame: false,
-          restart: false
-        })
+        animateStartOfGame: false,
+        restart: false
       })
-      setTimeout(() => {
-        this.setState({
-          showScore: true
-        })
-      }, 450)
     })
+    setTimeout(() => {
+      this.setState({
+        showScore: true
+      })
+    }, 450)
   }
 
   goBack() {
@@ -212,51 +226,23 @@ export default class Blitz extends React.Component {
 
   render() {
     return(
-      <View style={styles.container}>
-        {!this.state.gameStarted ? (
-          <View style={[styles.topBanner]}>
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', top: 15}}>
-              {this.state.fontLoaded ? (
-                <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                  <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                    <Image
-                      source={require('../assets/bolt.png')}
-                      style={{width: 40, height: 40, resizeMode: 'contain'}}
-                    />
-                    <Text style={{fontFamily: 'arcade', fontSize: 65, color: 'white'}} onPress={this.startGame.bind(this)}>
-                      BLITZ
-                    </Text>
-                    <Image
-                      source={require('../assets/bolt.png')}
-                      style={{width: 40, height: 40, resizeMode: 'contain'}}
-                    />
-                  </View>
-                  <Text style={{fontFamily: 'arcade', fontSize: 65, color: 'white'}}>
-                    JOIN
-                  </Text>
-                </View>
-              ) : (null)}
-            </View>
-          </View>
-        ) : (null)}
+      this.state.deck !== null ? (
+        <View style={styles.container}>
           {this.state.gameStarted ? (
             <View style={styles.showCase}>
               {this.state.fontLoaded && this.state.showScore ? (
                 <View style={{flex: 1, justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'black', flexDirection: 'row', width: "90%"}}>
                   <TouchableOpacity onPress={() => this.switchModal('hof')}>
-                    <Image source={require('../assets/trophy.png')} style={{width: 35, height: 35, resizeMode: 'contain'}}/>
+                    <Image source={{uri: this.state.fbPic}} style={{width: 50, height: 50, resizeMode: 'contain'}}/>
                   </TouchableOpacity>
                   <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                    <Text style={{fontSize: 45, fontFamily: 'arcade', color: 'white'}}>
-                      Score: {this.state.totalscore}
-                    </Text>
-                    <Text style={{fontFamily: 'arcade', fontSize: 20, color: 'yellow'}}>
+                    <Text style={{fontFamily: 'arcade', fontSize: 30, color: 'yellow'}}>
                       BLITZ MODE!
                     </Text>
                   </View>
                   <TouchableOpacity onPress={this.goBack.bind(this)}>
                     {this.state.fontLoaded ? (
-                      <Image source={require('../assets/menu.png')} style={{width: 35, height: 35, resizeMode: 'contain'}}/>
+                      <Image source={{uri: this.state.fbPic}} style={{width: 50, height: 50, resizeMode: 'contain'}}/>
                     ) : null}
                   </TouchableOpacity>
                 </View>
@@ -315,7 +301,13 @@ export default class Blitz extends React.Component {
               Jabroni Code
             </Text>
           </View>
-      </View>
+          {/* {boxes.map((tiles, i) => {
+            return (
+                <View style={{width: 40, height: 55, top: tiles.y, left: tiles.x ,backgroundColor:'red', position: 'absolute', zIndex: 999}} key={i}/>
+            )
+          })} */}
+        </View>
+      ) : (null)
     )
   }
 }

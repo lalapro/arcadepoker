@@ -26,7 +26,8 @@ export default facebookLogin = async () => {
 
 
     const promises = [];
-
+    let personalPic;
+    getFBPics(user.id).then(pic => personalPic = pic);
 
     friends.data.forEach((friend) => {
       promises.push(getFBPics(friend.id));
@@ -47,7 +48,8 @@ export default facebookLogin = async () => {
         database.fbFriends.child(user.id).set({
           name: user.name,
           friends: [friends.data],
-          highscore: highscore
+          highscore: highscore,
+          fbPic: personalPic
         })
       })
     })

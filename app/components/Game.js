@@ -98,15 +98,17 @@ export default class Game extends React.Component {
 
 
   async componentDidMount() {
-    Alert.alert(
-      'Alert Title',
-      'My Alert Msg',
-      [
-        {text: 'Ask me later', onPress: () => this.startDuel("-L1LVAPG_mFXlK5qFmN6")},
-        {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-      ],
-      { cancelable: true }
-    )
+    // Alert.alert(
+    //   'Alert Title',
+    //   'My Alert Msg',
+    //   [
+    //     {text: 'Ask me later', onPress: () => this.startDuel("-L1LVAPG_mFXlK5qFmN6")},
+    //     {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+    //   ],
+    //   { cancelable: true }
+    // )
+
+
     this.updateScoreFromAsyncStorage();
     await Font.loadAsync({
       'arcade': require('../assets/fonts/arcadeclassic.regular.ttf'),
@@ -351,10 +353,11 @@ export default class Game extends React.Component {
       console.log('here?')
       this.props.navigation.navigate('BlitzJoin', {room: room})
     } else {
-      console.log('no room')
+      if (this.state)
       this.props.navigation.navigate('Blitz');
     }
   }
+
 
 
 
@@ -382,7 +385,7 @@ export default class Game extends React.Component {
           </View>
         ) : (null)}
         {!this.state.gameStarted ? (
-          <View style={{flexDirection: 'row', zIndex: 100, width: "40%", justifyContent: 'space-between'}}>
+          <View style={{flex: 0.5, flexDirection: 'row', zIndex: 100, width: "40%", justifyContent: 'space-between'}}>
             <TouchableOpacity onPress={() => this.loginToFacebookFromHomeScreen()}>
               <Image source={require('../assets/facebook.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
             </TouchableOpacity>
@@ -390,7 +393,7 @@ export default class Game extends React.Component {
               <Image source={require('../assets/trophy.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => this.startDuel()}>
-              <Image source={require('../assets/duel.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
+              <Image source={require('../assets/bolt.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
             </TouchableOpacity>
           </View>
         ) : (null)}
@@ -523,7 +526,7 @@ export default class Game extends React.Component {
         </View>
         {/* prop up the starting board... */}
         {!this.state.gameStarted ? (
-          <View style={{flex: 1.5, backgroundColor: 'purple'}}>
+          <View style={{flex: 1, backgroundColor: 'purple'}}>
           </View>
         ) : (null)}
         <View style={styles.botBanner}>
