@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, Animated, Dimensions } from 'react-native';
-import Hex from './Hex'
-
+import Hex from './Hex';
+import database from '../firebase/db'
 
 const {height, width} = Dimensions.get('window');
 
@@ -10,25 +10,32 @@ export default class HexGrid extends React.Component {
     super(props)
     this.state = {
       numberOfCards: [],
-      animatedValue: []
+      animatedValue: [],
+      blitzRoomKey: this.props.blitzRoomKey,
+      drawable: false
     }
 
   }
 
   componentWillMount() {
+    // console.log(this.props.blitzRoomKey)
     this.drawFromDeck(this.props.tiles);
   }
 
   setTileResponders(e) {
-    // console.log(e.nativeEvent.layout.height)
-
-    let difference = 0;
+    // console.log(this.props.x)
+    //(e.nativeEvent.layout.y + (height / 8.5) * 4.5) + (65 * difference);
+    // console.log(e.nativeEvent.layout)
+    let difference = 1;
     for (let i = this.props.tiles - 1; i >= 0; i--) {
+      x = e.nativeEvent.layout.x + (85/4);
+      y = ((height / 8.5) * 3.5) + (37 * difference);
       let obj = {
-        x: e.nativeEvent.layout.x + e.nativeEvent.layout.width / 2 + e.nativeEvent.layout.width / 6,
-        y: (e.nativeEvent.layout.y + (height / 8.5) * 3.5) + (65 * difference)
+        x: x,
+        y: y
       }
       difference++;
+      // if (this.props.x === 0) console.log(obj)
       this.props.layoutCreators([this.props.x, i], obj)
     }
   }
@@ -41,9 +48,7 @@ export default class HexGrid extends React.Component {
       this.setState({
         numberOfCards: [],
         animatedValue: []
-      }, () => {
-        this.drawFromDeck(oldProps.tiles)
-      })
+      }, () => this.drawFromDeck(oldProps.tiles))
     }
 
     let cardsToReplace = 0;
@@ -60,8 +65,7 @@ export default class HexGrid extends React.Component {
       })
       // console.log(cardsToReplace)
       this.modifyOldCardsAnimation(oldCards);
-      this.drawFromDeck(cardsToReplace)
-      // setTimeout(() => {this.drawFromDeck(cardsToReplace)}, 2000);
+      this.drawFromDeck(cardsToReplace);
     }
 
     if(oldProps.gameStarted) {
@@ -93,7 +97,6 @@ export default class HexGrid extends React.Component {
   }
 
   drawFromDeck(num) {
-    // console.log(this.state.numberOfCards, num)
     for (let i = 0; i < num; i++) {
       let nextCard = this.props.deck.shift();
       let newCardIndex = this.state.numberOfCards.push(nextCard) - 1;
@@ -102,11 +105,13 @@ export default class HexGrid extends React.Component {
         position: -100
       }
     }
-    this.setState({
-      numberOfCards: this.state.numberOfCards
-    })
+    this.setState({numberOfCards: this.state.numberOfCards});
 
-    this.animate()
+    this.animate();
+  }
+
+  setBlitzRoomDrawable(bool) {
+    database.blitzGame.child(this.state.blitzRoomKey).child('drawable').set(bool); //prevent double draw
   }
 
 
@@ -152,7 +157,6 @@ export default class HexGrid extends React.Component {
           />
         ))}
       </View>
-
     )
   }
 }
@@ -165,19 +169,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: -13,
     marginRight: -10,
+    // backgroundColor: 'red',
+    height: "100%"
   },
 });
-
-// const mapStateToProps = (store) => {
-//   return {
-//     selectedCards: store.selectedCards,
-//     deck: store.deck
-//   }
-// }
-//
-// const mapDispatcherToProps = (dispatch) => ({
-//   addToCard: bindActionCreators(addSelected, dispatch)
-// })
-//
-//
-// export default connect(mapStateToProps, mapDispatcherToProps)(HexGrid);

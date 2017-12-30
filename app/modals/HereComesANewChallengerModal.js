@@ -55,7 +55,7 @@ export default class HereComesANewChallengerModal extends React.Component {
     this.setState({
       accepted: true
     })
-    database.gameRooms.child(this.state.fbId).child('requesting').set(true);
+    database.gameRooms.child(this.state.fbId).child('accepted').set(true);
 
     this.interval = setInterval(this.tick.bind(this), 1000);
   }

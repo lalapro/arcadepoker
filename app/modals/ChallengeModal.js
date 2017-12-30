@@ -2,7 +2,8 @@ import React from 'react';
 import { StyleSheet, Text, View, Button, TouchableOpacity, Image, AsyncStorage, AppState} from 'react-native';
 import { Font, Constants } from 'expo';
 import database from '../firebase/db';
-import shuffledDeck from '../helpers/shuffledDeck'
+import shuffledDeck from '../helpers/shuffledDeck';
+import moment from 'moment';
 
 
 export default class ChallengeModal extends React.Component {
@@ -15,8 +16,10 @@ export default class ChallengeModal extends React.Component {
       waitingForResponse: false,
       appState: false,
       rejected: false,
-      countdown: 5
+      countDown: 5
     }
+    this.startCountdown = this.startCountdown.bind(this);
+    this.clearCountdown = this.clearCountdown.bind(this);
   }
 
   async componentWillMount() {
@@ -27,7 +30,7 @@ export default class ChallengeModal extends React.Component {
     this.setState({
       fontLoaded: true,
       isMounted: true,
-      rejected: false
+      rejected: false,
     })
   }
 
@@ -47,9 +50,7 @@ export default class ChallengeModal extends React.Component {
                 if (this.state.friendsOnline[i].id === friend.id) {
                   let spliceIndex = i;
                   this.state.friendsOnline.splice(i, 1);
-                  this.setState({
-                    friendsOnline: this.state.friendsOnline
-                  })
+                  this.setState({friendsOnline: this.state.friendsOnline})
                   break;
                 }
               }
@@ -74,12 +75,20 @@ export default class ChallengeModal extends React.Component {
   }
 
   tick() {
-    this.setState({countdown: this.state.countdown - 1});
-    if (this.state.countdown === 1) {
+    // console.log(this.state.countDown)
+    this.setState({countDown: this.state.countDown - 1});
+    if (this.state.countDown === 1) {
       //CREATE GAME ROOM
+      let blitzDeck = shuffledDeck('blitz').slice()
+      let timestamp = moment().format('MMMM Do YYYY, h:mm:ss a');
       let newGameRoom = database.blitzGame.push({
-        deck: shuffledDeck('blitz').slice(),
-        playerOne: this.props.fbId
+        deck: blitzDeck,
+        playerOne: {
+          fbId: this.props.fbId,
+          score: 0,
+          timestamp: timestamp,
+          drawable: true
+        }
       })
       let roomKey = newGameRoom.key;
       database.gameRooms.child(this.state.friendId).child('blitzRoom').set(roomKey);
@@ -87,30 +96,36 @@ export default class ChallengeModal extends React.Component {
       this.setState({roomKey});
 
     }
-    if (this.state.countdown <= 0) {
-      clearInterval(this.interval);
-      this.props.close('startGame')
+    if (this.state.countDown <= 0) {
+      this.clearCountdown();
+      this.props.close('startGame');
     }
   }
 
   listenForResponse(friendId) {
-    database.gameRooms.child(friendId).child('requesting').on('value', data => {
-      let challenger = data.val();
-      if (challenger === false && this.state.isMounted) {
-        clearInterval(this.interval);
+    database.gameRooms.child(friendId).on('value', snap => {
+      let friendResponse = snap.val();
+      if (friendResponse.requesting === false && this.state.isMounted) {
+        this.clearCountdown();
         this.setState({
           rejected: true,
           accepted: false,
-          waitingForResponse: false
+          waitingForResponse: false,
+          countDown: 5
         })
-      } else if (challenger === true && !this.state.accepted) {
-        console.log('this shoudl trigeer...')
-        this.interval = setInterval(this.tick.bind(this), 1000);
-        this.setState({
-          accepted: true
-        })
+      } else if (friendResponse.accepted === true && this.state.isMounted && !this.state.accepted) {
+        this.startCountdown();
+        this.setState({accepted: true})
       }
     })
+  }
+
+  startCountdown() {
+    this.timer = setInterval(this.tick.bind(this), 1000);
+  }
+
+  clearCountdown() {
+    clearInterval(this.timer);
   }
 
   getFriendInfo(friendId) {
@@ -126,7 +141,6 @@ export default class ChallengeModal extends React.Component {
   }
 
   cancelChallenge() {
-    console.log('cancel challege mmodal')
     this.resetRequestStatus();
     this.props.close();
   }
@@ -134,6 +148,7 @@ export default class ChallengeModal extends React.Component {
   resetRequestStatus() {
     if (this.state.friendId) {
       database.gameRooms.child(this.state.friendId).child('requesting').set(false);
+      database.gameRooms.child(this.state.friendId).child('accepted').set(false);
     }
   }
 
@@ -162,7 +177,7 @@ export default class ChallengeModal extends React.Component {
                 Game  starting in ...
               </Text>
               <Text style={styles.font}>
-                {this.state.countdown}
+                {this.state.countDown}
               </Text>
             </View>
           ) : (null)}
@@ -172,7 +187,7 @@ export default class ChallengeModal extends React.Component {
                 {this.state.friendsOnline.map((friend, i) => {
                   let name = friend.name.slice(0, 10);
                   let space = name.indexOf(' ');
-                  if (space > 0) { name = name.slice(0, space); };
+                  if (space > 0) { name = name.slice(0, space) };
                   return (
                     <View style={[styles.box, {flexDirection: 'row'}]} key={i}>
                       <View style={styles.box}>
@@ -196,9 +211,11 @@ export default class ChallengeModal extends React.Component {
           ) : (
             <View style={[styles.box, {flex: 3}]}>
               <View style={styles.box}>
-                <Text style={styles.font}>
-                  You are
-                </Text>
+                <TouchableOpacity onPress={this.startCountdown.bind(this)}>
+                  <Text style={styles.font}>
+                    You are
+                  </Text>
+                </TouchableOpacity>
                 <Text style={styles.font}>
                   challenging...
                 </Text>

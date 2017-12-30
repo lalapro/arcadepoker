@@ -304,7 +304,13 @@ export default shuffledDeck = (mode) => {
 
   ];
   if (mode === 'blitz') {
-    return shuffle(DECK)
+    let doubleDeck = [];
+    for (let i = 0; i < 2; i++) {
+      let newDeck = DECK.slice();
+      newDeck = shuffle(newDeck)
+      doubleDeck = doubleDeck.concat(newDeck);
+    }
+    return shuffle(doubleDeck);
   } else if (mode === 'blanks') {
     return placeholders
   } else {

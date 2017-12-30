@@ -51,7 +51,6 @@ export default class Blitz extends React.Component {
 
 
   closeModal(type, roomKey) {
-    console.log(roomKey, 'in close modal')
     this.setState({
       challengeModal: false,
       hereComesANewChallenger: false
@@ -91,7 +90,6 @@ export default class Blitz extends React.Component {
   }
 
   componentWillUnmount() {
-    console.log('unmounting?');
     this.setOnlineStatus(false);
     AppState.removeEventListener('change', this._handleAppStateChange);
   }
@@ -106,8 +104,10 @@ export default class Blitz extends React.Component {
   resetRequestStatus(friendId) {
     if (friendId) {
       database.gameRooms.child(friendId).child('requesting').set(false);
+      database.gameRooms.child(friendId).child('accepted').set(false);
     } else {
       database.gameRooms.child(this.state.fbId).child('requesting').set(false);
+      database.gameRooms.child(this.state.fbId).child('accepted').set(false);
     }
   }
 
@@ -124,7 +124,7 @@ export default class Blitz extends React.Component {
 
   listenForChallenges() {
       database.gameRooms.child(this.state.fbId).child('requesting').on('value', data => {
-        // console.log('daya........', data, this.state.online, this.state.fbId)
+        console.log('daya........', data, this.state.online, this.state.fbId)
         let challenger = data.val();
         if (this.state.online && this.state.fbId !== null && this.state.hereComesANewChallenger === false) {
           if (typeof challenger === 'string') {

@@ -14,6 +14,7 @@ import GameOverModal from '../modals/GameOverModal';
 import facebookLogin from '../helpers/facebookLogin';
 import database from '../firebase/db.js';
 
+import moment from 'moment';
 
 const {height, width} = Dimensions.get('window');
 
@@ -22,6 +23,9 @@ const {height, width} = Dimensions.get('window');
 export default class Game extends React.Component {
   constructor(props){
     super(props)
+    console.ignoredYellowBox = [
+    'Setting a timer'
+    ];
     this.state = {
       deck: shuffledDeck().slice(),
       currentTile: null,
@@ -98,16 +102,22 @@ export default class Game extends React.Component {
 
 
   async componentDidMount() {
-    // Alert.alert(
-    //   'Alert Title',
-    //   'My Alert Msg',
-    //   [
-    //     {text: 'Ask me later', onPress: () => this.startDuel("-L1LVAPG_mFXlK5qFmN6")},
-    //     {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-    //   ],
-    //   { cancelable: true }
-    // )
+    // TEST TEST
 
+    // let blitzDeck = shuffledDeck('blitz').slice()
+    // let timestamp = moment().format('MMMM Do YYYY, h:mm:ss a');
+    // let newGameRoom = database.blitzGame.push({
+    //   deck: blitzDeck,
+    //   playerOne: {
+    //     fbId: "10155701930415791",
+    //     score: 0,
+    //     timestamp: timestamp
+    //   },
+    //   drawable: true
+    // })
+    // let roomKey = newGameRoom.key;
+
+    // TEST TEST
 
     this.updateScoreFromAsyncStorage();
     await Font.loadAsync({
@@ -350,7 +360,6 @@ export default class Game extends React.Component {
   startDuel(room) {
     clearInterval(this.insertCoin)
     if (room){
-      console.log('here?')
       this.props.navigation.navigate('BlitzJoin', {room: room})
     } else {
       if (this.state)
@@ -362,6 +371,7 @@ export default class Game extends React.Component {
 
 
   render() {
+
     const boxes = Object.values(this.state.tileResponders);
     return (
       <View style={styles.container}>
@@ -545,11 +555,11 @@ export default class Game extends React.Component {
             )
           )}
         </View>
-        {/* {boxes.map((tiles, i) => {
+        {boxes.map((tiles, i) => {
           return (
-              <View style={{width: 40, height: 55, top: tiles.y, left: tiles.x ,backgroundColor:'red', position: 'absolute', zIndex: 999}} key={i}/>
+            <View style={{width: 40, height: 55, top: tiles.y, left: tiles.x ,backgroundColor:'red', position: 'absolute', zIndex: 999}} key={i}/>
           )
-        })} */}
+        })}
       </View>
     );
   }
@@ -588,7 +598,8 @@ const styles = StyleSheet.create({
   gameContainer: {
     flex: 4,
     flexDirection: 'row',
-    backgroundColor: 'black',
+    backgroundColor: 'lightgreen',
+    width: "100%",
     alignItems: 'center',
     justifyContent: 'center',
     height: "100%",
