@@ -26,10 +26,10 @@ export default class HexGrid extends React.Component {
     // console.log(this.props.x)
     //(e.nativeEvent.layout.y + (height / 8.5) * 4.5) + (65 * difference);
     // console.log(e.nativeEvent.layout)
-    let difference = 1;
+    let difference = 0;
     for (let i = this.props.tiles - 1; i >= 0; i--) {
       x = e.nativeEvent.layout.x + (85/4);
-      y = ((height / 8.5) * 3.5) + (37 * difference);
+      y = e.nativeEvent.layout.y + ((height / 8.5) * 3.5) + (65 * difference);
       let obj = {
         x: x,
         y: y
@@ -170,6 +170,6 @@ const styles = StyleSheet.create({
     marginLeft: -13,
     marginRight: -10,
     // backgroundColor: 'red',
-    height: "100%"
+    // height: "100%"
   },
 });

@@ -555,11 +555,11 @@ export default class Game extends React.Component {
             )
           )}
         </View>
-        {boxes.map((tiles, i) => {
+        {/* {boxes.map((tiles, i) => {
           return (
             <View style={{width: 40, height: 55, top: tiles.y, left: tiles.x ,backgroundColor:'red', position: 'absolute', zIndex: 999}} key={i}/>
           )
-        })}
+        })} */}
       </View>
     );
   }
@@ -598,11 +598,11 @@ const styles = StyleSheet.create({
   gameContainer: {
     flex: 4,
     flexDirection: 'row',
-    backgroundColor: 'lightgreen',
+    backgroundColor: 'black',
     width: "100%",
     alignItems: 'center',
     justifyContent: 'center',
-    height: "100%",
+    // height: "100%",
     zIndex: 99
   },
   botBanner: {

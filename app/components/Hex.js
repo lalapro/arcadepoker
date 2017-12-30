@@ -49,18 +49,18 @@ export default class HexGrid extends React.Component {
   render() {
     return (
       this.state.isHighlighted ? (
-        <View onLayout={this.setTileResponders.bind(this)}>
+        // <View onLayout={this.setTileResponders.bind(this)}>
           <Animated.View style={[this.state.cardStyle, this.props.animate]}>
             <Image source={this.props.card.highlight} style={{width: 85, height: 85, resizeMode: 'contain'}}/>
           </Animated.View>
-        </View>
+        // </View>
 
       ) : (
-        <View onLayout={this.setTileResponders.bind(this)}>
+        // <View onLayout={this.setTileResponders.bind(this)}>
           <Animated.View style={[this.state.cardStyle, this.props.animate]} >
             <Image source={this.props.card.image} style={{width: 85, height: 85, resizeMode: 'contain'}}/>
           </Animated.View>
-        </View>
+        // </View>
       )
     )
   }
