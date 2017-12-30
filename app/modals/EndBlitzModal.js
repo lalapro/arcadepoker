@@ -88,43 +88,48 @@ export default class EndBlitzModal extends React.Component {
                 {this.endStatus(this.props.status)}
               </View>
               <View style={[styles.box, {flexDirection: 'column'}]}>
-                <Text style={styles.font}>
-                  Points:
-                </Text>
                 <Text style={[styles.font, {fontSize: 30}]}>
-                  {this.props.playerScore}
+                  {this.props.playerScore}  pts
                 </Text>
               </View>
               <View style={[styles.box, {flexDirection: 'column'}]}>
                 <Text style={[styles.font]}>
                   Hands  Made :
                 </Text>
-                <Text style={[styles.font, {fontSize: 15}]}>
+                <Text style={[styles.font, {fontSize: 25}]}>
                   {this.props.completedHands.length}
                 </Text>
               </View>
               <View style={[styles.box, {flexDirection: 'column'}]}>
-                <Text style={[styles.font]}>
-                  Best  Hand :
+                <Text style={[styles.font, {textDecorationLine: 'underline'}]}>
+                  Best  Hand
                 </Text>
-                <View style={{flexDirection: 'row'}}>
-                  {this.props.bestHand.map((card, i) => {
-                    if (i%2 === 0) {
-                      return (
-                        <Image source={card.highlight}
-                          style={{width: 45, height: 45, resizeMode: 'contain', marginRight: -13, zIndex: this.state.sampleHand.length - i}}
-                          key={i}
-                        />
-                      )
-                    } else {
-                      return (
-                        <Image source={card.highlight}
-                          style={{top: 15, width: 45, height: 45, resizeMode: 'contain', marginRight: -13, zIndex: this.state.sampleHand.length - i}}
-                          key={i}
-                        />
-                      )
-                    }
-                  })}
+                <View style={[styles.box, {flexDirection: 'row', top: 5}]}>
+                  {this.props.bestHand ? (
+                    this.props.bestHand.map((card, i) => {
+                      if (i%2 === 0) {
+                        return (
+                          <Image source={card.highlight}
+                            style={{width: 35, height: 35, resizeMode: 'contain', marginRight: -13, zIndex: this.props.bestHand.length - i}}
+                            key={i}
+                          />
+                        )
+                      } else {
+                        return (
+                          <Image source={card.highlight}
+                            style={{top: 15, width: 35, height: 35, resizeMode: 'contain', marginRight: -13, zIndex: this.props.bestHand.length - i}}
+                            key={i}
+                          />
+                        )
+                      }
+                    })
+                  ) : (
+                    <View style={styles.box}>
+                      <Text style={styles.font}>
+                        None
+                      </Text>
+                    </View>
+                  )}
                 </View>
               </View>
             </View>
@@ -142,43 +147,48 @@ export default class EndBlitzModal extends React.Component {
                 {this.endStatus(this.props.friendStatus)}
               </View>
               <View style={[styles.box, {flexDirection: 'column'}]}>
-                <Text style={styles.font}>
-                  Points:
-                </Text>
                 <Text style={[styles.font, {fontSize: 30}]}>
-                  {this.props.friendScore}
+                  {this.props.friendScore}  pts
                 </Text>
               </View>
               <View style={[styles.box, {flexDirection: 'column'}]}>
                 <Text style={[styles.font]}>
                   Hands  Made :
                 </Text>
-                <Text style={[styles.font, {fontSize: 15}]}>
+                <Text style={[styles.font, {fontSize: 25}]}>
                   {this.state.friendCompletedHands}
                 </Text>
               </View>
               <View style={[styles.box, {flexDirection: 'column'}]}>
-                <Text style={[styles.font]}>
-                  Best  Hand :
+                <Text style={[styles.font, {textDecorationLine: 'underline'}]}>
+                  Best  Hand
                 </Text>
-                <View style={{flexDirection: 'row'}}>
-                  {this.state.friendBestHand.map((card, i) => {
-                    if (i%2 === 0) {
-                      return (
-                        <Image source={card.highlight}
-                          style={{width: 45, height: 45, resizeMode: 'contain', marginRight: -13, zIndex: this.state.sampleHand.length - i}}
-                          key={i}
-                        />
-                      )
-                    } else {
-                      return (
-                        <Image source={card.highlight}
-                          style={{top: 15, width: 45, height: 45, resizeMode: 'contain', marginRight: -13, zIndex: this.state.sampleHand.length - i}}
-                          key={i}
-                        />
-                      )
-                    }
-                  })}
+                <View style={[styles.box, {flexDirection: 'row', top: 5}]}>
+                  {this.state.friendBestHand ? (
+                    this.state.friendBestHand.map((card, i) => {
+                      if (i%2 === 0) {
+                        return (
+                          <Image source={card.highlight}
+                            style={{width: 35, height: 35, resizeMode: 'contain', marginRight: -13, zIndex: this.state.friendBestHand.length - i}}
+                            key={i}
+                          />
+                        )
+                      } else {
+                        return (
+                          <Image source={card.highlight}
+                            style={{top: 15, width: 35, height: 35, resizeMode: 'contain', marginRight: -13, zIndex: this.state.friendBestHand.length - i}}
+                            key={i}
+                          />
+                        )
+                      }
+                    })
+                  ) : (
+                    <View style={styles.box}>
+                      <Text style={styles.font}>
+                        None
+                      </Text>
+                    </View>
+                  )}
                 </View>
               </View>
             </View>

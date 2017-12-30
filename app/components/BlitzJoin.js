@@ -239,7 +239,7 @@ export default class BlitzJoin extends React.Component {
       playerScore: this.state.playerScore += hand[1],
     }, () => {
       let bestHand = this.findBestHand(this.state.chosenCards);
-
+      this.setState({bestHand})
       this.updateRoomStats(bestHand);
       this.drawFromDatabase(5);
       this.setState({
@@ -258,9 +258,10 @@ export default class BlitzJoin extends React.Component {
   }
 
   findBestHand(recentHand) {
-    let bestHand = this.state.bestHand || ['highCard', 5];
+    let bestHand = this.state.bestHand;
     let handScore = calculateScore(recentHand);
-    let bestHandScore = calculateScore(bestHandScore);
+    if (bestHand === undefined) return recentHand;
+    let bestHandScore = calculateScore(bestHand);
     if (handScore[1] > bestHandScore[1]) {
       bestHand = recentHand
     }

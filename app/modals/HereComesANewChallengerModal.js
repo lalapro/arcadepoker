@@ -76,7 +76,7 @@ export default class HereComesANewChallengerModal extends React.Component {
               <Text style={styles.font}>
                 Game  starting in ...
               </Text>
-              <Text style={styles.font}>
+              <Text style={[styles.font, {fontSize: 40}]}>
                 {this.state.countdown}
               </Text>
             </View>

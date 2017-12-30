@@ -98,6 +98,7 @@ export default class ChallengeModal extends React.Component {
     }
     if (this.state.countDown <= 0) {
       this.clearCountdown();
+      this.forceUnmount();
       this.props.close('startGame');
     }
   }
@@ -154,9 +155,22 @@ export default class ChallengeModal extends React.Component {
 
   componentWillUnmount() {
     this.setState({
-      isMounted: false
-    })
+      isMounted: false,
+      accepted: false,
+      rejected: false,
+      waitingForResponse: false
+    }, () => console.log('unmounting..'))
   }
+
+  forceUnmount() {
+    this.setState({
+      isMounted: false,
+      accepted: false,
+      rejected: false,
+      waitingForResponse: false
+    }, () => console.log('unmounting..'))
+  }
+
 
 
 
@@ -176,7 +190,7 @@ export default class ChallengeModal extends React.Component {
               <Text style={styles.font}>
                 Game  starting in ...
               </Text>
-              <Text style={styles.font}>
+              <Text style={[styles.font, {fontSize: 40}]}>
                 {this.state.countDown}
               </Text>
             </View>

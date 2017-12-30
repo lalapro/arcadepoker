@@ -12,6 +12,7 @@ import cardImages from '../helpers/cardImages';
 import database from '../firebase/db';
 import ChallengeModal from '../modals/ChallengeModal';
 import HereComesANewChallengerModal from '../modals/HereComesANewChallengerModal';
+import facebookTokenCheck from '../helpers/facebookTokenCheck';
 
 
 export default class Blitz extends React.Component {
@@ -20,27 +21,30 @@ export default class Blitz extends React.Component {
     this.state = {
       fbId: null,
       fontLoaded: false,
-      blinky: false,
       challengeModal: false,
       hereComesANewChallenger: false,
       totalscore: 0,
       highscore: 0,
       newChallenger: 0,
       appState: AppState.currentState,
-      online: false
+      online: false,
+      friendsOnline: [],
+      isMounted: false
     }
   }
 
 
   async componentDidMount() {
     AppState.addEventListener('change', this._handleAppStateChange);
+    facebookTokenCheck();
     let fbId = await AsyncStorage.getItem('fbId');
     await Font.loadAsync({
       'arcade': require('../assets/fonts/arcadeclassic.regular.ttf'),
     });
     this.setState({
       fontLoaded: true,
-      fbId: fbId
+      fbId: fbId,
+      isMounted: true
     }, () => {
       this.resetRequestStatus();
       this.setOnlineStatus(true);
@@ -59,6 +63,9 @@ export default class Blitz extends React.Component {
     if (type === 'cancelChallenge') {
       this.resetRequestStatus();
     } else if (type === 'startGame') {
+      this.setState({
+        isMounted: false
+      })
       setTimeout(() => this.props.navigation.navigate('BlitzJoin'), 500)
     }
   }
@@ -86,7 +93,9 @@ export default class Blitz extends React.Component {
   }
 
   goBack() {
-    this.props.navigation.goBack();
+    this.setState({isMounted: false}, () => {
+      this.props.navigation.goBack();
+    })
   }
 
   componentWillUnmount() {
@@ -123,17 +132,40 @@ export default class Blitz extends React.Component {
   }
 
   listenForChallenges() {
-      database.gameRooms.child(this.state.fbId).child('requesting').on('value', data => {
-        console.log('daya........', data, this.state.online, this.state.fbId)
-        let challenger = data.val();
-        if (this.state.online && this.state.fbId !== null && this.state.hereComesANewChallenger === false) {
-          if (typeof challenger === 'string') {
-            console.log('am i setting state outside of component???')
-            this.closeModal()
-            this.showModal("challengeRecieved", challenger);
-          }
+    this.grabOnlineFriends(this.state.fbId);
+    database.gameRooms.child(this.state.fbId).child('requesting').on('value', data => {
+      let challenger = data.val();
+      if (this.state.online && this.state.fbId !== null && this.state.hereComesANewChallenger === false) {
+        if (typeof challenger === 'string') {
+          this.closeModal()
+          this.showModal("challengeRecieved", challenger);
         }
+      }
+    })
+  }
+
+
+  grabOnlineFriends(fbId) {
+    database.fbFriends.child(fbId).child('friends').once('value', snap => {
+      let friends = snap.val()[0];
+      let friendCount = friends.length - 1;
+      friends.forEach((friend, i) => {
+        database.gameRooms.child(friend.id).child('online').on('value', snap => {
+          if (this.state.isMounted && this.state.online) {
+            if (snap.val() === true) {
+              this.setState({friendsOnline: [...this.state.friendsOnline, friend]})
+            } else {
+              this.state.friendsOnline.forEach((friendOnline, i) => {
+                if (friendOnline.id === friend.id) {
+                  this.state.friendsOnline.splice(i, 1);
+                  this.setState({friendsOnline: this.state.friendsOnline});
+                }
+              })
+            }
+          }
+        })
       })
+    })
   }
 
 
@@ -196,9 +228,11 @@ export default class Blitz extends React.Component {
             prevButton={<Image source={require('../assets/prev.png')} style={{width:20, height: 20, resizeMode: 'contain'}}/>}
           >
             <View style={[styles.box]}>
-              <Text style={styles.font}>
-                1
-              </Text>
+              <View>
+                <Text style={styles.font}>
+                  Get as many points as you can before the timer runs out!
+                </Text>
+              </View>
             </View>
             <View style={[styles.box]}>
               <Text style={styles.font}>
@@ -217,7 +251,7 @@ export default class Blitz extends React.Component {
             <View style={styles.box}>
               <TouchableOpacity onPress={() => this.showModal('challenge')}>
                 <Text style={[styles.font, {fontSize: 20}]}>
-                  Challenge
+                  Challenge ({this.state.friendsOnline.length})
                 </Text>
               </TouchableOpacity>
             </View>

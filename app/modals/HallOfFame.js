@@ -4,6 +4,7 @@ import { Font, Constants } from 'expo';
 import facebookLogin from '../helpers/facebookLogin';
 import database from '../firebase/db'
 import moment from 'moment';
+import facebookTokenCheck from '../helpers/facebookTokenCheck';
 
 
 
@@ -23,20 +24,21 @@ export default class HallOfFame extends React.Component {
       textArray: ['_', '_', '_', '_', '_', '_', '_', '_', '_'],
       fakeText: '',
       positionToInject: -1,
-      isMounted: false
+      isMounted: false,
+      submitted: false
     }
   }
 
   async componentDidMount() {
     let isMounted = true;
-    this.setState({isMounted});
-    this.getHighscores();
+    this.setState({isMounted}, () => this.getHighscores());
 
     await Font.loadAsync({
       'arcade': require('../assets/fonts/arcadeclassic.regular.ttf'),
     });
     this.setState({
-      fontLoaded: true
+      fontLoaded: true,
+      submitted: false,
     })
   }
 
@@ -50,8 +52,9 @@ export default class HallOfFame extends React.Component {
     let leaderBoard = this.state.leaderBoard;
 
 
-    database.highscores.limitToLast(100).once('value', (snap) => {
-      if (snap.val()) {
+    database.highscores.limitToLast(100).on('value', (snap) => {
+      // console.log('called after close2222222', this.state.isMounted)
+      if (snap.val() && this.state.isMounted) {
         leaderBoard = Object.entries(snap.val()).reverse();
         let newLeaderBoard = [];
         leaderBoard.forEach(scoreEntry => {
@@ -71,10 +74,10 @@ export default class HallOfFame extends React.Component {
           positionToInject = positionToInject - 1;
           leaderBoard.splice(positionToInject, 0, [scoreToInject, [deviceId, this.state.text]]);
           leaderBoard.pop();
-          const insertName = setInterval(this.blinky.bind(this), 750)
-          this.setState({insertName})
+          // this.insertName = setInterval(this.blinky.bind(this), 750)
+          // this.setState({insertName})
         }
-      } else if (newChallenger) {
+      } else if (newChallenger && this.state.isMounted) {
         positionToInject = 0;
         leaderBoard = [];
         while(leaderBoard.length < 100) {
@@ -82,18 +85,22 @@ export default class HallOfFame extends React.Component {
         }
         leaderBoard.splice(positionToInject, 0, [scoreToInject, [deviceId, this.state.text]]);
         leaderBoard.pop();
-        const insertName = setInterval(this.blinky.bind(this), 750)
-        this.setState({insertName})
-      } else {
+        // this.setState({insertName2})
+      } else if (this.state.isMounted){
         while(leaderBoard.length < 100) {
           leaderBoard.push(["0", ["id", 'AAA']])
         }
       }
-      this.setState({leaderBoard, positionToInject, loadReady})
+      if (this.state.isMounted) {
+        this.setState({leaderBoard, positionToInject, loadReady}, () => {
+          this.insertName = setInterval(this.blinky.bind(this), 750)
+        })
+      }
     })
   }
 
   blinky() {
+    // console.log('called after close?')
     this.setState({
       blinky: !this.state.blinky
     })
@@ -124,9 +131,9 @@ export default class HallOfFame extends React.Component {
     const fbId = await AsyncStorage.getItem('fbId');
     const fbName = await AsyncStorage.getItem('fbName');
     let highscore = await AsyncStorage.getItem('highscore');
-
+    let fbToken = await AsyncStorage.getItem('fbToken')
     this.setState({ownerName: fbName})
-    if (fbId === null) {
+    if (fbId === null || fbToken === null) {
       facebookLogin().then(resObj => {
         let user = resObj.user;
         let friends = resObj.friends;
@@ -136,7 +143,9 @@ export default class HallOfFame extends React.Component {
         this.getScoresFromFriends(user.id, user.name, highscore);
       })
     } else {
-      this.getScoresFromFriends(fbId, fbName, highscore)
+      facebookTokenCheck().then(resObj => {
+        this.getScoresFromFriends(fbId, fbName, highscore);
+      })
     }
 
   }
@@ -191,17 +200,20 @@ export default class HallOfFame extends React.Component {
 
   scrollAnimate(e) {
     //TODO need to fix
+    console.log(e.nativeEvent)
+    let positionToAdd = Math.round(this.state.positionToInject/10)*10
     if (this.state.positionToInject >= 0) {
       let y = e.nativeEvent.target;
-      y = (y / 100) * (this.state.positionToInject);
+      y = (y / e.nativeEvent.layout.height) * (this.state.positionToInject) + positionToAdd;
       this.refs.scrollz.scrollTo({x: 0, y: y, animated: true})
     }
   }
 
 
   async close() {
-    if (this.state.positionToInject >= 0) {
-      clearInterval(this.state.insertName);
+    if (this.state.positionToInject >= 0 && !this.state.submitted && this.state.isMounted) {
+      this.setState({isMounted: false})
+      clearInterval(this.insertName);
       this.checkIfPersonalHigh();
       let deviceId = Constants.deviceId;
       let highscore = this.state.newChallenger.score;
@@ -209,10 +221,12 @@ export default class HallOfFame extends React.Component {
       let timestamp = moment().format('MMMM Do YYYY, h:mm:ss a');
       if (name === '') name = 'magikarp'
       scoreToSave = [deviceId, name]
-      database.highscores.child(highscore).child(timestamp).set(scoreToSave)
-      this.props.close('over');
+      database.highscores.child(highscore).child(timestamp).set(scoreToSave);
+      this.setState({submitted:true}, () => this.props.close('over'))
 
     } else {
+      clearInterval(this.insertName);
+      console.log('closing?')
       this.props.close();
     }
   }
@@ -444,7 +458,6 @@ export default class HallOfFame extends React.Component {
 
   componentWillUnmount() {
     let isMounted = false;
-    console.log('unmounting....', isMounted)
     this.setState({isMounted})
   }
 
