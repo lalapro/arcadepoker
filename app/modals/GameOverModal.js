@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button, TouchableOpacity, Image, AsyncStorage} from 'react-native';
-import { Font, Constants } from 'expo';
+import { Font } from 'expo';
 import database from '../firebase/db'
 
 

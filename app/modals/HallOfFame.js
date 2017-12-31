@@ -1,10 +1,11 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, AsyncStorage, TextInput } from 'react-native';
-import { Font, Constants } from 'expo';
+import { Font } from 'expo';
 import facebookLogin from '../helpers/facebookLogin';
 import database from '../firebase/db'
 import moment from 'moment';
 import facebookTokenCheck from '../helpers/facebookTokenCheck';
+import uniqueId from 'react-native-unique-id';
 
 
 
@@ -30,6 +31,9 @@ export default class HallOfFame extends React.Component {
   }
 
   async componentDidMount() {
+    uniqueId().then(id => this.setState({uniqueId: id}))
+    .catch(err => console.log(err));
+
     let isMounted = true;
     this.setState({isMounted}, () => this.getHighscores());
 
@@ -42,10 +46,12 @@ export default class HallOfFame extends React.Component {
     })
   }
 
-  getHighscores() {
+  async getHighscores() {
+    let deviceId = await AsyncStorage.getItem('__uniqueId')
+
+
     let newChallenger = this.props.newChallenger;
     this.setState({newChallenger});
-    let deviceId = Constants.deviceId;
     let positionToInject = newChallenger.rank;
     let scoreToInject = newChallenger.score;
     let loadReady = true;
@@ -100,7 +106,7 @@ export default class HallOfFame extends React.Component {
   }
 
   blinky() {
-    // console.log('called after close?')
+    console.log('called after close?')
     this.setState({
       blinky: !this.state.blinky
     })
@@ -211,11 +217,11 @@ export default class HallOfFame extends React.Component {
 
 
   async close() {
+    let deviceId = await AsyncStorage.getItem('__uniqueId');
     if (this.state.positionToInject >= 0 && !this.state.submitted && this.state.isMounted) {
       this.setState({isMounted: false})
       clearInterval(this.insertName);
       this.checkIfPersonalHigh();
-      let deviceId = Constants.deviceId;
       let highscore = this.state.newChallenger.score;
       let name = this.state.fakeText;
       let timestamp = moment().format('MMMM Do YYYY, h:mm:ss a');
@@ -269,8 +275,9 @@ export default class HallOfFame extends React.Component {
   }
 
   checkIfOwner(ownerCheck) {
+    let deviceId = this.state.uniqueId;
+    // console.log(deviceId);
     if (Array.isArray(ownerCheck)) {
-      let deviceId = Constants.deviceId;
       return ownerCheck[1][0] === deviceId ? 'gold' : 'white';
     } else if (typeof ownerCheck === 'number') {
       // console.log(ownerCheck)

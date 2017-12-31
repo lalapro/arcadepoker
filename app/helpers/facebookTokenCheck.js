@@ -1,5 +1,4 @@
 import { AsyncStorage } from 'react-native';
-import { Constants } from 'expo';
 import database from '../firebase/db';
 import facebookLogin from './facebookLogin';
 
@@ -14,7 +13,7 @@ export default facebookTokenCheck = async () => {
     if (user.error) {
       facebookLogin();
     } else {
-      facebookLogin('token');
+      facebookLogin(token);
     }
   }
 

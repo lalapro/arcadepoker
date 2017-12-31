@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button, PanResponder, Dimensions, Image, Animated, TouchableOpacity, AsyncStorage, Alert } from 'react-native';
-import { Font, Constants } from 'expo';
+import { Font } from 'expo';
 import Modal from 'react-native-modal';
 import HexGrid from './HexGrid.js';
 import { adjacentTiles, keyTiles } from '../helpers/tileLogic';
@@ -13,6 +13,7 @@ import HallOfFameModal from '../modals/HallOfFame';
 import GameOverModal from '../modals/GameOverModal';
 import facebookLogin from '../helpers/facebookLogin';
 import database from '../firebase/db.js';
+
 
 import moment from 'moment';
 
@@ -102,6 +103,13 @@ export default class Game extends React.Component {
 
 
   async componentDidMount() {
+    // AsyncStorage.removeItem('fbId');
+    // AsyncStorage.removeItem('fbName');
+    // AsyncStorage.removeItem('fbToken');
+
+
+
+
     // TEST TEST
 
     // let blitzDeck = shuffledDeck('blitz').slice()

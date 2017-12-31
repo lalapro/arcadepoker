@@ -1,5 +1,4 @@
 import { AsyncStorage } from 'react-native';
-import { Constants } from 'expo';
 import database from '../firebase/db';
 
 
@@ -13,15 +12,18 @@ export default facebookLogin = async (token) => {
     if (type === 'success') {
       return updateData(highscore, token);
     } else {
-      updateData(highscore);
+      updateData(highscore, token);
     }
   }
 }
 
 updateData = async (highscore, token) => {
 
+
   const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
   const user = await response.json();
+
+  console.log(user);
 
   highscore = highscore || 0;
 
