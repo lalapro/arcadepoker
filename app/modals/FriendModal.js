@@ -1,23 +1,12 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button, TouchableOpacity, Image} from 'react-native';
-import { Font } from 'expo';
 
 
 export default class FriendModal extends React.Component {
   constructor(props){
     super(props)
     this.state = {
-      fontLoaded: false,
     }
-  }
-
-  async componentWillMount() {
-    await Font.loadAsync({
-      'arcade': require('../assets/fonts/arcadeclassic.regular.ttf'),
-    });
-    this.setState({
-      fontLoaded: true,
-    })
   }
 
   async fbLogin() {

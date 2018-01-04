@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, Animated, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Image, Animated, Dimensions, Alert } from 'react-native';
 import Hex from './Hex';
 import database from '../firebase/db'
 
@@ -12,7 +12,8 @@ export default class HexGrid extends React.Component {
       numberOfCards: [],
       animatedValue: [],
       blitzRoomKey: this.props.blitzRoomKey,
-      drawable: false
+      drawable: false,
+      gameStarted: false
     }
 
   }
@@ -23,9 +24,7 @@ export default class HexGrid extends React.Component {
   }
 
   setTileResponders(e) {
-    // console.log(this.props.x)
-    //(e.nativeEvent.layout.y + (height / 8.5) * 4.5) + (65 * difference);
-    // console.log(e.nativeEvent.layout)
+    let flex = height / 8.5 * 4;
     let difference = 0;
     for (let i = this.props.tiles - 1; i >= 0; i--) {
       x = e.nativeEvent.layout.x + (85/4);
@@ -35,7 +34,6 @@ export default class HexGrid extends React.Component {
         y: y
       }
       difference++;
-      // if (this.props.x === 0) console.log(obj)
       this.props.layoutCreators([this.props.x, i], obj)
     }
   }
@@ -69,6 +67,7 @@ export default class HexGrid extends React.Component {
     }
 
     if(oldProps.gameStarted) {
+      this.setState({gameStarted: true})
       this.animateStartOfGame(this.state.numberOfCards)
     }
 
@@ -80,7 +79,7 @@ export default class HexGrid extends React.Component {
       this.state.animatedValue[i] = {
         value: new Animated.Value(0),
         //TODO might have to make dynamic
-        position: -100
+        position: -85
       }
     }
     this.animate()
@@ -132,7 +131,33 @@ export default class HexGrid extends React.Component {
   }
 
   render() {
-    return (
+    // if (this.props.x === 0)   Alert.alert(JSON.stringify(this.props.gameStarted))
+    return this.props.grabTiles ? (
+      <View style={styles.brow}>
+        {this.state.numberOfCards.map((card, i) => (
+          <Hex
+            card={card}
+            key={i}
+            x={this.props.x}
+            y={i}
+            add={this.props.add}
+            chosen={this.props.chosen}
+            destroy={this.props.destroy}
+            selectedTiles={this.props.selectedTiles}
+            addEmpty={this.props.addEmpty}
+            hoverHand={this.props.hoverHand}
+            animate={{
+              transform: [{
+                translateY: this.state.animatedValue[i].value.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [this.state.animatedValue[i].position, 0]
+                })
+              }]
+            }}
+          />
+        ))}
+      </View>
+    ) : (
       <View style={styles.row} onLayout={this.setTileResponders.bind(this)}>
         {this.state.numberOfCards.map((card, i) => (
           <Hex
@@ -169,7 +194,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: -13,
     marginRight: -10,
-    // backgroundColor: 'red',
     // height: "100%"
   },
+  brow: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: -13,
+    marginRight: -10,
+    height: "100%"
+  }
 });

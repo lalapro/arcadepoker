@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, PanResponder, Animated, Dimensions, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, View, Image, PanResponder, Animated, Dimensions, TouchableWithoutFeedback, Alert } from 'react-native';
 import { keyTiles } from '../helpers/tileLogic'
 const {height, width} = Dimensions.get('window');
 
@@ -14,7 +14,7 @@ export default class HexGrid extends React.Component {
         width: 85,
         height: 85,
         marginBottom: -27,
-        zIndex: 99
+        zIndex: 120,
       },
     };
   }
@@ -22,6 +22,7 @@ export default class HexGrid extends React.Component {
   componentWillMount() {
     if (this.props.x === 2) {
       this.state.cardStyle.top = (this.props.y - 1) * -130;
+      // Alert.alert(JSON.stringify((this.props.y - 1) * -130))
     } else if(this.props.x !== 0 && this.props.x !== 4){
       this.state.cardStyle.top = (this.props.y - 1.5) * -130;
     }
@@ -43,24 +44,26 @@ export default class HexGrid extends React.Component {
   }
 
   setTileResponders(e) {
-    console.log(this.props.x, e.nativeEvent.layout)
+    if (this.props.x === 1 && this.props.y === 0) {
+      // Alert.alert(JSON.stringify(e.nativeEvent))
+      // Alert.alert(JSON.stringify(height))
+    }
   }
 
   render() {
     return (
       this.state.isHighlighted ? (
-        // <View onLayout={this.setTileResponders.bind(this)}>
-          <Animated.View style={[this.state.cardStyle, this.props.animate]}>
-            <Image source={this.props.card.highlight} style={{width: 85, height: 85, resizeMode: 'contain'}}/>
-          </Animated.View>
-        // </View>
-
+        <Animated.View style={[this.state.cardStyle, this.props.animate]}>
+            <Image
+              source={this.props.card.highlight} style={{width: 85, height: 85, resizeMode: 'contain'}}/>
+        </Animated.View>
       ) : (
-        // <View onLayout={this.setTileResponders.bind(this)}>
-          <Animated.View style={[this.state.cardStyle, this.props.animate]} >
-            <Image source={this.props.card.image} style={{width: 85, height: 85, resizeMode: 'contain'}}/>
-          </Animated.View>
-        // </View>
+        <Animated.View
+          onLayout={this.setTileResponders.bind(this)}
+          style={[this.state.cardStyle, this.props.animate]} >
+            <Image
+              source={this.props.card.image} style={{width: 85, height: 85, resizeMode: 'contain'}}/>
+        </Animated.View>
       )
     )
   }

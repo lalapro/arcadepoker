@@ -1,18 +1,7 @@
 {
-   "expo": {
-    "name": "Arcade Poker",
-    "icon": "./app/assets/hexIcon.png",
-    "version": "0.1.0",
-    "slug": "arcadepoker",
-    "sdkVersion": "23.0.0",
-    "facebookScheme": "fb183752602209264",
-    "facebookAppId": "183752602209264",
-    "facebookDisplayName": "Arcade Poker",
-    "ios": {
-      "bundleIdentifier": "com.lalapro.arcadepoker"
-    },
-    "android": {
-      "package": "com.lalapro.arcadepoker"
-    }
-   }
- }
+  "expo": {
+    "sdkVersion": "23.0.0"
+  },
+  "name": "arcadepoker",
+  "displayName": "Arcade Poker"
+}

@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button, PanResponder, Dimensions, Image, Animated, TouchableOpacity, AsyncStorage } from 'react-native';
-import { Font } from 'expo';
 import Modal from 'react-native-modal';
 import HexGrid from './HexGrid.js';
 import { adjacentTiles, keyTiles } from '../helpers/tileLogic';
@@ -10,6 +9,7 @@ import handAnimations from '../helpers/handAnimations';
 import EndBlitzModal from '../modals/EndBlitzModal'
 import cardImages from '../helpers/cardImages';
 import database from '../firebase/db';
+import initializeSounds from '../helpers/initializeSounds';
 
 
 export default class BlitzJoin extends React.Component {
@@ -32,7 +32,6 @@ export default class BlitzJoin extends React.Component {
       hoverHand: [],
       emptyTiles: [],
       restart: false,
-      fontLoaded: false,
       gameStarted: false,
       hofModal: false,
       blinky: false,
@@ -43,10 +42,11 @@ export default class BlitzJoin extends React.Component {
       friendScore: 0,
       isMounted: false,
       cardsLeft: 0,
-      timer: 5,
+      timer: 60,
       status: null,
       endBlitzModal: false,
-      bestHand: undefined
+      bestHand: undefined,
+      sound: this.state.sound
     }
     this._panResponder = PanResponder.create({
       onMoveShouldSetPanResponder:(evt, gestureState) => this.state.gameStarted,
@@ -98,6 +98,9 @@ export default class BlitzJoin extends React.Component {
   }
 
   async componentWillMount() {
+    let SOUNDS = initializeSounds();
+    this.setState({soundBytes: SOUNDS});
+
     let fakeDeck = shuffledDeck('blanks').slice();
     this.setState({fakeDeck})
     let fbId = await AsyncStorage.getItem('fbId');
@@ -199,16 +202,13 @@ export default class BlitzJoin extends React.Component {
 
 
   async componentDidMount() {
-    await Font.loadAsync({
-      'arcade': require('../assets/fonts/arcadeclassic.regular.ttf'),
-    });
     this.setState({
-      fontLoaded: true,
       isMounted: true,
     }, () => this.startGame())
   }
 
   selectNewTile(key) {
+    this.playSound('select');
     if (this.state.selectedTiles.indexOf(key) === -1) {
       this.setState({
         selectedTiles: [...this.state.selectedTiles, key]
@@ -232,6 +232,7 @@ export default class BlitzJoin extends React.Component {
 
     hand = calculateScore(this.state.chosenCards);
     // console.log(this.state.player, this.state.friendScore)
+    this.playSound('tileDrop');
     this.setState({
       destroy: true,
       pressed: true,
@@ -314,6 +315,7 @@ export default class BlitzJoin extends React.Component {
   }
 
   reset() {
+    this.playSound('reset');
     this.setState({
       destroy: true,
       chosenCards: [],
@@ -410,7 +412,25 @@ export default class BlitzJoin extends React.Component {
   }
 
   endDuel() {
-    this.props.navigation.navigate('Classic');
+    this.setState({
+      isMounted: false
+    }, () => {
+      this.props.navigation.navigate('Classic');
+    })
+  }
+
+  playSound(byte) {
+    if (this.state.sound === 'on') {
+      if (byte === 'startGame') {
+        this.state.soundBytes.startGameSound.play();
+      } else if (byte === 'select') {
+        this.state.soundBytes.selectSound.play();
+      } else if (byte === 'tileDrop') {
+        this.state.soundBytes.tileDropSound.play();
+      } else if (byte === 'reset') {
+        this.state.soundBytes.resetSound.play();
+      }
+    }
   }
 
   render() {
@@ -421,7 +441,7 @@ export default class BlitzJoin extends React.Component {
         <View style={styles.container}>
           {this.state.gameStarted ? (
             <View style={styles.showCase}>
-              {this.state.fontLoaded && this.state.showScore ? (
+              {this.state.showScore ? (
                 <View style={{flex: 1, justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'black', flexDirection: 'row', width: "90%"}}>
                   <View style={[styles.box, {flexDirection: 'column'}]}>
                     <TouchableOpacity onPress={() => this.switchModal('hof')}>
@@ -436,7 +456,7 @@ export default class BlitzJoin extends React.Component {
                   </View>
 
                   <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                    <Text style={{fontFamily: 'arcade', fontSize: 30, color: 'yellow'}}>
+                    <Text style={{fontFamily: 'ArcadeClassic', fontSize: 30, color: 'yellow'}}>
                       BLITZ MODE!
                     </Text>
                     <Text style={styles.font}>
@@ -445,9 +465,7 @@ export default class BlitzJoin extends React.Component {
                   </View>
                   <View style={[styles.box, {flexDirection: 'column'}]}>
                     <TouchableOpacity onPress={this.goBack.bind(this)}>
-                      {this.state.fontLoaded ? (
-                        <Image source={{uri: this.state.friendFbPic}} style={{width: 50, height: 50, resizeMode: 'contain'}}/>
-                      ) : null}
+                      <Image source={{uri: this.state.friendFbPic}} style={{width: 50, height: 50, resizeMode: 'contain'}}/>
                     </TouchableOpacity>
                     <Text style={[styles.font, {fontSize: 15}]}>
                       {this.state.friendFbName}
@@ -459,23 +477,29 @@ export default class BlitzJoin extends React.Component {
                 </View>
               ) : null}
               <View style={{flex: 1, flexDirection: 'row'}}>
-                {this.state.hoverHand.map((card, i) => {
-                  if (i%2 === 0) {
-                    return (
-                      <Image source={cardImages[card.value]}
-                        style={{top: 15, width: 85, height: 85, resizeMode: 'contain', marginRight: -15}}
-                        key={i}
-                      />
-                    )
-                  } else {
-                    return (
-                      <Image source={cardImages[card.value]}
-                        style={{top:40, width: 85, height: 85, resizeMode: 'contain', marginRight: -15}}
-                        key={i}
-                      />
-                    )
-                  }
-                })}
+                {this.state.pressed ? (
+                  <View style={[styles.box, {zIndex: 100}]}>
+                    <Image source={this.state.animatedHand[this.state.lastCompletedHand]} style={{width: 300, height: 100, resizeMode: 'contain'}}/>
+                  </View>
+                ) : (
+                  this.state.hoverHand.map((card, i) => {
+                    if (i%2 === 0) {
+                      return (
+                        <Image source={cardImages[card.value]}
+                          style={{top: 15, width: 85, height: 85, resizeMode: 'contain', marginRight: -15}}
+                          key={i}
+                        />
+                      )
+                    } else {
+                      return (
+                        <Image source={cardImages[card.value]}
+                          style={{top:40, width: 85, height: 85, resizeMode: 'contain', marginRight: -15}}
+                          key={i}
+                        />
+                      )
+                    }
+                  })
+                )}
               </View>
             </View>
           ) : (null)}
@@ -499,15 +523,12 @@ export default class BlitzJoin extends React.Component {
                 friendFbName={this.state.friendFbName}
                 friendFbPic={this.state.friendFbPic}
                 player={this.state.player}
+                soundBytes={this.state.soundBytes}
+
               />
             </View>
           </Modal>
           <View style={styles.gameContainer} {...this._panResponder.panHandlers} ref="mycomp">
-            {this.state.pressed ? (
-              <View style={{position: 'absolute', zIndex: 2}}>
-                <Image source={this.state.animatedHand[this.state.lastCompletedHand]} style={{width: 300, height: 100, resizeMode: 'contain'}}/>
-              </View>
-            ) : null}
             {this.state.startingTiles.map((tiles, i) => (
               <HexGrid
                 deck={this.state.deck}
@@ -569,7 +590,7 @@ const styles = StyleSheet.create({
   },
   font: {
     fontSize: 40,
-    fontFamily: 'arcade',
+    fontFamily: 'ArcadeClassic',
     color: 'white'
   },
   topBanner: {

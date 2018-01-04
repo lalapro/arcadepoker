@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button, TouchableOpacity, Image} from 'react-native';
-import { Font } from 'expo';
 import calculateScore from '../helpers/calculateScore';
 
 export default class HelpModal extends React.Component {
@@ -27,14 +26,7 @@ export default class HelpModal extends React.Component {
   }
 
   async componentWillMount() {
-    await Font.loadAsync({
-      'arcade': require('../assets/fonts/arcadeclassic.regular.ttf'),
-    });
-    this.setState({
-      fontLoaded: true,
-      blinky: true
-    })
-
+    this.setState({blinky: true});
     this.blinking = setInterval(this.blinky.bind(this), 750)
   }
 
@@ -60,89 +52,87 @@ export default class HelpModal extends React.Component {
   render() {
     // console.log(this.state.sampleHand)
     return (
-      this.state.fontLoaded ? (
-        <View style={{width: "80%", height: "100%"}}>
-          <View style={{flex: 2, justifyContent:'center', alignItems: 'center'}}>
-            <Text style={[styles.font, {fontSize: 25}]}>
-              How to play:
+      <View style={{width: "80%", height: "100%"}}>
+        <View style={{flex: 2, justifyContent:'center', alignItems: 'center'}}>
+          <Text style={[styles.font, {fontSize: 25}]}>
+            How to play:
+          </Text>
+          <Text style={[styles.font, {fontSize: 18}]}>
+            Drag  5 cards
+          </Text>
+        </View>
+        <View style={{flex: 5, justifyContent: 'space-around'}}>
+          <View style={styles.line}>
+            <Text style={[styles.font, {textDecorationLine: 'underline'}]}>
+              Hands
             </Text>
-            <Text style={[styles.font, {fontSize: 18}]}>
-              Drag  5 cards
+            <Text style={[styles.font, {textDecorationLine: 'underline'}]}>
+              Points
             </Text>
           </View>
-          <View style={{flex: 5, justifyContent: 'space-around'}}>
-            <View style={styles.line}>
-              <Text style={[styles.font, {textDecorationLine: 'underline'}]}>
-                Hands
-              </Text>
-              <Text style={[styles.font, {textDecorationLine: 'underline'}]}>
-                Points
-              </Text>
-            </View>
-            <View style={{flexDirection: 'column'}}>
-              {this.state.hands.map((hand, i) => (
-                  this.state.handSelected === hand[0] ? (
-                    <View style={styles.line} key={i}>
-                      <TouchableOpacity onPress={() => {this.showHand(hand)}}>
-                        <Text style={[styles.font, {color: 'red'}]}>
-                          {hand[0]}
-                        </Text>
-                      </TouchableOpacity>
+          <View style={[styles.line, {flexDirection: 'column'}]}>
+            {this.state.hands.map((hand, i) => (
+                this.state.handSelected === hand[0] ? (
+                  <View style={styles.line} key={i}>
+                    <TouchableOpacity onPress={() => {this.showHand(hand)}}>
                       <Text style={[styles.font, {color: 'red'}]}>
-                        {hand[1]}
+                        {hand[0]}
                       </Text>
-                    </View>
-                  ) : (
-                    <View style={styles.line} key={i}>
-                      <TouchableOpacity onPress={() => {this.showHand(hand)}}>
-                        <Text style={styles.font}>
-                          {hand[0]}
-                        </Text>
-                      </TouchableOpacity>
+                    </TouchableOpacity>
+                    <Text style={[styles.font, {color: 'red'}]}>
+                      {hand[1]}
+                    </Text>
+                  </View>
+                ) : (
+                  <View style={styles.line} key={i}>
+                    <TouchableOpacity onPress={() => {this.showHand(hand)}}>
                       <Text style={styles.font}>
-                        {hand[1]}
+                        {hand[0]}
                       </Text>
-                    </View>
-                  )
-              ))}
-            </View>
-        </View>
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          {this.state.blinky && this.state.handSelected === null ? (
-            <Text style={[styles.font]}>
-              Tap on a hand for examples
-            </Text>
-          ) : (
-            <View style={{flexDirection: 'row'}}>
-              {this.state.sampleHand.map((card, i) => {
-                if (i%2 === 0) {
-                  return (
-                    <Image source={card.highlight}
-                      style={{width: 45, height: 45, resizeMode: 'contain', marginRight: -13, zIndex: this.state.sampleHand.length - i}}
-                      key={i}
-                    />
-                  )
-                } else {
-                  return (
-                    <Image source={card.highlight}
-                      style={{top: 15, width: 45, height: 45, resizeMode: 'contain', marginRight: -13, zIndex: this.state.sampleHand.length - i}}
-                      key={i}
-                    />
-                  )
-                }
-              })}
-            </View>
-          )}
-        </View>
-        <View style={styles.normal}>
-          <TouchableOpacity onPress={this.backToGame.bind(this)}>
-            <Text style={[styles.font]}>
-              Go  back
-            </Text>
-          </TouchableOpacity>
-        </View>
+                    </TouchableOpacity>
+                    <Text style={styles.font}>
+                      {hand[1]}
+                    </Text>
+                  </View>
+                )
+            ))}
+          </View>
       </View>
-      ) : (null)
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        {this.state.blinky && this.state.handSelected === null ? (
+          <Text style={[styles.font]}>
+            Tap on a hand for examples
+          </Text>
+        ) : (
+          <View style={{flexDirection: 'row'}}>
+            {this.state.sampleHand.map((card, i) => {
+              if (i%2 === 0) {
+                return (
+                  <Image source={card.highlight}
+                    style={{width: 45, height: 45, resizeMode: 'contain', marginRight: -13, zIndex: this.state.sampleHand.length - i}}
+                    key={i}
+                  />
+                )
+              } else {
+                return (
+                  <Image source={card.highlight}
+                    style={{top: 15, width: 45, height: 45, resizeMode: 'contain', marginRight: -13, zIndex: this.state.sampleHand.length - i}}
+                    key={i}
+                  />
+                )
+              }
+            })}
+          </View>
+        )}
+      </View>
+      <View style={styles.normal}>
+        <TouchableOpacity onPress={this.backToGame.bind(this)}>
+          <Text style={[styles.font]}>
+            Go  back
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
     )
   }
 }
@@ -151,7 +141,7 @@ export default class HelpModal extends React.Component {
 
 const styles = StyleSheet.create({
   font: {
-    fontFamily: 'arcade',
+    fontFamily: 'ArcadeClassic',
     fontSize: 20,
   },
   line: {

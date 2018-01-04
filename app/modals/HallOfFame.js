@@ -1,10 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, AsyncStorage, TextInput } from 'react-native';
-import { Font } from 'expo';
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, AsyncStorage, TextInput, Alert } from 'react-native';
 import facebookLogin from '../helpers/facebookLogin';
 import database from '../firebase/db'
 import moment from 'moment';
-import facebookTokenCheck from '../helpers/facebookTokenCheck';
 import uniqueId from 'react-native-unique-id';
 
 
@@ -13,7 +11,6 @@ export default class HallOfFame extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      fontLoaded: false,
       leaderBoard: [],
       friendLeaderBoard: [],
       board1: 'black',
@@ -34,20 +31,15 @@ export default class HallOfFame extends React.Component {
     uniqueId().then(id => this.setState({uniqueId: id}))
     .catch(err => console.log(err));
 
-    let isMounted = true;
-    this.setState({isMounted}, () => this.getHighscores());
 
-    await Font.loadAsync({
-      'arcade': require('../assets/fonts/arcadeclassic.regular.ttf'),
-    });
     this.setState({
-      fontLoaded: true,
+      isMounted: true,
       submitted: false,
-    })
+    }, () => this.getHighscores());
   }
 
   async getHighscores() {
-    let deviceId = await AsyncStorage.getItem('__uniqueId')
+    let deviceId = await AsyncStorage.getItem('__uniqueId');
 
 
     let newChallenger = this.props.newChallenger;
@@ -137,23 +129,12 @@ export default class HallOfFame extends React.Component {
     const fbId = await AsyncStorage.getItem('fbId');
     const fbName = await AsyncStorage.getItem('fbName');
     let highscore = await AsyncStorage.getItem('highscore');
-    let fbToken = await AsyncStorage.getItem('fbToken')
-    this.setState({ownerName: fbName})
-    if (fbId === null || fbToken === null) {
-      facebookLogin().then(resObj => {
-        let user = resObj.user;
-        let friends = resObj.friends;
-        this.setState({ownerName: user.name})
-        highscore = highscore || 0;
-        this.props.updateScore(user.id);
-        this.getScoresFromFriends(user.id, user.name, highscore);
-      })
-    } else {
-      facebookTokenCheck().then(resObj => {
-        this.getScoresFromFriends(fbId, fbName, highscore);
-      })
-    }
-
+    facebookLogin().then(user => {
+      this.setState({ownerName: fbName})
+      highscore = highscore || 0;
+      this.props.updateScore(user.id);
+      this.getScoresFromFriends(user.id, user.name, highscore);
+    })
   }
 
   getFBPics = async (id) => {
@@ -472,7 +453,7 @@ export default class HallOfFame extends React.Component {
 
   render() {
     return(
-      this.state.fontLoaded && this.state.loadReady ? (
+      this.state.loadReady ? (
         <View style={styles.container}>
           <View style={[styles.box, {backgroundColor:'black'}]}>
             <Text style={styles.font}>
@@ -553,7 +534,7 @@ const styles = StyleSheet.create({
     width: "90%"
   },
   font: {
-    fontFamily: 'arcade',
+    fontFamily: 'ArcadeClassic',
     fontSize: 50,
     color: 'white'
   }

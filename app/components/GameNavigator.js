@@ -1,11 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button, PanResponder, Dimensions, Image, Animated, TouchableOpacity, AsyncStorage } from 'react-native';
-import {
-  createNavigator,
-  createNavigationContainer,
-  TabRouter,
-  addNavigationHelpers,
-} from 'react-navigation';
+import { createNavigator, createNavigationContainer, TabRouter, addNavigationHelpers } from 'react-navigation';
 import Game from './Game';
 import Blitz from './Blitz';
 import BlitzJoin from './BlitzJoin';

@@ -43,8 +43,8 @@ export default shuffledDeck = (mode) => {
   const DECK = [
     {
       value: "1♦",
-      image: require("../assets/cards/diamond1.png"),
-      highlight: require("../assets/cards/diamond1-highlight.png")
+      image: require("../assets/cards/spades1.png"),
+      highlight: require("../assets/cards/spades1-highlight.png")
     },
     {
       value: "2♦",

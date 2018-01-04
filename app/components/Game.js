@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button, PanResponder, Dimensions, Image, Animated, TouchableOpacity, AsyncStorage, Alert } from 'react-native';
-import { Font } from 'expo';
 import Modal from 'react-native-modal';
 import HexGrid from './HexGrid.js';
 import { adjacentTiles, keyTiles } from '../helpers/tileLogic';
@@ -13,7 +12,7 @@ import HallOfFameModal from '../modals/HallOfFame';
 import GameOverModal from '../modals/GameOverModal';
 import facebookLogin from '../helpers/facebookLogin';
 import database from '../firebase/db.js';
-
+import initializeSounds from '../helpers/initializeSounds';
 
 import moment from 'moment';
 
@@ -25,7 +24,7 @@ export default class Game extends React.Component {
   constructor(props){
     super(props)
     console.ignoredYellowBox = [
-    'Setting a timer'
+      'Setting a timer'
     ];
     this.state = {
       deck: shuffledDeck().slice(),
@@ -43,7 +42,6 @@ export default class Game extends React.Component {
       hoverHand: [],
       emptyTiles: [],
       restart: false,
-      fontLoaded: false,
       gameStarted: false,
       hofModal: false,
       blinky: false,
@@ -51,6 +49,9 @@ export default class Game extends React.Component {
       totalscore: 0,
       highscore: 0,
       newChallenger: 0,
+      sound: 'on',
+      soundBytes: undefined,
+      grabTileResponders: false
     }
     this._panResponder = PanResponder.create({
       onMoveShouldSetPanResponder:(evt, gestureState) => this.state.gameStarted,
@@ -103,41 +104,16 @@ export default class Game extends React.Component {
 
 
   async componentDidMount() {
-    // AsyncStorage.removeItem('fbId');
-    // AsyncStorage.removeItem('fbName');
-    // AsyncStorage.removeItem('fbToken');
-
-
-
-
-    // TEST TEST
-
-    // let blitzDeck = shuffledDeck('blitz').slice()
-    // let timestamp = moment().format('MMMM Do YYYY, h:mm:ss a');
-    // let newGameRoom = database.blitzGame.push({
-    //   deck: blitzDeck,
-    //   playerOne: {
-    //     fbId: "10155701930415791",
-    //     score: 0,
-    //     timestamp: timestamp
-    //   },
-    //   drawable: true
-    // })
-    // let roomKey = newGameRoom.key;
-
-    // TEST TEST
-
+    console.log('JABRONIIII');
     this.updateScoreFromAsyncStorage();
-    await Font.loadAsync({
-      'arcade': require('../assets/fonts/arcadeclassic.regular.ttf'),
-    });
-    this.setState({
-      fontLoaded: true,
-      blinky: true
-    })
-
+    this.setState({blinky: true});
     this.insertCoin = setInterval(this.blinky.bind(this), 750)
+    let SOUNDS = initializeSounds();
+    this.setState({
+      soundBytes: SOUNDS
+    })
   }
+
 
   blinky() {
     this.setState({
@@ -146,7 +122,9 @@ export default class Game extends React.Component {
   }
 
   loginToFacebookFromHomeScreen() {
-    facebookLogin().then(resObj => this.updateScoreFromAsyncStorage())
+    facebookLogin('relog').then(resObj => {
+      this.updateScoreFromAsyncStorage();
+    });
   }
 
 
@@ -183,6 +161,7 @@ export default class Game extends React.Component {
 
 
   selectNewTile(key) {
+    this.playSound('select');
     if (this.state.selectedTiles.indexOf(key) === -1) {
       this.setState({
         selectedTiles: [...this.state.selectedTiles, key]
@@ -199,13 +178,19 @@ export default class Game extends React.Component {
     this.setState({
       tileResponders: this.state.tileResponders,
     })
+    let length = Object.keys(this.state.tileResponders).length;
+    if(length === 13) {
+      this.setState({
+        grabTileResponders: true
+      })
+    }
   }
 
   destroy() {
     this.state.completedHands.push(calculateScore(this.state.chosenCards))
     hand = calculateScore(this.state.chosenCards);
 
-
+    this.playSound('tileDrop');
     this.setState({
       destroy: true,
       pressed: true,
@@ -275,6 +260,7 @@ export default class Game extends React.Component {
 
 
   reset() {
+    this.playSound('reset');
     this.setState({
       destroy: true,
       chosenCards: [],
@@ -304,6 +290,7 @@ export default class Game extends React.Component {
       gameStarted: true,
       animateStartOfGame: true
     }, () => {
+      this.playSound('startGame')
       this.setState({
         animateStartOfGame: false
       })
@@ -353,6 +340,7 @@ export default class Game extends React.Component {
         })}, 450)
     } else if (modal === 'game over') {
       setTimeout(() => {
+        this.playSound('win');
         this.setState({
           gameOverModal: true
         })}, 450)
@@ -368,10 +356,40 @@ export default class Game extends React.Component {
   startDuel(room) {
     clearInterval(this.insertCoin)
     if (room){
-      this.props.navigation.navigate('BlitzJoin', {room: room})
+      this.props.navigation.navigate('BlitzJoin')
     } else {
       if (this.state)
-      this.props.navigation.navigate('Blitz');
+      this.props.navigation.navigate('Blitz', {sound: this.state.sound});
+    }
+  }
+
+  playSound(byte) {
+    if (this.state.sound === 'on') {
+      if (byte === 'startGame') {
+        this.state.soundBytes.startGameSound.play((success) => {
+          if (success) {
+            // Alert.alert('success')
+          } else {
+            // Alert.alert('error')
+          }
+        });
+      } else if (byte === 'select') {
+        this.state.soundBytes.selectSound.play();
+      } else if (byte === 'tileDrop') {
+        this.state.soundBytes.tileDropSound.play();
+      } else if (byte === 'reset') {
+        this.state.soundBytes.resetSound.play();
+      } else if (byte === 'win') {
+        this.state.soundBytes.winSound.play();
+      }
+    }
+  }
+
+  toggleSound() {
+    if (this.state.sound === 'on') {
+      this.setState({sound: 'off'})
+    } else {
+      this.setState({sound: 'on'})
     }
   }
 
@@ -382,28 +400,26 @@ export default class Game extends React.Component {
 
     const boxes = Object.values(this.state.tileResponders);
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, {backgroundColor: 'black'}]}>
         {!this.state.gameStarted ? (
           <View style={[styles.topBanner]}>
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', top: 15}}>
-              {this.state.fontLoaded ? (
-                <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                  <Text style={{fontFamily: 'arcade', fontSize: 65, color: 'white'}}>
-                    ARCADE
-                  </Text>
-                  <Text style={{fontFamily: 'arcade', fontSize: 65, color: 'white'}}>
-                    POKER
-                  </Text>
-                  <Text style={{fontFamily: 'arcade', fontSize: 20, color: 'yellow'}}>
-                    highscore: {this.state.highscore}
-                  </Text>
-                </View>
-              ) : (null)}
+              <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                <Text style={{fontFamily: 'ArcadeClassic', fontSize: 65, color: 'white'}}>
+                  ARCADE
+                </Text>
+                <Text style={{fontFamily: 'ArcadeClassic', fontSize: 65, color: 'white'}}>
+                  POKER
+                </Text>
+                <Text style={{fontFamily: 'ArcadeClassic', fontSize: 20, color: 'yellow'}}>
+                  highscore: {this.state.highscore}
+                </Text>
+              </View>
             </View>
           </View>
         ) : (null)}
         {!this.state.gameStarted ? (
-          <View style={{flex: 0.5, flexDirection: 'row', zIndex: 100, width: "40%", justifyContent: 'space-between'}}>
+          <View style={{flex: 1, flexDirection: 'row', zIndex: 100, width: "40%", justifyContent: 'space-between', backgroundColor:'black'}}>
             <TouchableOpacity onPress={() => this.loginToFacebookFromHomeScreen()}>
               <Image source={require('../assets/facebook.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
             </TouchableOpacity>
@@ -417,76 +433,89 @@ export default class Game extends React.Component {
         ) : (null)}
         {this.state.gameStarted ? (
           <View style={styles.showCase}>
-            {this.state.fontLoaded && this.state.showScore ? (
+            {this.state.showScore ? (
               <View style={{flex: 1, justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'black', flexDirection: 'row', width: "90%"}}>
                 <TouchableOpacity onPress={() => this.switchModal('hof')}>
                   <Image source={require('../assets/trophy.png')} style={{width: 35, height: 35, resizeMode: 'contain'}}/>
                 </TouchableOpacity>
                 <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                  <Text style={{fontSize: 45, fontFamily: 'arcade', color: 'white'}}>
+                  <Text style={{fontSize: 45, fontFamily: 'ArcadeClassic', color: 'white'}}>
                     Score: {this.state.totalscore}
                   </Text>
-                  <Text style={{fontFamily: 'arcade', fontSize: 20, color: 'yellow'}}>
+                  <Text style={{fontFamily: 'ArcadeClassic', fontSize: 20, color: 'yellow'}}>
                     highscore: {this.state.highscore}
                   </Text>
                 </View>
                 <TouchableOpacity onPress={() => this.switchModal('main')}>
-                  {this.state.fontLoaded ? (
-                    <Image source={require('../assets/menu.png')} style={{width: 35, height: 35, resizeMode: 'contain'}}/>
-                  ) : null}
+                  <Image source={require('../assets/menu.png')} style={{width: 35, height: 35, resizeMode: 'contain'}}/>
                 </TouchableOpacity>
               </View>
             ) : null}
             <View style={{flex: 1, flexDirection: 'row'}}>
-              {this.state.hoverHand.map((card, i) => {
-                if (i%2 === 0) {
-                  return (
-                    <Image source={cardImages[card.value]}
-                      style={{top: 15, width: 85, height: 85, resizeMode: 'contain', marginRight: -15}}
-                      key={i}
-                    />
-                  )
-                } else {
-                  return (
-                    <Image source={cardImages[card.value]}
-                      style={{top:40, width: 85, height: 85, resizeMode: 'contain', marginRight: -15}}
-                      key={i}
-                    />
-                  )
-                }
-              })}
+              {this.state.pressed ? (
+                <View style={[styles.box, {zIndex: 100}]}>
+                  <Image source={this.state.animatedHand[this.state.lastCompletedHand]} style={{width: 300, height: 100, resizeMode: 'contain'}}/>
+                </View>
+              ) : (
+                this.state.hoverHand.map((card, i) => {
+                  if (i%2 === 0) {
+                    return (
+                      <Image source={cardImages[card.value]}
+                        style={{top: 15, width: 85, height: 85, resizeMode: 'contain', marginRight: -15}}
+                        key={i}
+                      />
+                    )
+                  } else {
+                    return (
+                      <Image source={cardImages[card.value]}
+                        style={{top:40, width: 85, height: 85, resizeMode: 'contain', marginRight: -15}}
+                        key={i}
+                      />
+                    )
+                  }
+                })
+              )}
             </View>
             <Modal
               isVisible={this.state.mainModal}
               animationIn={'slideInLeft'}
               animationOut={'slideOutRight'}
             >
-            {this.state.fontLoaded ? (
-              <View style={styles.mainModal}>
-                <TouchableOpacity onPress={() => this.switchModal('help')}>
-                  <Text style={{fontFamily: 'arcade', fontSize: 35}}>
-                    Help
+            <View style={styles.mainModal}>
+              <TouchableOpacity onPress={() => this.switchModal('help')}>
+                <Text style={{fontFamily: 'ArcadeClassic', fontSize: 35}}>
+                  Help
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.toggleSound.bind(this)}>
+                {this.state.sound === 'on' ? (
+                  <Text style={{fontFamily: 'ArcadeClassic', fontSize: 35}}>
+                    Sound  Off
                   </Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={this.restartGame.bind(this)}>
-                  <Text style={{fontFamily: 'arcade', fontSize: 35}}>
-                    Restart
+                ) : (
+                  <Text style={{fontFamily: 'ArcadeClassic', fontSize: 35}}>
+                    Sound  On
                   </Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={this.closeModal.bind(this)}>
-                  <Text style={{fontFamily: 'arcade', fontSize: 35}}>
-                    Continue
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            ) : (null)}
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.restartGame.bind(this)}>
+                <Text style={{fontFamily: 'ArcadeClassic', fontSize: 35}}>
+                  Restart
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.closeModal.bind(this)}>
+                <Text style={{fontFamily: 'ArcadeClassic', fontSize: 35}}>
+                  Continue
+                </Text>
+              </TouchableOpacity>
+            </View>
             </Modal>
             <Modal
               isVisible={this.state.helpModal}
               animationIn={'slideInUp'}
               animationOut={'slideOutDown'}
             >
-              <View style={styles.otherModal}>
+              <View style={[styles.otherModal, {height: "80%"}]}>
                 <HelpModal close={this.closeModal.bind(this)}/>
               </View>
             </Modal>
@@ -519,11 +548,6 @@ export default class Game extends React.Component {
         </Modal>
 
         <View style={styles.gameContainer} {...this._panResponder.panHandlers} ref="mycomp">
-          {this.state.pressed ? (
-            <View style={{position: 'absolute', zIndex: 2}}>
-              <Image source={this.state.animatedHand[this.state.lastCompletedHand]} style={{width: 300, height: 100, resizeMode: 'contain'}}/>
-            </View>
-          ) : null}
           {this.state.startingTiles.map((tiles, i) => (
             <HexGrid
               deck={this.state.deck}
@@ -537,6 +561,7 @@ export default class Game extends React.Component {
               gameStarted={this.state.animateStartOfGame}
               addEmpty={this.addEmptyTiles.bind(this)}
               hoverHand={this.state.hoverHand}
+              grabTiles={this.state.grabTileResponders}
               x={i}
               key={i}
             />
@@ -548,7 +573,7 @@ export default class Game extends React.Component {
           </View>
         ) : (null)}
         <View style={styles.botBanner}>
-          {!this.state.gameStarted && this.state.fontLoaded && this.state.blinky ? (
+          {!this.state.gameStarted && this.state.blinky ? (
             <Text style={styles.font} onPress={this.startGame.bind(this)}>
               Press Start
             </Text>
@@ -596,12 +621,12 @@ const styles = StyleSheet.create({
   },
   showCase: {
     flex: 3.5,
-    backgroundColor: 'black',
+    backgroundColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
     width: "100%",
     flexDirection: 'column',
-    zIndex: 99
+    zIndex: 100
   },
   gameContainer: {
     flex: 4,
@@ -637,7 +662,7 @@ const styles = StyleSheet.create({
   },
   font: {
     fontSize: 40,
-    fontFamily: 'arcade',
+    fontFamily: 'ArcadeClassic',
     color: 'white'
   },
 });
