@@ -1,44 +1,95 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, Animated} from 'react-native';
-import Svg from 'react-native-svg-uri';
-import Hex from './Hex'
+import { StyleSheet, Text, View, Image, Animated, Dimensions, Alert } from 'react-native';
+import Hex from './Hex';
+import database from '../firebase/db'
+
+const {height, width} = Dimensions.get('window');
 
 export default class HexGrid extends React.Component {
   constructor(props){
     super(props)
     this.state = {
       numberOfCards: [],
-      animatedValue: []
+      animatedValue: [],
+      drawable: false,
+      gameStarted: false
     }
+
   }
 
   componentWillMount() {
     this.drawFromDeck(this.props.tiles);
   }
 
+  setTileResponders(e) {
+    let flex = height / 10.5 * 4;
+    let difference = 0;
+    for (let i = this.props.tiles - 1; i >= 0; i--) {
+      x = e.nativeEvent.layout.x + (85/4);
+      if (this.props.x === 0 || this.props.x === 4) {
+        y = e.nativeEvent.layout.y + ((height / 10.5) * 4.0) + 25;
+      } else {
+        y = e.nativeEvent.layout.y + ((height / 10.5) * 4.0) + (70 * difference);
+      }
+      let obj = {
+        x: x,
+        y: y
+      }
+      difference++;
+      this.props.layoutCreators([this.props.x, i], obj)
+    }
+  }
+
+
 
   componentWillReceiveProps(oldProps) {
-    let cardsToReplace = 0;
-    let oldCards = this.state.numberOfCards.slice();
+    // lag somewhere here
+    if(oldProps.restart) {
+      this.setState({
+        numberOfCards: [],
+        animatedValue: []
+      }, () => this.drawFromDeck(oldProps.tiles))
+    }
 
+    let cardsToReplace = 0;
     if (oldProps.destroy) {
-      oldProps.chosen.forEach((card, i) => {
+      // console.log(oldProps.chosen, 'oldprops')
+      // console.log(this.state.numberOfCards, 'this.state')
+      let oldCards = this.state.numberOfCards.slice();
+      oldProps.chosen.forEach((card) => {
         exists = this.state.numberOfCards.indexOf(card)
         if (exists !== -1) {
           this.state.numberOfCards.splice(exists, 1);
           cardsToReplace++;
         }
       })
-
+      // console.log(cardsToReplace)
       this.modifyOldCardsAnimation(oldCards);
       this.drawFromDeck(cardsToReplace);
     }
+
+    if(oldProps.gameStarted) {
+      this.setState({gameStarted: true})
+      this.animateStartOfGame(this.state.numberOfCards)
+    }
+
+
+  }
+
+  animateStartOfGame(startingCards) {
+    for(let i = 0; i < startingCards.length; i++) {
+      this.state.animatedValue[i] = {
+        value: new Animated.Value(0),
+        //TODO might have to make dynamic
+        position: -55
+      }
+    }
+    this.animate()
   }
 
   modifyOldCardsAnimation(oldCards) {
     this.state.numberOfCards.forEach((card, i) => {
       let differenceInPosition = Math.abs(this.state.numberOfCards.indexOf(card) - oldCards.indexOf(card))
-      console.log(card, differenceInPosition)
       this.state.animatedValue[i] = {
         value: new Animated.Value(0),
         position: differenceInPosition * -65
@@ -48,14 +99,19 @@ export default class HexGrid extends React.Component {
 
   drawFromDeck(num) {
     for (let i = 0; i < num; i++) {
-      let newCardIndex = this.state.numberOfCards.push(this.props.deck.shift()) - 1;
+      let nextCard = this.props.deck.shift();
+      let newCardIndex = this.state.numberOfCards.push(nextCard) - 1;
       this.state.animatedValue[newCardIndex] = {
         value: new Animated.Value(0),
-        position: -150
+        position: -100
       }
     }
-    this.animate()
+    this.setState({numberOfCards: this.state.numberOfCards});
+
+    this.animate();
   }
+
+
 
   animate() {
     const animations = this.state.animatedValue.map((item, i) => {
@@ -69,12 +125,13 @@ export default class HexGrid extends React.Component {
         }
       )
     })
-    Animated.stagger(100, animations).start()
+    Animated.stagger(50, animations).start()
   }
 
   render() {
-    return (
-      <Animated.View style={styles.row}>
+    // if (this.props.x === 0)   Alert.alert(JSON.stringify(this.props.gameStarted))
+    return this.props.grabTiles ? (
+      <View style={styles.brow}>
         {this.state.numberOfCards.map((card, i) => (
           <Hex
             card={card}
@@ -84,18 +141,45 @@ export default class HexGrid extends React.Component {
             add={this.props.add}
             chosen={this.props.chosen}
             destroy={this.props.destroy}
+            selectedTiles={this.props.selectedTiles}
+            addEmpty={this.props.addEmpty}
+            hoverHand={this.props.hoverHand}
             animate={{
-                    transform: [{
-                      translateY: this.state.animatedValue[i].value.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [this.state.animatedValue[i].position, 0]
-                      })
-                    }]
-                  }}
+              transform: [{
+                translateY: this.state.animatedValue[i].value.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [this.state.animatedValue[i].position, 0]
+                })
+              }]
+            }}
           />
         ))}
-      </Animated.View>
-
+      </View>
+    ) : (
+      <View style={styles.row} onLayout={this.setTileResponders.bind(this)}>
+        {this.state.numberOfCards.map((card, i) => (
+          <Hex
+            card={card}
+            key={i}
+            x={this.props.x}
+            y={i}
+            add={this.props.add}
+            chosen={this.props.chosen}
+            destroy={this.props.destroy}
+            selectedTiles={this.props.selectedTiles}
+            addEmpty={this.props.addEmpty}
+            hoverHand={this.props.hoverHand}
+            animate={{
+              transform: [{
+                translateY: this.state.animatedValue[i].value.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [this.state.animatedValue[i].position, 0]
+                })
+              }]
+            }}
+          />
+        ))}
+      </View>
     )
   }
 }
@@ -104,34 +188,18 @@ export default class HexGrid extends React.Component {
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'column',
-    justifyContent: 'space-between',
-    margin: -10
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: -13,
+    marginRight: -10,
+    // height: "100%"
   },
-  card: {
-    width: 75,
-    height: 75,
-    marginTop: -10
-  },
-  text: {
-    position: 'relative',
-    left: 30,
-    top: -47,
-    backgroundColor: 'transparent',
-    color: 'white',
-    fontSize: 20
+  brow: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: -13,
+    marginRight: -10,
+    height: "100%"
   }
 });
-
-// const mapStateToProps = (store) => {
-//   return {
-//     selectedCards: store.selectedCards,
-//     deck: store.deck
-//   }
-// }
-//
-// const mapDispatcherToProps = (dispatch) => ({
-//   addToCard: bindActionCreators(addSelected, dispatch)
-// })
-//
-//
-// export default connect(mapStateToProps, mapDispatcherToProps)(HexGrid);

@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/fresco-1.3.0.aar/23fa0a78263b2882f62c68e24005b8ad/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="fe85b87215e405f5917d40ae4960488ac9224b74">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/34.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/modules-2/files-2.1/com.google.zxing/core/3.3.0/73c49077166faa4c3c0059c5f583d1d7bd1475fe/core-3.3.0.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="73c49077166faa4c3c0059c5f583d1d7bd1475fe">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/29.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-27.0.1.aar/1440e1f24088bac0f5aa8b8de3f96bb0/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="69f7591c9ff9238ff226e264c0260bb9f1ce0029">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/22.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/play-services-basement-11.8.0.aar/dbb289a6e36d4d1687800a9897b21a40/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="5ad3911825107d8dd4b017fdecebfd23c08048dd">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/17.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/textlayoutbuilder-1.0.0.aar/564940d223f17b5ce2c62b5a6f5725b2/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="f90b593491e4044903f0bbf68dc3fa2790b151b9">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/40.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/modules-2/files-2.1/android.arch.lifecycle/common/1.0.0/e414a4cb28434e25c4f6aa71426eb20cf4874ae9/common-1.0.0.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="e414a4cb28434e25c4f6aa71426eb20cf4874ae9">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/51.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/3.0.0/5871fb60dc68d67da54a663c3fd636a10a532948/jsr305-3.0.0.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="5871fb60dc68d67da54a663c3fd636a10a532948">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/42.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/soloader-0.1.0.aar/c2239695279cc207ae2e9d7ce572989b/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="8f615bca00639150c9eb6175d4b5471193f70794">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/41.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/fbcore-1.3.0.aar/048a37952a10873e738e2393a2d8c2de/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="37345de2ed2772f385eaeec37a9c2ff0fea99ad7">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/49.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/Arcade Poker/arcadepoker/node_modules/react-native-fbsdk/android/build/intermediates/intermediate-jars/release/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="ce2b293f217b5d6255c438847e083d4376367ad0">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/56.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/support-v4-27.0.1.aar/f387f79bcb28b065b3635fde80eab92f/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="cbbd26dd2f6d46181b41a5f6f5e34889442a811b">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/18.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/facebook-login-4.29.0.aar/d28166a414e691b877e59477e65070f9/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="b8b26b28aae0ba8e2db55ad9fe0ebc770530c5ef">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/Arcade Poker/arcadepoker/node_modules/react-native-admob/android/build/intermediates/intermediate-jars/release/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="ef3cf8027edd78c1e906ef58718f5f638b455bbb">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/53.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp3/okhttp/3.6.0/69edde9fc4b01c9fd51d25b83428837478c27254/okhttp-3.6.0.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="69edde9fc4b01c9fd51d25b83428837478c27254">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/44.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/facebook-share-4.29.0.aar/4bbd051d466307c4e1620623b783d2cc/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="07ca601b039863d2c018dc7f625e845084d6d18b">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/3.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/facebook-common-4.29.0.aar/fb2017f4495ac2fa27ad83fb9a7282f6/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="f95788f0e923006a2da51733d4cbd5c08aad299c">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/4.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/Arcade Poker/arcadepoker/node_modules/react-native-firebase/android/build/intermediates/intermediate-jars/release/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="25d3ff8ceba680ef0959d83cd775bf2c7933be85">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/55.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/support-core-ui-27.0.1.aar/a3235e9c817da548e9c271229d16cdf9/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="f10fed27d6d0b4aae675f17b33c639b4d5a0ed93">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/24.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/facebook-places-4.29.0.aar/42540e25e5b534ada7d1aeb16cf9e3cb/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="0d394688dd7030b83dea8eed3fa483410c24afe0">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/9.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.1.aar/2800583ee2977255a8b9a1d1e05f9884/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="59cbbfb2937ebed98c8bb8882b7112d16358014e">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/7.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/imagepipeline-1.3.0.aar/d2f2c11e01694e8acfff1996abe4342b/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="48c7f54c2515a2312d3a4481d10c43fbb807f3af">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/36.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-27.0.1.aar/ffb2ae54fd82def8fb74fcd42e74125f/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="d928394035bd4f7d2ee9e1c63d45f9ec088e21a4">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/21.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/modules-2/files-2.1/com.squareup.okio/okio/1.13.0/a9283170b7305c8d92d25aff02a6ab7e45d06cbe/okio-1.13.0.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="a9283170b7305c8d92d25aff02a6ab7e45d06cbe">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/45.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/modules-2/files-2.1/android.arch.core/common/1.0.0/a2d487452376193fc8c103dd2b9bd5f2b1b44563/common-1.0.0.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="a2d487452376193fc8c103dd2b9bd5f2b1b44563">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/52.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/facebook-core-4.29.0.aar/37faf283c6d0d4c09f3eca8b98401159/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="dc98b63d89490102b0a38423e24dce190354795b">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/12.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/imagepipeline-okhttp3-1.3.0.aar/d87929c7e8d6cda6fe3aca1a2c35434f/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="c03c08c9934b23c8c09c803345ec51a74119127b">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/35.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/Arcade Poker/arcadepoker/node_modules/react-native-sound/android/build/intermediates/intermediate-jars/release/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="7928ca2aee98dbdd5120ff66393d67402b5b719c">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/54.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/runtime-1.0.0.aar/b3499edf074bb72607564211b12f70d4/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="b62fdc4cfef174c1e456014195c83fa7de7dc041">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/50.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/play-services-ads-11.8.0.aar/a537d6e27488b8b148fa56ecb49b7401/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="aeca0a0ab86831ec59a54723205ce9341ac22d1b">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/8.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/drawee-1.3.0.aar/a729c8fd708b9b5b8760d186e8bbc509/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="c65a2e39d54023bac3aef64a2f0cff89289c7ff6">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/48.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/react-native-0.50.3.aar/54056893d748d7269eb3d85c14d370a3/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="24303e5ddb2c1210dd7e8db9dbab018f50313e48">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/5.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/facebook-android-sdk-4.29.0.aar/76aa723f424f05d25493cea42f4b8f7f/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="53e8932b1ac8c7dfc35cfeda1f9efbc9822ceaf3">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/1.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/modules-2/files-2.1/com.facebook.fbui.textlayoutbuilder/staticlayout-proxy/1.0/f162442a19fff13995fbd51ba414d9ee05579080/staticlayout-proxy-1.0.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="f162442a19fff13995fbd51ba414d9ee05579080">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/47.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/support-compat-27.0.1.aar/5bcfb9dbc3fe2e2cc842226144a6645f/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="91dae39a5cc837ad2a829c0dc69c57ab8d69d22b">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/25.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp3/okhttp-urlconnection/3.6.0/3f9b16b774f2c36cfd86dd2053d0b3059531dacc/okhttp-urlconnection-3.6.0.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="3f9b16b774f2c36cfd86dd2053d0b3059531dacc">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/43.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/customtabs-27.0.1.aar/42e2fc0fbe504b9b59418c8ef252df55/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="7ca71e38c643e51083ab3a07f3a056bfb066caec">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/14.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/modules-2/files-2.1/javax.inject/javax.inject/1/6975da39a7040257bd51d21a231b76c915872d38/javax.inject-1.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="6975da39a7040257bd51d21a231b76c915872d38">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/39.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/modules-2/files-2.1/com.android.support/support-annotations/27.0.1/287742f1c6cea6d9126670e9f031890b0462362a/support-annotations-27.0.1.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="287742f1c6cea6d9126670e9f031890b0462362a">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/26.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.0.1.aar/21aaacee9eb3875f04c4d2ad1f9494ef/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="f8a80c9882b064f2943e10649a8d2b249f5bf176">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/23.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/modules-2/files-2.1/com.parse.bolts/bolts-tasks/1.4.0/d85884acf6810a3bbbecb587f239005cbc846dc4/bolts-tasks-1.4.0.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="d85884acf6810a3bbbecb587f239005cbc846dc4">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/38.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/support-fragment-27.0.1.aar/e1882a9244fe05eb20fce8e371c3244a/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="ac5e6ae168ef77f0b0b1e3245d7afd7d32f710c3">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/19.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/imagepipeline-base-1.3.0.aar/edee0097edd1e9befadfdd082ac568c7/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="72128af126ddd7d6252da9357fe560d3abcdfb0c">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/37.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/react-native-0.50.3.aar/54056893d748d7269eb3d85c14d370a3/jars/libs/infer-annotations-4.0.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="9809e90be788acdb479b2b44e2112f3295a03068">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/6.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/play-services-ads-lite-11.8.0.aar/556ea4b8465d004c0364549c0134e3ed/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="24cb9bae5fbe94df0f55d87452a291b69a2f22bf">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/15.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/facebook-messenger-4.29.0.aar/fa1351df5d803f95f4f969633e4c35b3/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="2482bfd874e8b3927f4141105674ad392ff83698">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/11.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/facebook-applinks-4.29.0.aar/64fdb6127068c739efb3a66ba7799d20/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="82ea5a937ab84229fbd2f3fc8cf2a72cbdf0ee0f">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/10.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/support-core-utils-27.0.1.aar/1711da4ad668c5985bdceadd4ac0b075/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="d4f9ace23785adf79a174d569bde261f032e1190">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/20.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/modules-2/files-2.1/com.parse.bolts/bolts-applinks/1.4.0/8ad21bf21784dacce5f2043afb97218cc377e835/bolts-applinks-1.4.0.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="8ad21bf21784dacce5f2043afb97218cc377e835">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/33.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/cardview-v7-27.0.1.aar/01957302bb12727e37f42ba1c02c4f49/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="925879273e627f34059466359ba6789cf61889e2">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/13.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/admin/.gradle/caches/transforms-1/files-1.1/play-services-gass-11.8.0.aar/96e0fba3f1100e3156ace9eb1ea5e392/jars/classes.jar"
+        jumboMode="false"
+        min-sdk-version="16"
+        optimize="true"
+        revision="26.0.2"
+        sha1="a7760a45a6c9f425aaa43ef391a8cf28a8bcb4a1">
+        <dex dex="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/preDex/release/16.jar" />
+    </item>
+
+</items>

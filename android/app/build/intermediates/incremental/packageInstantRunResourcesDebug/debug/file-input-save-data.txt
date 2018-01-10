@@ -1,0 +1,11 @@
+#Internal package file, do not edit.
+#Fri Jan 05 14:40:03 EST 2018
+1.base=/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/assets/debug
+0.baseType=DIRECTORY
+1.baseType=DIRECTORY
+count=2
+1.set=ASSET
+0.path=fonts/game-over.regular.ttf
+0.set=ASSET
+0.base=/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/assets/debug
+1.path=fonts/ArcadeClassic.ttf
