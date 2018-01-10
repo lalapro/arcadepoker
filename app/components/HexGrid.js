@@ -11,7 +11,6 @@ export default class HexGrid extends React.Component {
     this.state = {
       numberOfCards: [],
       animatedValue: [],
-      blitzRoomKey: this.props.blitzRoomKey,
       drawable: false,
       gameStarted: false
     }
@@ -19,16 +18,19 @@ export default class HexGrid extends React.Component {
   }
 
   componentWillMount() {
-    // console.log(this.props.blitzRoomKey)
     this.drawFromDeck(this.props.tiles);
   }
 
   setTileResponders(e) {
-    let flex = height / 8.5 * 4;
+    let flex = height / 10.5 * 4;
     let difference = 0;
     for (let i = this.props.tiles - 1; i >= 0; i--) {
       x = e.nativeEvent.layout.x + (85/4);
-      y = e.nativeEvent.layout.y + ((height / 8.5) * 3.5) + (65 * difference);
+      if (this.props.x === 0 || this.props.x === 4) {
+        y = e.nativeEvent.layout.y + ((height / 10.5) * 4.0) + 25;
+      } else {
+        y = e.nativeEvent.layout.y + ((height / 10.5) * 4.0) + (70 * difference);
+      }
       let obj = {
         x: x,
         y: y
@@ -79,7 +81,7 @@ export default class HexGrid extends React.Component {
       this.state.animatedValue[i] = {
         value: new Animated.Value(0),
         //TODO might have to make dynamic
-        position: -85
+        position: -55
       }
     }
     this.animate()
@@ -107,10 +109,6 @@ export default class HexGrid extends React.Component {
     this.setState({numberOfCards: this.state.numberOfCards});
 
     this.animate();
-  }
-
-  setBlitzRoomDrawable(bool) {
-    database.blitzGame.child(this.state.blitzRoomKey).child('drawable').set(bool); //prevent double draw
   }
 
 

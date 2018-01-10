@@ -9,15 +9,15 @@ export default class HelpModal extends React.Component {
       fontLoaded: false,
       hands: [
         ["Royal Flush", 2000],
-        ["Straight Flush", 1000],
-        ["Four  of  a  Kind", 500],
-        ["Full House", 250],
-        ["Flush", 100],
-        ["Straight", 50],
-        ["Three  of  a  Kind", 25],
-        ["Two  Pair", 20],
-        ["Pair", 10],
-        ["High  Card", 5],
+        ["Straight Flush", 1500],
+        ["Four  of  a  Kind", 1000],
+        ["Full House", 500],
+        ["Flush", 250],
+        ["Straight", 150],
+        ["Three  of  a  Kind", 75],
+        ["Two  Pair", 50],
+        ["Pair", 25],
+        ["High  Card", 10],
       ],
       blinky: false,
       handSelected: null,
@@ -52,21 +52,23 @@ export default class HelpModal extends React.Component {
   render() {
     // console.log(this.state.sampleHand)
     return (
-      <View style={{width: "80%", height: "100%"}}>
-        <View style={{flex: 2, justifyContent:'center', alignItems: 'center'}}>
-          <Text style={[styles.font, {fontSize: 25}]}>
-            How to play:
+      <View style={{flex: 1, width: "100%", height: "100%", backgroundColor: 'black', padding: 25}}>
+        <View style={{flex: 1, justifyContent:'center', alignItems: 'center'}}>
+          <Text style={[styles.font, {fontSize: 25, textDecorationLine: 'underline'}]}>
+            How to play
           </Text>
-          <Text style={[styles.font, {fontSize: 18}]}>
+        </View>
+        <View style={{flex: 0.5, justifyContent:'center', alignItems: 'center'}}>
+          <Text style={[styles.font, {fontSize: 20}]}>
             Drag  5 cards
           </Text>
         </View>
-        <View style={{flex: 5, justifyContent: 'space-around'}}>
+        <View style={{flex: 6, justifyContent: 'center'}}>
           <View style={styles.line}>
-            <Text style={[styles.font, {textDecorationLine: 'underline'}]}>
+            <Text style={[styles.font, {textDecorationLine: 'underline', fontSize: 25}]}>
               Hands
             </Text>
-            <Text style={[styles.font, {textDecorationLine: 'underline'}]}>
+            <Text style={[styles.font, {textDecorationLine: 'underline', fontSize: 25}]}>
               Points
             </Text>
           </View>
@@ -127,8 +129,8 @@ export default class HelpModal extends React.Component {
       </View>
       <View style={styles.normal}>
         <TouchableOpacity onPress={this.backToGame.bind(this)}>
-          <Text style={[styles.font]}>
-            Go  back
+          <Text style={[styles.font, {fontSize: 25}]}>
+            back
           </Text>
         </TouchableOpacity>
       </View>
@@ -143,6 +145,7 @@ const styles = StyleSheet.create({
   font: {
     fontFamily: 'ArcadeClassic',
     fontSize: 20,
+    color: 'white'
   },
   line: {
     flexDirection: 'row',

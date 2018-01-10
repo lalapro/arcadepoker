@@ -1,25 +1,26 @@
 var Sound = require('react-native-sound');
-import { Alert } from 'react-native';
 // Sound.setCategory('Playback');
 
 export default initializeSounds = () => {
-  startGameSound = new Sound('startGame.wav', Sound.MAIN_BUNDLE, (error) => {
+  startGameSound = new Sound('startgame.wav', Sound.MAIN_BUNDLE, (error) => {
     if (error) {return;}
   });
   selectSound = new Sound('select.wav', Sound.MAIN_BUNDLE, (error) => {
     if (error) { return;}
   });
-  tileDropSound = new Sound('tileDrop.wav', Sound.MAIN_BUNDLE, (error) => {
+  tileDropSound = new Sound('tiledrop.wav', Sound.MAIN_BUNDLE, (error) => {
     if (error) { return;}
   });
-  resetSound = new Sound('notValid.wav', Sound.MAIN_BUNDLE, (error) => {
+  resetSound = new Sound('notvalid.wav', Sound.MAIN_BUNDLE, (error) => {
     if (error) { return;}
   });
-  resetSound.setVolume(0.5);
   winSound = new Sound('win.wav', Sound.MAIN_BUNDLE, (error) => {
     if (error) { return;}
   });
   loseSound = new Sound('lose.wav', Sound.MAIN_BUNDLE, (error) => {
+    if (error) { return;}
+  });
+  gameLoaded = new Sound('gameloaded.wav', Sound.MAIN_BUNDLE, (error) => {
     if (error) { return;}
   });
 
@@ -30,6 +31,7 @@ export default initializeSounds = () => {
     tileDropSound,
     resetSound,
     winSound,
-    loseSound
+    loseSound,
+    gameLoaded
   }
 }

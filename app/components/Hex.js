@@ -43,12 +43,6 @@ export default class HexGrid extends React.Component {
 
   }
 
-  setTileResponders(e) {
-    if (this.props.x === 1 && this.props.y === 0) {
-      // Alert.alert(JSON.stringify(e.nativeEvent))
-      // Alert.alert(JSON.stringify(height))
-    }
-  }
 
   render() {
     return (
@@ -59,7 +53,6 @@ export default class HexGrid extends React.Component {
         </Animated.View>
       ) : (
         <Animated.View
-          onLayout={this.setTileResponders.bind(this)}
           style={[this.state.cardStyle, this.props.animate]} >
             <Image
               source={this.props.card.image} style={{width: 85, height: 85, resizeMode: 'contain'}}/>

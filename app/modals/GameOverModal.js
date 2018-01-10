@@ -64,7 +64,7 @@ export default class FriendModal extends React.Component {
   render() {
     return(
       this.state.newChallenger ? (
-        <View style={styles.box}>
+        <View style={[styles.box, {backgroundColor: 'black', width: "100%"}]}>
           <View style={styles.box}>
             <Text style={[styles.font, {fontSize: 30}]}>
               Congratulations!!
@@ -81,7 +81,7 @@ export default class FriendModal extends React.Component {
           <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
             <TouchableOpacity onPress={() => this.props.close('challenger', this.state.challenger)}>
               <Image
-                source={require('../assets/continue2.png')}
+                source={require('../assets/icons/continue.png')}
                 style={{width: 25, height: 25, resizeMode: 'contain'}}
               />
             </TouchableOpacity>
@@ -89,31 +89,26 @@ export default class FriendModal extends React.Component {
         </View>
       ) :
       (
-        <View style={{flex: 1}}>
-          <View style={{flex: 2, justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={[styles.font, {fontSize: 65}]}>
+        <View style={[styles.box, {backgroundColor: 'black', width: "100%"}]}>
+          <View style={{flex: 3, justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={[styles.font, {fontSize: 45}]}>
               Game
             </Text>
-            <Text style={[styles.font, {fontSize: 65}]}>
+            <Text style={[styles.font, {fontSize: 45}]}>
               Over
             </Text>
           </View>
-          <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-            <TouchableOpacity onPress={() => this.props.close('hof')}>
-              <Text style={styles.font}>
-                View  highscores
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.props.close('hof')}>
-              <Image source={require('../assets/trophy.png')} style={{width: 20, height: 20, resizeMode: 'contain'}}/>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.box}>
-            <TouchableOpacity onPress={() => this.props.close('over')}>
-              <Text style={styles.font}>
-                Play  Again
-              </Text>
-            </TouchableOpacity>
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+              <TouchableOpacity onPress={() => this.props.close('hof')}>
+                <Text style={styles.font}>
+                  View  highscores
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => this.props.close('over')}>
+                <Text style={styles.font}>
+                  Play  Again
+                </Text>
+              </TouchableOpacity>
           </View>
         </View>
       )
@@ -130,5 +125,6 @@ const styles = StyleSheet.create({
   font: {
     fontFamily: 'ArcadeClassic',
     fontSize: 20,
+    color: 'white'
   },
 })

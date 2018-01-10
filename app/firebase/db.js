@@ -1,8 +1,9 @@
 import * as firebase from 'firebase';
+import KEYS from '../../keys.js'
 
 // Initialize Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyCfeJUbf7LoN7IMIFp7zbE50QK6lMDeTR8",
+  apiKey: KEYS.firebase,
   authDomain: "arcade-poker.firebaseapp.com",
   databaseURL: "https://arcade-poker.firebaseio.com/",
   // storageBucket: "highscore.appspot.com"

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, PanResponder, Dimensions, Image, Animated, TouchableOpacity, AsyncStorage, Alert } from 'react-native';
+import { Platform, StyleSheet, Text, View, Button, PanResponder, Dimensions, Image, Animated, TouchableOpacity, AsyncStorage, Alert } from 'react-native';
 import Modal from 'react-native-modal';
 import HexGrid from './HexGrid.js';
 import { adjacentTiles, keyTiles } from '../helpers/tileLogic';
@@ -13,8 +13,15 @@ import GameOverModal from '../modals/GameOverModal';
 import facebookLogin from '../helpers/facebookLogin';
 import database from '../firebase/db.js';
 import initializeSounds from '../helpers/initializeSounds';
-
+import CreditsModal from '../modals/CreditsModal'
 import moment from 'moment';
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+  PublisherBanner,
+  AdMobRewarded,
+} from 'react-native-admob'
+import KEYS from '../../keys.js';
 
 const {height, width} = Dimensions.get('window');
 
@@ -27,6 +34,8 @@ export default class Game extends React.Component {
       'Setting a timer'
     ];
     this.state = {
+      title: ['A', 'R', 'C', 'A', 'D', 'E'],
+      title2: ['P', 'O', 'K', 'E', 'R'],
       deck: shuffledDeck().slice(),
       currentTile: null,
       startingTiles: [1, 4, 3, 4, 1],
@@ -51,7 +60,10 @@ export default class Game extends React.Component {
       newChallenger: 0,
       sound: 'on',
       soundBytes: undefined,
-      grabTileResponders: false
+      grabTileResponders: false,
+      easterEggs: [],
+      isAndroid: false,
+      animatedCake: []
     }
     this._panResponder = PanResponder.create({
       onMoveShouldSetPanResponder:(evt, gestureState) => this.state.gameStarted,
@@ -104,7 +116,16 @@ export default class Game extends React.Component {
 
 
   async componentDidMount() {
-    console.log('JABRONIIII');
+    console.log('JABRONIIIII')
+    let adBlock = await AsyncStorage.getItem('adBlock');
+    if (adBlock === 'true') this.setState({adBlock: true});
+    if (Platform.OS === 'android') this.setState({isAndroid: true})
+    let sound = await AsyncStorage.getItem('sound');
+    if (sound === null) {
+      this.setState({sound: 'on'})
+    } else {
+      this.setState({sound});
+    }
     this.updateScoreFromAsyncStorage();
     this.setState({blinky: true});
     this.insertCoin = setInterval(this.blinky.bind(this), 750)
@@ -150,19 +171,22 @@ export default class Game extends React.Component {
       gameStarted: false,
       showScore: false,
       totalscore: 0,
-      newChallenger: 0
+      newChallenger: 0,
+      easterEggs: [],
+      animatedCake: []
     }, () => {
       this.setState({
         restart: false
       })
+      this.playSound('gameloaded')
     })
     this.insertCoin = setInterval(this.blinky.bind(this), 750)
   }
 
 
   selectNewTile(key) {
-    this.playSound('select');
     if (this.state.selectedTiles.indexOf(key) === -1) {
+      this.playSound('select');
       this.setState({
         selectedTiles: [...this.state.selectedTiles, key]
       })
@@ -237,41 +261,29 @@ export default class Game extends React.Component {
     }
   }
 
-  async updateScoreFromAsyncStorage() {
+  async updateScoreFromAsyncStorage(user) {
     let highscore = await AsyncStorage.getItem('highscore');
-    highscore = highscore || 0
-    this.setState({highscore}, () => {this.updateScoreFromFaceBook()})
+    highscore = highscore || 0;
+    this.setState({highscore});
   }
-
-  async updateScoreFromFaceBook() {
-    let fbId = await AsyncStorage.getItem('fbId');
-    if (fbId) {
-      database.fbFriends.child(fbId).child('highscore').once('value', snap => {
-        let highscore = snap.val();
-        if (highscore > this.state.highscore) {
-          this.setState({highscore})
-          AsyncStorage.setItem('highscore', highscore.toString())
-        }
-      })
-    }
-  }
-
 
 
 
   reset() {
-    this.playSound('reset');
-    this.setState({
-      destroy: true,
-      chosenCards: [],
-      selectedTiles: [],
-      hoverHand: [],
-      currentTile: null
-    }, () => {
+    if (this.state.chosenCards.length > 0) {
+      this.playSound('reset');
       this.setState({
-        destroy: false
+        destroy: true,
+        chosenCards: [],
+        selectedTiles: [],
+        hoverHand: [],
+        currentTile: null
+      }, () => {
+        this.setState({
+          destroy: false
+        })
       })
-    })
+    }
   }
 
   addToChosenCards(card) {
@@ -315,7 +327,8 @@ export default class Game extends React.Component {
         helpModal: false,
         mainModal: false,
         hofModal: false,
-        gameOverModal: false
+        gameOverModal: false,
+        creditsModal: false
       })
     }
   }
@@ -350,125 +363,243 @@ export default class Game extends React.Component {
           hofModal: true,
           newChallenger: challenger
         })}, 450)
+    } else if (modal === 'WIP') {
+      this.setState({creditsModal: true})
     }
   }
 
   startDuel(room) {
-    clearInterval(this.insertCoin)
-    if (room){
-      this.props.navigation.navigate('BlitzJoin')
-    } else {
-      if (this.state)
-      this.props.navigation.navigate('Blitz', {sound: this.state.sound});
-    }
+    this.switchModal('WIP');
   }
 
   playSound(byte) {
+    let sound = this.state.soundBytes;
     if (this.state.sound === 'on') {
       if (byte === 'startGame') {
-        this.state.soundBytes.startGameSound.play((success) => {
-          if (success) {
-            // Alert.alert('success')
-          } else {
-            // Alert.alert('error')
-          }
-        });
+        sound.startGameSound.play();
       } else if (byte === 'select') {
-        this.state.soundBytes.selectSound.play();
+        sound.selectSound.stop(() => {
+          sound.selectSound.play()
+        });
       } else if (byte === 'tileDrop') {
-        this.state.soundBytes.tileDropSound.play();
+        sound.tileDropSound.play();
       } else if (byte === 'reset') {
-        this.state.soundBytes.resetSound.play();
+        sound.resetSound.play();
       } else if (byte === 'win') {
-        this.state.soundBytes.winSound.play();
+        sound.winSound.play();
+      } else if (byte === 'gameloaded') {
+        sound.gameLoaded.play();
       }
     }
   }
 
   toggleSound() {
     if (this.state.sound === 'on') {
-      this.setState({sound: 'off'})
+      this.setState({sound: 'off'});
+      AsyncStorage.setItem('sound', 'off');
     } else {
-      this.setState({sound: 'on'})
+      this.setState({sound: 'on'}, () => {
+        this.playSound('select')
+      });
+      AsyncStorage.setItem('sound', 'on');
     }
   }
 
+  limit(num) {
+    if (num <= 0) return 0;
+    return num;
+  }
 
+  addToBasket(char, idx) {
+    let includes = -1;
+    for (let i = 0; i < this.state.easterEggs.length; i++) {
+      let egg = this.state.easterEggs[i];
+      if (JSON.stringify(egg) === JSON.stringify([char, idx])) {
+        includes = i;
+        break;
+      }
+    }
+
+    if (includes >= 0) {
+      this.state.easterEggs.splice(includes, 1);
+      this.setState({
+        easterEggs: this.state.easterEggs
+      })
+    } else {
+      this.setState({
+        easterEggs: [...this.state.easterEggs, [char, idx]]
+      }, () => this.activateEasterEgg())
+    }
+  }
+
+  checkEasterEggs(char, idx, shift) {
+    let top = 0;
+    if (shift) top = -15;
+
+    for (let i = 0; i < this.state.easterEggs.length; i++) {
+      let egg = this.state.easterEggs[i];
+      if (egg[0] === char && egg[1] === idx) {
+        return (
+          <Text style={{fontFamily: 'ArcadeClassic', fontSize: 65, color: 'red', top: top}}>
+            {char}
+          </Text>
+        )
+      }
+    }
+    return (
+      <Text style={{fontFamily: 'ArcadeClassic', fontSize: 65, color: 'white', top: top}}>
+        {char}
+      </Text>
+    )
+  }
+
+
+  activateEasterEgg() {
+    let easterEgg = '';
+    for (let i = 0; i < this.state.easterEggs.length; i++) {
+      let egg = this.state.easterEggs[i];
+      easterEgg += egg[0];
+    }
+
+    if (easterEgg === 'CAKE') {
+      this.animateCake();
+    } else if (easterEgg === 'ADPOKE') {
+      this.adBlock();
+    }
+  }
+
+  async adBlock() {
+    let adBlock = AsyncStorage.getItem('adblock');
+    if (adBlock === 'true') {
+      AsyncStorage.removeItem('adblock');
+      this.setState({adBlock: false})
+    } else {
+      AsyncStorage.setItem('adblock', 'true');
+      this.setState({adBlock: true})
+    }
+  }
+
+  animateCake() {
+    for (let i = 0 ; i < 7; i++) {
+      this.state.animatedCake[i] = {
+        value: new Animated.Value(0),
+        position: -900
+      }
+    }
+
+    const animations = this.state.animatedCake.map((cake, i) => {
+      return Animated.spring(
+        this.state.animatedCake[i].value,
+        {
+          toValue: 1,
+          speed: 1,
+          bounciness: 12,
+          useNativeDriver: true
+        }
+      )
+    })
+    Animated.stagger(100, animations).start()
+  }
 
 
   render() {
 
-    const boxes = Object.values(this.state.tileResponders);
+
     return (
       <View style={[styles.container, {backgroundColor: 'black'}]}>
         {!this.state.gameStarted ? (
           <View style={[styles.topBanner]}>
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', top: 15}}>
-              <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                <Text style={{fontFamily: 'ArcadeClassic', fontSize: 65, color: 'white'}}>
-                  ARCADE
-                </Text>
-                <Text style={{fontFamily: 'ArcadeClassic', fontSize: 65, color: 'white'}}>
-                  POKER
-                </Text>
-                <Text style={{fontFamily: 'ArcadeClassic', fontSize: 20, color: 'yellow'}}>
-                  highscore: {this.state.highscore}
-                </Text>
+            <View>
+              <Text style={{fontSize: 40, color: 'black'}}>
+                Jabroni
+              </Text>
+            </View>
+            <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+              <View style={{flexDirection: 'row'}}>
+                {this.state.title.map((char, i) => (
+                  <TouchableOpacity onPress ={() => this.addToBasket(char, i)} key={i}>
+                    {this.checkEasterEggs(char, i)}
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <View style={{flexDirection: 'row', zIndex: 1}}>
+                {this.state.title2.map((char, i) => (
+                  <TouchableOpacity onPress ={() => this.addToBasket(char, i)} key={i}>
+                    {this.checkEasterEggs(char, i, 'shift')}
+                  </TouchableOpacity>
+                ))}
               </View>
             </View>
           </View>
         ) : (null)}
         {!this.state.gameStarted ? (
-          <View style={{flex: 1, flexDirection: 'row', zIndex: 100, width: "40%", justifyContent: 'space-between', backgroundColor:'black'}}>
-            <TouchableOpacity onPress={() => this.loginToFacebookFromHomeScreen()}>
-              <Image source={require('../assets/facebook.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.switchModal('hof')}>
-              <Image source={require('../assets/trophy.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.startDuel()}>
-              <Image source={require('../assets/bolt.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
-            </TouchableOpacity>
+          <View style={{flex: 0.5, justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={{fontFamily: 'ArcadeClassic', fontSize: 20, color: 'gold'}}>
+              highscore:  {this.state.highscore}
+            </Text>
+          </View>
+        ) : (null)}
+        {!this.state.gameStarted ? (
+          <View style={{flex: 1}}>
+            <View style={{flex: 1, flexDirection: 'row', zIndex: 100, width: "40%", justifyContent: 'space-between'}}>
+              <TouchableOpacity onPress={() => this.loginToFacebookFromHomeScreen()}>
+                <Image source={require('../assets/icons/facebook.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => this.switchModal('hof')}>
+                <Image source={require('../assets/icons/trophy.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => this.startDuel()}>
+                <Image source={require('../assets/icons/info.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
+              </TouchableOpacity>
+            </View>
           </View>
         ) : (null)}
         {this.state.gameStarted ? (
           <View style={styles.showCase}>
             {this.state.showScore ? (
-              <View style={{flex: 1, justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'black', flexDirection: 'row', width: "90%"}}>
+              <View style={{flex: 1.5, justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'black', flexDirection: 'row', width: "90%", zIndex: 103}}>
                 <TouchableOpacity onPress={() => this.switchModal('hof')}>
-                  <Image source={require('../assets/trophy.png')} style={{width: 35, height: 35, resizeMode: 'contain'}}/>
+                  <Image source={require('../assets/icons/trophy.png')} style={{width: 35, height: 35, resizeMode: 'contain'}}/>
                 </TouchableOpacity>
                 <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                  <Text style={{fontSize: 40, color: 'black'}}>
+                    Jabroni
+                  </Text>
                   <Text style={{fontSize: 45, fontFamily: 'ArcadeClassic', color: 'white'}}>
                     Score: {this.state.totalscore}
                   </Text>
-                  <Text style={{fontFamily: 'ArcadeClassic', fontSize: 20, color: 'yellow'}}>
+                  <Text style={{fontFamily: 'ArcadeClassic', fontSize: 25, color: 'gold'}}>
                     highscore: {this.state.highscore}
+                  </Text>
+                  <Text style={{fontFamily: 'ArcadeClassic', fontSize: 20, color: 'white'}}>
+                    Cards  left: {this.limit(this.state.deck.length - 13)}
                   </Text>
                 </View>
                 <TouchableOpacity onPress={() => this.switchModal('main')}>
-                  <Image source={require('../assets/menu.png')} style={{width: 35, height: 35, resizeMode: 'contain'}}/>
+                  <Image source={require('../assets/icons/question.png')} style={{width: 33, height: 33, resizeMode: 'contain'}}/>
                 </TouchableOpacity>
               </View>
             ) : null}
-            <View style={{flex: 1, flexDirection: 'row'}}>
+            <View style={{flex: 1, flexDirection: 'row',}}>
               {this.state.pressed ? (
                 <View style={[styles.box, {zIndex: 100}]}>
                   <Image source={this.state.animatedHand[this.state.lastCompletedHand]} style={{width: 300, height: 100, resizeMode: 'contain'}}/>
                 </View>
               ) : (
                 this.state.hoverHand.map((card, i) => {
+                  let imageSize = 85;
+                  if (this.state.isAndroid) imageSize = 55
                   if (i%2 === 0) {
                     return (
                       <Image source={cardImages[card.value]}
-                        style={{top: 15, width: 85, height: 85, resizeMode: 'contain', marginRight: -15}}
+                        style={{top: 15, width: imageSize, height: imageSize, resizeMode: 'contain', marginRight: -15}}
                         key={i}
                       />
                     )
                   } else {
                     return (
                       <Image source={cardImages[card.value]}
-                        style={{top:40, width: 85, height: 85, resizeMode: 'contain', marginRight: -15}}
+                        style={{top:40, width: imageSize, height: imageSize, resizeMode: 'contain', marginRight: -15}}
                         key={i}
                       />
                     )
@@ -483,28 +614,28 @@ export default class Game extends React.Component {
             >
             <View style={styles.mainModal}>
               <TouchableOpacity onPress={() => this.switchModal('help')}>
-                <Text style={{fontFamily: 'ArcadeClassic', fontSize: 35}}>
+                <Text style={{fontFamily: 'ArcadeClassic', fontSize: 35, color: 'black'}}>
                   Help
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={this.toggleSound.bind(this)}>
                 {this.state.sound === 'on' ? (
-                  <Text style={{fontFamily: 'ArcadeClassic', fontSize: 35}}>
+                  <Text style={{fontFamily: 'ArcadeClassic', fontSize: 35, color: 'black'}}>
                     Sound  Off
                   </Text>
                 ) : (
-                  <Text style={{fontFamily: 'ArcadeClassic', fontSize: 35}}>
+                  <Text style={{fontFamily: 'ArcadeClassic', fontSize: 35, color: 'black'}}>
                     Sound  On
                   </Text>
                 )}
               </TouchableOpacity>
               <TouchableOpacity onPress={this.restartGame.bind(this)}>
-                <Text style={{fontFamily: 'ArcadeClassic', fontSize: 35}}>
+                <Text style={{fontFamily: 'ArcadeClassic', fontSize: 35, color: 'black'}}>
                   Restart
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={this.closeModal.bind(this)}>
-                <Text style={{fontFamily: 'ArcadeClassic', fontSize: 35}}>
+                <Text style={{fontFamily: 'ArcadeClassic', fontSize: 35, color: 'black'}}>
                   Continue
                 </Text>
               </TouchableOpacity>
@@ -515,7 +646,7 @@ export default class Game extends React.Component {
               animationIn={'slideInUp'}
               animationOut={'slideOutDown'}
             >
-              <View style={[styles.otherModal, {height: "80%"}]}>
+              <View style={[styles.otherModal, {height: "80%", backgroundColor: 'white'}]}>
                 <HelpModal close={this.closeModal.bind(this)}/>
               </View>
             </Modal>
@@ -542,7 +673,18 @@ export default class Game extends React.Component {
             <HallOfFameModal
               close={this.closeModal.bind(this)}
               newChallenger={this.state.newChallenger}
-              updateScore={this.updateScoreFromFaceBook.bind(this)}
+              updateScore={this.updateScoreFromAsyncStorage.bind(this)}
+            />
+          </View>
+        </Modal>
+        <Modal
+          isVisible={this.state.creditsModal}
+          animationIn={'slideInUp'}
+          animationOut={'slideOutDown'}
+        >
+          <View style={[styles.otherModal, {height: "65%"}]}>
+            <CreditsModal
+              close={this.closeModal.bind(this)}
             />
           </View>
         </Modal>
@@ -569,7 +711,7 @@ export default class Game extends React.Component {
         </View>
         {/* prop up the starting board... */}
         {!this.state.gameStarted ? (
-          <View style={{flex: 1, backgroundColor: 'purple'}}>
+          <View style={{flex: 1, backgroundColor: 'purple', zIndex: 0}}>
           </View>
         ) : (null)}
         <View style={styles.botBanner}>
@@ -583,11 +725,39 @@ export default class Game extends React.Component {
                 Jabroni Code
               </Text>
             ) : (
-              //ad space
-              null
+              this.state.adBlock ? (
+                null
+              ) : (
+                <AdMobBanner
+                  adSize="fullBanner"
+                  adUnitID={KEYS.adMob}
+                  onAdFailedToLoad={error => console.log(error)}
+                />
+              )
             )
           )}
         </View>
+        {!this.state.gameStarted ? (
+          <View style={{position: 'absolute', zIndex: 999, left: 10, top: height - 100, flexDirection: 'row'}}>
+            {this.state.animatedCake.map((cake, i) => {
+              return (
+                <Animated.View key={i} style={{
+                  transform: [{
+                    translateY: this.state.animatedCake[i].value.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [-600, 0]
+                    })
+                  }],
+                }}>
+                <Image
+                  source={require('../assets/icons/cake.png')}
+                  style={[{width: 50, height: 50, resizeMode: 'contain'}]}
+                />
+              </Animated.View>
+            )
+          })}
+        </View>
+        ) : ( null )}
         {/* {boxes.map((tiles, i) => {
           return (
             <View style={{width: 40, height: 55, top: tiles.y, left: tiles.x ,backgroundColor:'red', position: 'absolute', zIndex: 999}} key={i}/>
@@ -607,12 +777,11 @@ const styles = StyleSheet.create({
   },
   topBanner: {
     flex: 2,
-    flexDirection: 'row',
+    flexDirection: 'column',
     backgroundColor: 'black',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     width: "100%",
-    zIndex: 80
   },
   titleCard: {
     width: 200,
@@ -629,7 +798,7 @@ const styles = StyleSheet.create({
     zIndex: 100
   },
   gameContainer: {
-    flex: 4,
+    flex: 5,
     flexDirection: 'row',
     backgroundColor: 'black',
     width: "100%",
@@ -654,7 +823,7 @@ const styles = StyleSheet.create({
   },
   otherModal: {
     backgroundColor: 'white',
-    padding: 1,
+    padding: 2,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 4,

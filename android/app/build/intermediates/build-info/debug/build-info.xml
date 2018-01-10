@@ -3,12 +3,12 @@
     abi="x86"
     api-level="25"
     build-mode="FULL"
-    density="420dpi"
+    density="xxxhdpi"
     format="10"
     plugin-version="3.0.1"
-    timestamp="1515105094316"
+    timestamp="1515390218449"
     token="-709777596938074898"
-    verifier="FULL_BUILD_REQUESTED" >
+    verifier="COLD_SWAP_REQUESTED" >
 
     <task
         name="javac"
@@ -24,10 +24,10 @@
         duration="0" />
 
     <artifact
-        location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_8.apk"
+        location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/dep/dependencies.apk"
         type="SPLIT" />
     <artifact
-        location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_3.apk"
+        location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_0.apk"
         type="SPLIT" />
     <artifact
         location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_2.apk"
@@ -39,22 +39,22 @@
         location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_5.apk"
         type="SPLIT" />
     <artifact
-        location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/dep/dependencies.apk"
-        type="SPLIT" />
-    <artifact
-        location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_0.apk"
-        type="SPLIT" />
-    <artifact
-        location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_9.apk"
-        type="SPLIT" />
-    <artifact
-        location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_4.apk"
+        location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_6.apk"
         type="SPLIT" />
     <artifact
         location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_7.apk"
         type="SPLIT" />
     <artifact
-        location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_6.apk"
+        location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_4.apk"
+        type="SPLIT" />
+    <artifact
+        location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_3.apk"
+        type="SPLIT" />
+    <artifact
+        location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_9.apk"
+        type="SPLIT" />
+    <artifact
+        location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_8.apk"
         type="SPLIT" />
     <artifact
         location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/outputs/apk/debug/app-debug.apk"
@@ -62,13 +62,13 @@
 
     <build
         build-mode="FULL"
-        timestamp="1515105094316"
-        verifier="FULL_BUILD_REQUESTED" >
+        timestamp="1515390218449"
+        verifier="COLD_SWAP_REQUESTED" >
         <artifact
-            location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_8.apk"
+            location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/dep/dependencies.apk"
             type="SPLIT" />
         <artifact
-            location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_3.apk"
+            location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_0.apk"
             type="SPLIT" />
         <artifact
             location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_2.apk"
@@ -80,22 +80,22 @@
             location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_5.apk"
             type="SPLIT" />
         <artifact
-            location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/dep/dependencies.apk"
-            type="SPLIT" />
-        <artifact
-            location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_0.apk"
-            type="SPLIT" />
-        <artifact
-            location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_9.apk"
-            type="SPLIT" />
-        <artifact
-            location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_4.apk"
+            location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_6.apk"
             type="SPLIT" />
         <artifact
             location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_7.apk"
             type="SPLIT" />
         <artifact
-            location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_6.apk"
+            location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_4.apk"
+            type="SPLIT" />
+        <artifact
+            location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_3.apk"
+            type="SPLIT" />
+        <artifact
+            location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_9.apk"
+            type="SPLIT" />
+        <artifact
+            location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/split-apk/debug/slices/slice_8.apk"
             type="SPLIT" />
         <artifact
             location="/Users/admin/Arcade Poker/arcadepoker/android/app/build/outputs/apk/debug/app-debug.apk"

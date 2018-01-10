@@ -43,8 +43,8 @@ export default shuffledDeck = (mode) => {
   const DECK = [
     {
       value: "1♦",
-      image: require("../assets/cards/spades1.png"),
-      highlight: require("../assets/cards/spades1-highlight.png")
+      image: require("../assets/cards/diamond1.png"),
+      highlight: require("../assets/cards/diamond1-highlight.png")
     },
     {
       value: "2♦",
@@ -303,6 +303,7 @@ export default shuffledDeck = (mode) => {
     },
 
   ];
+
   if (mode === 'blitz') {
     let doubleDeck = [];
     for (let i = 0; i < 2; i++) {

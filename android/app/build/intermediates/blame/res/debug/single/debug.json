@@ -96,6 +96,10 @@
         "source": "/Users/admin/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.1.aar/2800583ee2977255a8b9a1d1e05f9884/res/drawable-hdpi-v4/abc_btn_radio_to_on_mtrl_000.png"
     },
     {
+        "merged": "/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/res/merged/debug/raw_startgame.wav.flat",
+        "source": "/Users/admin/Arcade Poker/arcadepoker/android/app/src/main/res/raw/startgame.wav"
+    },
+    {
         "merged": "/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/res/merged/debug/drawable-xhdpi-v4_com_facebook_tooltip_blue_topnub.png.flat",
         "source": "/Users/admin/.gradle/caches/transforms-1/files-1.1/facebook-login-4.29.0.aar/d28166a414e691b877e59477e65070f9/res/drawable-xhdpi-v4/com_facebook_tooltip_blue_topnub.png"
     },
@@ -282,6 +286,10 @@
     {
         "merged": "/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/res/merged/debug/layout_notification_template_big_media_custom.xml.flat",
         "source": "/Users/admin/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.0.1.aar/21aaacee9eb3875f04c4d2ad1f9494ef/res/layout/notification_template_big_media_custom.xml"
+    },
+    {
+        "merged": "/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/res/merged/debug/raw_win.wav.flat",
+        "source": "/Users/admin/Arcade Poker/arcadepoker/android/app/src/main/res/raw/win.wav"
     },
     {
         "merged": "/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/res/merged/debug/drawable-xxhdpi-v4_abc_textfield_search_activated_mtrl_alpha.9.png.flat",
@@ -708,6 +716,10 @@
         "source": "/Users/admin/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.1.aar/2800583ee2977255a8b9a1d1e05f9884/res/layout/abc_dialog_title_material.xml"
     },
     {
+        "merged": "/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/res/merged/debug/raw_select2.wav.flat",
+        "source": "/Users/admin/Arcade Poker/arcadepoker/android/app/src/main/res/raw/select2.wav"
+    },
+    {
         "merged": "/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/res/merged/debug/drawable-xxhdpi-v4_abc_scrubber_control_to_pressed_mtrl_005.png.flat",
         "source": "/Users/admin/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.1.aar/2800583ee2977255a8b9a1d1e05f9884/res/drawable-xxhdpi-v4/abc_scrubber_control_to_pressed_mtrl_005.png"
     },
@@ -952,6 +964,10 @@
         "source": "/Users/admin/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.1.aar/2800583ee2977255a8b9a1d1e05f9884/res/drawable-hdpi-v4/abc_ic_menu_cut_mtrl_alpha.png"
     },
     {
+        "merged": "/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/res/merged/debug/raw_tiledrop.wav.flat",
+        "source": "/Users/admin/Arcade Poker/arcadepoker/android/app/src/main/res/raw/tiledrop.wav"
+    },
+    {
         "merged": "/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/res/merged/debug/drawable-mdpi-v4_abc_text_select_handle_middle_mtrl_light.png.flat",
         "source": "/Users/admin/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.1.aar/2800583ee2977255a8b9a1d1e05f9884/res/drawable-mdpi-v4/abc_text_select_handle_middle_mtrl_light.png"
     },
@@ -1096,8 +1112,16 @@
         "source": "/Users/admin/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.1.aar/2800583ee2977255a8b9a1d1e05f9884/res/drawable/abc_list_selector_background_transition_holo_light.xml"
     },
     {
+        "merged": "/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/res/merged/debug/raw_select.wav.flat",
+        "source": "/Users/admin/Arcade Poker/arcadepoker/android/app/src/main/res/raw/select.wav"
+    },
+    {
         "merged": "/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/res/merged/debug/layout_com_facebook_device_auth_dialog_fragment.xml.flat",
         "source": "/Users/admin/.gradle/caches/transforms-1/files-1.1/facebook-common-4.29.0.aar/fb2017f4495ac2fa27ad83fb9a7282f6/res/layout/com_facebook_device_auth_dialog_fragment.xml"
+    },
+    {
+        "merged": "/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/res/merged/debug/raw_notvalid.wav.flat",
+        "source": "/Users/admin/Arcade Poker/arcadepoker/android/app/src/main/res/raw/notvalid.wav"
     },
     {
         "merged": "/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/res/merged/debug/drawable-mdpi-v4_abc_ic_menu_cut_mtrl_alpha.png.flat",
@@ -1618,6 +1642,10 @@
     {
         "merged": "/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/res/merged/debug/drawable-xhdpi-v4_abc_btn_check_to_on_mtrl_000.png.flat",
         "source": "/Users/admin/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.1.aar/2800583ee2977255a8b9a1d1e05f9884/res/drawable-xhdpi-v4/abc_btn_check_to_on_mtrl_000.png"
+    },
+    {
+        "merged": "/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/res/merged/debug/raw_lose.wav.flat",
+        "source": "/Users/admin/Arcade Poker/arcadepoker/android/app/src/main/res/raw/lose.wav"
     },
     {
         "merged": "/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/res/merged/debug/drawable-mdpi-v4_com_facebook_tooltip_black_bottomnub.png.flat",

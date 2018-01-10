@@ -19,41 +19,41 @@ export default calculateScore = (array) => {
     return ['royalFlush', 2000]
   }
   if (sameSuits && isOrdered) {
-    return ['straightFlush', 1000]
+    return ['straightFlush', 1500]
   }
   if (frequencies[0] === 4) {
-    return ['fourOfAKind', 500]
+    return ['fourOfAKind', 1000]
   }
   if (frequencies[0] === 3 && frequencies[1] === 2) {
-    return ['fullHouse', 250]
+    return ['fullHouse', 500]
   }
   if (sameSuits) {
-    return ['flush', 100]
+    return ['flush', 250]
   }
   if (isOrdered) {
-    return ['straight', 50]
+    return ['straight', 150]
   }
   if (frequencies[0] === 3) {
-    return ['threeOfAKind', 25]
+    return ['threeOfAKind', 75]
   }
   if (frequencies[0] === 2 && frequencies[1] === 2) {
-    return ['twoPair', 20]
+    return ['twoPair', 50]
   }
   if (frequencies[0] === 2) {
-    return ['onePair', 10]
+    return ['onePair', 25]
   } else {
-    return ['highCard', 5]
+    return ['highCard', 10]
   }
 
 }
 
 checkIfOrdered = (arr) => {
   for(let i = 1; i < 5; i++) {
-    // these can be in the same if statement because it will short out before
-    // it reaches the statement after &&
-    if (arr[i] !== arr[i - 1] + 1 ) {
-      if (arr[i - 1] !== 1) return false
+    if (arr[i] !== arr[i - 1] + 1) {
+      if (arr[i - 1] !== 1 || arr[i] !== 10) {
+        return false;
+      }
     }
   }
-  return true
-}
+  return true;
+};

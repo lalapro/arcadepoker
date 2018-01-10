@@ -125,22 +125,14 @@ export default class HallOfFame extends React.Component {
     }
   }
 
-  async getFriendStats() {
-    const fbId = await AsyncStorage.getItem('fbId');
-    const fbName = await AsyncStorage.getItem('fbName');
-    let highscore = await AsyncStorage.getItem('highscore');
+  getFriendStats() {
     facebookLogin().then(user => {
-      this.setState({ownerName: fbName})
-      highscore = highscore || 0;
-      this.props.updateScore(user.id);
-      this.getScoresFromFriends(user.id, user.name, highscore);
+      if (user.id !== undefined) {
+        this.setState({ownerName: user.name})
+        this.props.updateScore(user);
+        this.getScoresFromFriends(user.id, user.name, user.highscore);
+      }
     })
-  }
-
-  getFBPics = async (id) => {
-    const response3 = await fetch(`https://graph.facebook.com/${id}/picture?type=normal`)
-    let pic = await response3.url;
-    return pic
   }
 
 
@@ -185,13 +177,10 @@ export default class HallOfFame extends React.Component {
     this.setState({friendLeaderBoard, youIndex})
   }
 
-  scrollAnimate(e) {
-    //TODO need to fix
-    console.log(e.nativeEvent)
-    let positionToAdd = Math.round(this.state.positionToInject/10)*10
-    if (this.state.positionToInject >= 0) {
-      let y = e.nativeEvent.target;
-      y = (y / e.nativeEvent.layout.height) * (this.state.positionToInject) + positionToAdd;
+  scrollAnimate(w, h) {
+    let inject = this.state.positionToInject;
+    if (inject > 10) {
+      let y = h * (inject/100) - 50;
       this.refs.scrollz.scrollTo({x: 0, y: y, animated: true})
     }
   }
@@ -206,7 +195,11 @@ export default class HallOfFame extends React.Component {
       let highscore = this.state.newChallenger.score;
       let name = this.state.fakeText;
       let timestamp = moment().format('MMMM Do YYYY, h:mm:ss a');
-      if (name === '') name = 'magikarp'
+      if (name === ''){
+        let random = ['magikarp', 'oddish', 'squirtle', 'jabroni', 'bulbasaur'];
+        let index = this.getRandomIndex(0, random.length);
+        name = random[index];
+      }
       scoreToSave = [deviceId, name]
       database.highscores.child(highscore).child(timestamp).set(scoreToSave);
       this.setState({submitted:true}, () => this.props.close('over'))
@@ -214,9 +207,17 @@ export default class HallOfFame extends React.Component {
     } else {
       clearInterval(this.insertName);
       console.log('closing?')
+      this.setState({isMounted: false})
       this.props.close();
     }
   }
+
+  getRandomIndex(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
+  }
+
 
   async checkIfPersonalHigh() {
     let personalHigh = await AsyncStorage.getItem('highscore');
@@ -338,7 +339,8 @@ export default class HallOfFame extends React.Component {
         style={{position: 'absolute', top: 0, left: 0, bottom: 0, right: 0}}
         contentContainerStyle={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: "100%"}}
         ref={"scrollz"}
-        onLayout={(e) => this.scrollAnimate(e)}
+        // onLayout={(e) => this.scrollAnimate(e)}
+        onContentSizeChange={(w,h) => this.scrollAnimate(w, h)}
       >
         <View style={[styles.box, {width: "100%"}]}>
           {this.state.leaderBoard.map((hs, i) => (
@@ -361,13 +363,13 @@ export default class HallOfFame extends React.Component {
                     {this.state.textArray.map((char, x) => {
                       if (char === ' _') {
                         return (
-                          <Text style={[styles.font, {fontSize: 14, color: 'yellow'}]} key={x} onPress={this.reFocus.bind(this)}>
+                          <Text style={[styles.font, {fontSize: 14, color: 'gold'}]} key={x} onPress={this.reFocus.bind(this)}>
                             {char}
                           </Text>
                         )
                       } else {
                         return (
-                          <Text style={[styles.font, {fontSize: 14, color: 'yellow'}]} key={x} onPress={this.reFocus.bind(this)}>
+                          <Text style={[styles.font, {fontSize: 14, color: 'gold'}]} key={x} onPress={this.reFocus.bind(this)}>
                             {char}
                           </Text>
                         )
@@ -375,7 +377,7 @@ export default class HallOfFame extends React.Component {
                     })}
                   </View>
                 ) : (
-                  <Text style={[styles.font, {fontSize: 14, color: 'yellow'}]} key={i}>
+                  <Text style={[styles.font, {fontSize: 14, color: 'gold'}]} key={i}>
                     {this.state.fakeText}
                   </Text>
                 )
@@ -385,7 +387,7 @@ export default class HallOfFame extends React.Component {
               return (
                 <View key={i} style={{flexDirection: 'row'}}>
                   <Image
-                    source={require('../assets/trophy.png')}
+                    source={require('../assets/icons/trophy.png')}
                     style={{top:2, left: -15, width: 10, height: 10, resizeMode: 'contain', position: 'absolute'}}
                   />
                   <Text style={[styles.font, {fontSize: 14, color: this.checkIfOwner(hs)}]} key={i}>
@@ -509,8 +511,8 @@ export default class HallOfFame extends React.Component {
           </View>
         </View>
       ) : (
-        <View>
-          <Text style={[styles.font, {color: 'black'}]}>
+        <View style={styles.box}>
+          <Text style={[styles.font, {color: 'white'}]}>
             Loading...
           </Text>
         </View>
@@ -531,7 +533,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width: "90%"
+    width: "100%",
+    backgroundColor: 'black'
   },
   font: {
     fontFamily: 'ArcadeClassic',

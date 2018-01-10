@@ -4,92 +4,135 @@
 <dict>
 	<key>files</key>
 	<dict>
-		<key>Base.lproj/LaunchScreen.nib</key>
+		<key>AppIcon20x20@2x.png</key>
 		<data>
-		XdcAJAxfiLLZAToLWxIuc7Fy2qE=
+		sRC9uvkG5IxxY/I/5iVbfBAh8MQ=
 		</data>
-		<key>Frameworks/IDEBundleInjection.framework/IDEBundleInjection</key>
+		<key>AppIcon20x20@3x.png</key>
 		<data>
-		ooz0sIAaLKBGoFU5iKq8DR11NmY=
+		Hb0lkQL4YubQJNfmfiYj8YVbUnc=
 		</data>
-		<key>Frameworks/IDEBundleInjection.framework/Info.plist</key>
+		<key>AppIcon29x29@2x.png</key>
 		<data>
-		R/knOPjsjrJNiVtUa2S4kYE749M=
+		u2VzcD8ve/ecAnGNOywrH3Bnbkg=
 		</data>
-		<key>Frameworks/IDEBundleInjection.framework/_CodeSignature/CodeResources</key>
+		<key>AppIcon29x29@3x.png</key>
 		<data>
-		qcVgsOCxIzxwcNXLWXgRrNjnuT8=
+		FLBavQLp+GdSlhh+BRrG5LQW/DU=
 		</data>
-		<key>Frameworks/IDEBundleInjection.framework/version.plist</key>
+		<key>AppIcon40x40@2x.png</key>
 		<data>
-		K7jOt4uC+lqy/StneXlQVk21axY=
+		VyXggYr2JrBBolifgQ/uzFfWihA=
 		</data>
-		<key>Frameworks/XCTest.framework/Info.plist</key>
+		<key>AppIcon40x40@3x.png</key>
 		<data>
-		CYfyvPIGUR84QvCD7SuNDvG6Bxc=
+		Dt3hWZTt5JJt40Jg7CNFqgsrm/Y=
 		</data>
-		<key>Frameworks/XCTest.framework/XCTest</key>
+		<key>AppIcon60x60@2x.png</key>
 		<data>
-		M3EBma1BpAxt7iGIjYcrm9BnNOc=
+		Dt3hWZTt5JJt40Jg7CNFqgsrm/Y=
 		</data>
-		<key>Frameworks/XCTest.framework/_CodeSignature/CodeResources</key>
+		<key>AppIcon60x60@3x.png</key>
 		<data>
-		5EUn1qFgVTwSkfSLCubcLwgrx0c=
+		eB9vZuAY4ZmiknHcW7JYf3JWvko=
 		</data>
-		<key>Frameworks/XCTest.framework/en.lproj/InfoPlist.strings</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			TuBj57ZP6zBqcL9HttO2Rucaw9E=
-			</data>
-			<key>optional</key>
-			<true/>
-		</dict>
-		<key>Frameworks/XCTest.framework/version.plist</key>
+		<key>ArcadeClassic.ttf</key>
 		<data>
-		Etc/8BPenX54rv1uBx24u4bnqTg=
+		3GLPZKQudZpH8xScrzkYS1E3Tko=
+		</data>
+		<key>Assets.car</key>
+		<data>
+		V0mLH1IMQJOfBWHA2aYThtwTmps=
 		</data>
 		<key>Info.plist</key>
 		<data>
-		5ADonW2un8r5nWIz/l1vW/nht/c=
+		aJAENdqeNz7sIpvIOvvL9kKliAc=
+		</data>
+		<key>LaunchImage-1100-Landscape-2436h@3x.png</key>
+		<data>
+		sa9IuboaNyrhsx8GZBkTljb2uR8=
+		</data>
+		<key>LaunchImage-1100-Portrait-2436h@3x.png</key>
+		<data>
+		E9rdzfSM76Qtisvyw0D0t7osOHw=
+		</data>
+		<key>LaunchImage-568h@2x.png</key>
+		<data>
+		64hiAwuDSmvm49VlJsn79WXso8M=
+		</data>
+		<key>LaunchImage-700-568h@2x.png</key>
+		<data>
+		RjhjrL7laqzvDdCiueLsVJH6vUc=
+		</data>
+		<key>LaunchImage-700-Landscape@2x~ipad.png</key>
+		<data>
+		3b2ppRopqh2hz0S3NZbsZN9T+3I=
+		</data>
+		<key>LaunchImage-700-Landscape~ipad.png</key>
+		<data>
+		J1V90AlX3i/lb3eXAzw7r9Nio0s=
+		</data>
+		<key>LaunchImage-700-Portrait@2x~ipad.png</key>
+		<data>
+		GWEGV/dtppL8PdV4hekNUYHhuRs=
+		</data>
+		<key>LaunchImage-700-Portrait~ipad.png</key>
+		<data>
+		Ox1w4O1IaZ1flwWroN6Qe1Vix/8=
+		</data>
+		<key>LaunchImage-700@2x.png</key>
+		<data>
+		sI1oSHDfqQIwYtyO26QXDqJvaQo=
+		</data>
+		<key>LaunchImage-800-667h@2x.png</key>
+		<data>
+		Ks7wGAP4RypZpH70ArmIR993MF0=
+		</data>
+		<key>LaunchImage-800-Landscape-736h@3x.png</key>
+		<data>
+		l1zJmj7bF+WNhZcqwbpX+vS+mtY=
+		</data>
+		<key>LaunchImage-800-Portrait-736h@3x.png</key>
+		<data>
+		6mZymi7OwjR2QQ1nL/cqxgd6MCE=
+		</data>
+		<key>LaunchImage-Landscape@2x~ipad.png</key>
+		<data>
+		v31kKBv3oE5M4le8843JD0JQ7C8=
+		</data>
+		<key>LaunchImage-Landscape~ipad.png</key>
+		<data>
+		EH8wjx2SH83AuEiTY5vPSfvsAEE=
+		</data>
+		<key>LaunchImage-Portrait@2x~ipad.png</key>
+		<data>
+		55jnyykFJgrPvMBCK/lPYaHGr3c=
+		</data>
+		<key>LaunchImage-Portrait~ipad.png</key>
+		<data>
+		Z0wCdEGaZWG/gWFldLcwkOpOVWw=
+		</data>
+		<key>LaunchImage.png</key>
+		<data>
+		IEy2rdly5e2unW2dD2RGaxVaz3w=
+		</data>
+		<key>LaunchImage@2x.png</key>
+		<data>
+		Tm21BEKPgElIGMe+Mmkw4OrwHe4=
 		</data>
 		<key>PkgInfo</key>
 		<data>
 		n57qDP4tZfLD1rCS43W0B4LQjzE=
 		</data>
-		<key>PlugIns/arcadepokerTests.xctest.dSYM/Contents/Info.plist</key>
+		<key>gameloaded.wav</key>
 		<data>
-		glg4KjXJObxdft7WphXPSBKq5SI=
-		</data>
-		<key>PlugIns/arcadepokerTests.xctest.dSYM/Contents/Resources/DWARF/arcadepokerTests</key>
-		<data>
-		LBD5C8ZVBwT7BCqsdbIWEwgq1P8=
-		</data>
-		<key>PlugIns/arcadepokerTests.xctest/Info.plist</key>
-		<data>
-		P7z6OYEXxuZBAsodq7Yp6pwr0Tw=
-		</data>
-		<key>PlugIns/arcadepokerTests.xctest/_CodeSignature/CodeResources</key>
-		<data>
-		/hlxvih+V+ZKuZR+PFYyEtWIA/E=
-		</data>
-		<key>PlugIns/arcadepokerTests.xctest/arcadepokerTests</key>
-		<data>
-		ZExEZAddTVz3QX26wEywGJi0U9k=
-		</data>
-		<key>arcadeclassic.regular.ttf</key>
-		<data>
-		3GLPZKQudZpH8xScrzkYS1E3Tko=
-		</data>
-		<key>game-over.regular.ttf</key>
-		<data>
-		TY3bzm/ZfZCZG4Hh5h8MH+ILP7c=
+		8FFqc2ZE6ypHRiJQmn5/wfdz3+c=
 		</data>
 		<key>lose.wav</key>
 		<data>
 		0Li3upQX7S0yhcnl+onNV0yWpME=
 		</data>
-		<key>notValid.wav</key>
+		<key>notvalid.wav</key>
 		<data>
 		6u8w3C/OaJfa8B4b+xRyWaQx2n4=
 		</data>
@@ -101,11 +144,11 @@
 		<data>
 		lYZDpEv2N6jQudg5opD6SiDQr0s=
 		</data>
-		<key>startGame.wav</key>
+		<key>startgame.wav</key>
 		<data>
 		SdtlhT8a0NsB/c7c0QKlLuQ6WUU=
 		</data>
-		<key>tileDrop.wav</key>
+		<key>tiledrop.wav</key>
 		<data>
 		FW7qh6FBshg9N0XpgCv4dcs8nsM=
 		</data>
@@ -116,174 +159,95 @@
 	</dict>
 	<key>files2</key>
 	<dict>
-		<key>Base.lproj/LaunchScreen.nib</key>
+		<key>AppIcon20x20@2x.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			XdcAJAxfiLLZAToLWxIuc7Fy2qE=
+			sRC9uvkG5IxxY/I/5iVbfBAh8MQ=
 			</data>
 			<key>hash2</key>
 			<data>
-			jrCPg5mkBE+9F4nnpinPG082SO8qJ9M0Rp3WWS4vdec=
+			FsSEKn7Hk6sKkhKnJbZTM2jTkUy/CvaFpKWqFcLJWLs=
 			</data>
 		</dict>
-		<key>Frameworks/IDEBundleInjection.framework/IDEBundleInjection</key>
+		<key>AppIcon20x20@3x.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			ooz0sIAaLKBGoFU5iKq8DR11NmY=
+			Hb0lkQL4YubQJNfmfiYj8YVbUnc=
 			</data>
 			<key>hash2</key>
 			<data>
-			QTZkTlnemyTcrFMb3v3GdQcfmpRodaOjtevd5TjxiiY=
+			uAD6U6D220qkoQPstQWvpTZ4VdSDmxCOUBZt2G4Jfzk=
 			</data>
 		</dict>
-		<key>Frameworks/IDEBundleInjection.framework/Info.plist</key>
+		<key>AppIcon29x29@2x.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			R/knOPjsjrJNiVtUa2S4kYE749M=
+			u2VzcD8ve/ecAnGNOywrH3Bnbkg=
 			</data>
 			<key>hash2</key>
 			<data>
-			wLDjbULmM78l0rN5jh2/yPax234qVZL29OQBQmdYmOU=
+			5+Jvik81S1oM+4GY+m534mgQynsWS6/GyIM6poHNxVk=
 			</data>
 		</dict>
-		<key>Frameworks/IDEBundleInjection.framework/_CodeSignature/CodeResources</key>
+		<key>AppIcon29x29@3x.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			qcVgsOCxIzxwcNXLWXgRrNjnuT8=
+			FLBavQLp+GdSlhh+BRrG5LQW/DU=
 			</data>
 			<key>hash2</key>
 			<data>
-			ZARlo4LD/z4nYhaCEocjb6nPjuZDCrLsQzn0n4GVr3s=
+			xDj4BSLmzoLQF0Lcwnel07B7Azy988e3CN20luxC+sE=
 			</data>
 		</dict>
-		<key>Frameworks/IDEBundleInjection.framework/version.plist</key>
+		<key>AppIcon40x40@2x.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			K7jOt4uC+lqy/StneXlQVk21axY=
+			VyXggYr2JrBBolifgQ/uzFfWihA=
 			</data>
 			<key>hash2</key>
 			<data>
-			VzM0aDQjkmLy+IyPasdn9DeGkOOTuNMbKUMz+3efAaU=
+			xVCTOJrUuDFMSXVvOyaoSli8h9q0mFw2PFWWiYEgfrY=
 			</data>
 		</dict>
-		<key>Frameworks/XCTest.framework/Info.plist</key>
+		<key>AppIcon40x40@3x.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			CYfyvPIGUR84QvCD7SuNDvG6Bxc=
+			Dt3hWZTt5JJt40Jg7CNFqgsrm/Y=
 			</data>
 			<key>hash2</key>
 			<data>
-			Xsgm2dBly62EneiB04ryti89smi53XIXAOtYLFyW4ZE=
+			ZsAEaDyf+eYGXUaDnbWObcNK0LdiHMvzWqKHFXi7dDc=
 			</data>
 		</dict>
-		<key>Frameworks/XCTest.framework/XCTest</key>
+		<key>AppIcon60x60@2x.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			M3EBma1BpAxt7iGIjYcrm9BnNOc=
+			Dt3hWZTt5JJt40Jg7CNFqgsrm/Y=
 			</data>
 			<key>hash2</key>
 			<data>
-			qAlGOWS6ltLA/WrYd4Rz6EHPivttCiNu41NTW7ulBAI=
+			ZsAEaDyf+eYGXUaDnbWObcNK0LdiHMvzWqKHFXi7dDc=
 			</data>
 		</dict>
-		<key>Frameworks/XCTest.framework/_CodeSignature/CodeResources</key>
+		<key>AppIcon60x60@3x.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			5EUn1qFgVTwSkfSLCubcLwgrx0c=
+			eB9vZuAY4ZmiknHcW7JYf3JWvko=
 			</data>
 			<key>hash2</key>
 			<data>
-			55ZdMLgNGz7Q67XNAv/M4f4uXy0R2d5+tlHRhlkL8t4=
+			xiQUoWogUrA2JZzhXkeQLLawg799GGdPMCx4Kbcd4Fg=
 			</data>
 		</dict>
-		<key>Frameworks/XCTest.framework/en.lproj/InfoPlist.strings</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			TuBj57ZP6zBqcL9HttO2Rucaw9E=
-			</data>
-			<key>hash2</key>
-			<data>
-			89RGkjZaKuewYnjpzwhIswhqfrU8+pcEXqM/DHVrUmo=
-			</data>
-			<key>optional</key>
-			<true/>
-		</dict>
-		<key>Frameworks/XCTest.framework/version.plist</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			Etc/8BPenX54rv1uBx24u4bnqTg=
-			</data>
-			<key>hash2</key>
-			<data>
-			Jh5i9giCFfo5GhN25CjMKdDJ6Kdlz/p4L95RITR+WeA=
-			</data>
-		</dict>
-		<key>PlugIns/arcadepokerTests.xctest.dSYM/Contents/Info.plist</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			glg4KjXJObxdft7WphXPSBKq5SI=
-			</data>
-			<key>hash2</key>
-			<data>
-			N1lHUsK44E/qe3rmjxWrSG/xwrmLrOy2hyfarVmJTs4=
-			</data>
-		</dict>
-		<key>PlugIns/arcadepokerTests.xctest.dSYM/Contents/Resources/DWARF/arcadepokerTests</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			LBD5C8ZVBwT7BCqsdbIWEwgq1P8=
-			</data>
-			<key>hash2</key>
-			<data>
-			NBAYrKKNtXUA1xssE6QKj7nKuO8MOWEewUT+U5yAn0g=
-			</data>
-		</dict>
-		<key>PlugIns/arcadepokerTests.xctest/Info.plist</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			P7z6OYEXxuZBAsodq7Yp6pwr0Tw=
-			</data>
-			<key>hash2</key>
-			<data>
-			SZAj8EamrUiEt5HD+XCLAWY/RGIRqRR/kCt0YV8RCKs=
-			</data>
-		</dict>
-		<key>PlugIns/arcadepokerTests.xctest/_CodeSignature/CodeResources</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			/hlxvih+V+ZKuZR+PFYyEtWIA/E=
-			</data>
-			<key>hash2</key>
-			<data>
-			ez70Bbu+BiSZchNt4fTvcTTeerINJy4rIsQgro4pyFk=
-			</data>
-		</dict>
-		<key>PlugIns/arcadepokerTests.xctest/arcadepokerTests</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			ZExEZAddTVz3QX26wEywGJi0U9k=
-			</data>
-			<key>hash2</key>
-			<data>
-			PRioFgBVu6rz7ViDPHJlQ9tXG+DpRPZusY2rIbI/PtQ=
-			</data>
-		</dict>
-		<key>arcadeclassic.regular.ttf</key>
+		<key>ArcadeClassic.ttf</key>
 		<dict>
 			<key>hash</key>
 			<data>
@@ -294,15 +258,224 @@
 			rxrd6uBRoxO8wZZM7IleESp6BslBrI92lOSyeEQsBIw=
 			</data>
 		</dict>
-		<key>game-over.regular.ttf</key>
+		<key>Assets.car</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			TY3bzm/ZfZCZG4Hh5h8MH+ILP7c=
+			V0mLH1IMQJOfBWHA2aYThtwTmps=
 			</data>
 			<key>hash2</key>
 			<data>
-			r6D6SeV2B94mKh6l+vg2tA6UHkIhZGTuCOQTl13aOqM=
+			7XHFNn2KV6bcLU5PXuUdFvknhy5AC8RPECmpBY8treg=
+			</data>
+		</dict>
+		<key>LaunchImage-1100-Landscape-2436h@3x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			sa9IuboaNyrhsx8GZBkTljb2uR8=
+			</data>
+			<key>hash2</key>
+			<data>
+			QmJOXAr0k30VwLA2FNnVDiL/Jfs9fRCLrjTZARIZKjQ=
+			</data>
+		</dict>
+		<key>LaunchImage-1100-Portrait-2436h@3x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			E9rdzfSM76Qtisvyw0D0t7osOHw=
+			</data>
+			<key>hash2</key>
+			<data>
+			3LBLGOH4MynLPWil0/p5cJbx7tcXLHiFLq+V3Z0p9ig=
+			</data>
+		</dict>
+		<key>LaunchImage-568h@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			64hiAwuDSmvm49VlJsn79WXso8M=
+			</data>
+			<key>hash2</key>
+			<data>
+			jC5YtrJlMaLOn2dU78hIts3DQOH593zAm9hvbVFRwu0=
+			</data>
+		</dict>
+		<key>LaunchImage-700-568h@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			RjhjrL7laqzvDdCiueLsVJH6vUc=
+			</data>
+			<key>hash2</key>
+			<data>
+			IttqSs4UNLNOTQjo8f3B4LxE4QXYAyAXp68nnxO/dGc=
+			</data>
+		</dict>
+		<key>LaunchImage-700-Landscape@2x~ipad.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			3b2ppRopqh2hz0S3NZbsZN9T+3I=
+			</data>
+			<key>hash2</key>
+			<data>
+			ZIb6EMsylv7LoX6rdXdCTGowP+8cJbjlFuUZQ/VDLYY=
+			</data>
+		</dict>
+		<key>LaunchImage-700-Landscape~ipad.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			J1V90AlX3i/lb3eXAzw7r9Nio0s=
+			</data>
+			<key>hash2</key>
+			<data>
+			tPk2w1PkoBdZEZTnwIYH+xfJO4tRduLwDSetVH4lGQI=
+			</data>
+		</dict>
+		<key>LaunchImage-700-Portrait@2x~ipad.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			GWEGV/dtppL8PdV4hekNUYHhuRs=
+			</data>
+			<key>hash2</key>
+			<data>
+			9fVw6H9ViYFX02fgsvShY6xaJXy0R7uvqVwSp9A2z44=
+			</data>
+		</dict>
+		<key>LaunchImage-700-Portrait~ipad.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Ox1w4O1IaZ1flwWroN6Qe1Vix/8=
+			</data>
+			<key>hash2</key>
+			<data>
+			s5JJRophlMKgWYUkQxaqkbv7L7qu4pk5P479u+Pkzso=
+			</data>
+		</dict>
+		<key>LaunchImage-700@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			sI1oSHDfqQIwYtyO26QXDqJvaQo=
+			</data>
+			<key>hash2</key>
+			<data>
+			6eiewiBcPZJPpuEJHw231q0puFeV2907BHikC+se3Ws=
+			</data>
+		</dict>
+		<key>LaunchImage-800-667h@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Ks7wGAP4RypZpH70ArmIR993MF0=
+			</data>
+			<key>hash2</key>
+			<data>
+			R2kUK2gigWzxznqYz51kH0DmCBqXpWB7oc4Xgro77oQ=
+			</data>
+		</dict>
+		<key>LaunchImage-800-Landscape-736h@3x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			l1zJmj7bF+WNhZcqwbpX+vS+mtY=
+			</data>
+			<key>hash2</key>
+			<data>
+			xI3BGyg6pkLp2FxEZsAR35JKZkbpH91N7Mmu/iL0SF4=
+			</data>
+		</dict>
+		<key>LaunchImage-800-Portrait-736h@3x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			6mZymi7OwjR2QQ1nL/cqxgd6MCE=
+			</data>
+			<key>hash2</key>
+			<data>
+			D0KwAN5PFxew8eR9tDlKIRBuLIoHBWj1z2x33pMUjVc=
+			</data>
+		</dict>
+		<key>LaunchImage-Landscape@2x~ipad.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			v31kKBv3oE5M4le8843JD0JQ7C8=
+			</data>
+			<key>hash2</key>
+			<data>
+			JaT1eHKsXexpePyZxC4NpY9+/h8VzZr8U4dVV+dw35s=
+			</data>
+		</dict>
+		<key>LaunchImage-Landscape~ipad.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			EH8wjx2SH83AuEiTY5vPSfvsAEE=
+			</data>
+			<key>hash2</key>
+			<data>
+			qTH5opnkatjUqeKaAD91o612iQA3PP0xq8h+DCzJ5KQ=
+			</data>
+		</dict>
+		<key>LaunchImage-Portrait@2x~ipad.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			55jnyykFJgrPvMBCK/lPYaHGr3c=
+			</data>
+			<key>hash2</key>
+			<data>
+			svS+TLUPkKCUue3VgAkYfDFQdXGPDuY9uadXScxpBmM=
+			</data>
+		</dict>
+		<key>LaunchImage-Portrait~ipad.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Z0wCdEGaZWG/gWFldLcwkOpOVWw=
+			</data>
+			<key>hash2</key>
+			<data>
+			3rXBUliSpkm8GodMpeJVX6AteWe/7w0wcJgJuU+sLlQ=
+			</data>
+		</dict>
+		<key>LaunchImage.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			IEy2rdly5e2unW2dD2RGaxVaz3w=
+			</data>
+			<key>hash2</key>
+			<data>
+			BcTkVy4UWbF6nfZ+POeoT7ohknKzQqSj9ZNI8XdocrQ=
+			</data>
+		</dict>
+		<key>LaunchImage@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Tm21BEKPgElIGMe+Mmkw4OrwHe4=
+			</data>
+			<key>hash2</key>
+			<data>
+			ZFlukQEOmy3vY9kfYGvn6+XBfeuYGRBn6h0ohIyU6lQ=
+			</data>
+		</dict>
+		<key>gameloaded.wav</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			8FFqc2ZE6ypHRiJQmn5/wfdz3+c=
+			</data>
+			<key>hash2</key>
+			<data>
+			NQUPJNjY6nDv7GvuG3yXzGukrHDa7Xc29gQHT+l8yTk=
 			</data>
 		</dict>
 		<key>lose.wav</key>
@@ -316,7 +489,7 @@
 			y9rOK65DqdEXBPKhkL9RXVuw4RQtvbKZejTaHL+Sr34=
 			</data>
 		</dict>
-		<key>notValid.wav</key>
+		<key>notvalid.wav</key>
 		<dict>
 			<key>hash</key>
 			<data>
@@ -349,7 +522,7 @@
 			asbkyYc6yvbvTImJZV9T9M7BLZh3hNBiI6ZZck0Lywo=
 			</data>
 		</dict>
-		<key>startGame.wav</key>
+		<key>startgame.wav</key>
 		<dict>
 			<key>hash</key>
 			<data>
@@ -360,7 +533,7 @@
 			cjKzsZZT+P7cO6B8dCNtBaIozlnzapwwUwizNBOlNtw=
 			</data>
 		</dict>
-		<key>tileDrop.wav</key>
+		<key>tiledrop.wav</key>
 		<dict>
 			<key>hash</key>
 			<data>
