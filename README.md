@@ -17,7 +17,9 @@ Compete with your friends and put your name onto the leaderboard!
 
 ## Screenshots
 
-![Alt text](https://i.imgur.com/g6reX7S.jpg "Home Screen" =450x975)
-![Alt text](https://i.imgur.com/M6yfAnC.png "Drag 5 tiles to complete a hand!" =450x975)
-![Alt text](https://i.imgur.com/jH9JpUa.png "Earn points based on your hand strength" =450x975)
-![Alt text](https://i.imgur.com/UYdaxKs.png "Get on the leaderboard and play against your friends!" =450x975)
+<div style="width:100%">
+  <img src="https://i.imgur.com/g6reX7S.jpg" width="24%"/>
+  <img src="https://i.imgur.com/M6yfAnC.png" width="24%"/>
+  <img src="https://i.imgur.com/jH9JpUa.png" width="24%"/>
+  <img src="https://i.imgur.com/UYdaxKs.png" width="24%"/>
+</div>
