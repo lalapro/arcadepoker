@@ -541,7 +541,7 @@ export default class Game extends React.Component {
         ) : (null)}
         {!this.state.gameStarted ? (
           <View style={{flex: 1}}>
-            <View style={{flex: 1, flexDirection: 'row', zIndex: 100, width: "40%", justifyContent: 'space-between'}}>
+            <View style={{flex: 1, flexDirection: 'row', zIndex: 100, justifyContent: 'space-between', width: "40%"}}>
               <TouchableOpacity onPress={() => this.loginToFacebookFromHomeScreen()}>
                 <Image source={require('../assets/icons/facebook.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
               </TouchableOpacity>
