@@ -2,7 +2,7 @@
 
 Contact me at jonathanyuenby@gmail.com!
 
-Arcade Poker is a fun new twist on the traditional video poker game!
+Arcade Poker is a fun new twist on the traditional video poker game!!
 
 ## How to Play:
 
