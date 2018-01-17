@@ -4,6 +4,10 @@ Contact me at jonathanyuenby@gmail.com!
 
 Arcade Poker is a fun new twist on the traditional video poker game!!
 
+## Download the App!
+
+https://itunes.apple.com/us/app/arcade-poker/id1332985671?mt=8
+
 ## How to Play:
 
  * Drag 5 cards to complete a hand
