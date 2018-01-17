@@ -51,5 +51,7 @@ export default cardImages = {
   "11♠": require("../assets/cards/spades11.png"),
   "12♠": require("../assets/cards/spades12.png"),
   "13♠": require("../assets/cards/spades13.png"),
-
+  "0☆": require("../assets/cards/wildRed.png"),
+  "0★": require("../assets/cards/wildBlack.png"),
+  "": require("../assets/cards/empty.png")
 }

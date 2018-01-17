@@ -40,6 +40,14 @@
     <string gender="unknown" name="com_facebook_smart_login_confirmation_continue_as">המשך/המשיכי בתור %1$s</string>
     <string gender="unknown" name="com_facebook_smart_login_confirmation_title">אשר/י את ההתחברות</string>
     <string gender="unknown" name="com_facebook_tooltip_default">את/ה בשליטה - בחר/י אילו פרטים ברצונך לשתף עם אפליקציות.</string>
+    <string msgid="2518680582564677258" name="common_google_play_services_unknown_issue">"‏<ns1:g id="APP_NAME">%1$s</ns1:g> נתקלה בבעיה בשירותי Google Play. נסה שוב."</string>
+    <string msgid="368094699078615544" name="s1">"שמור את התמונה"</string>
+    <string msgid="4550830452390689489" name="s2">"האם לאפשר למודעה לאחסן תמונה בגלריית התמונות?"</string>
+    <string msgid="2435407834265420668" name="s3">"קבל"</string>
+    <string msgid="9167523597401839819" name="s4">"דחה"</string>
+    <string msgid="1566682516266724847" name="s5">"צור אירוע ביומן"</string>
+    <string msgid="5996672174517137271" name="s6">"האם לאפשר למודעה ליצור אירוע ביומן?"</string>
+    <string msgid="7163549807207034258" name="s7">"מודעת בדיקה"</string>
     <string msgid="146198913615257606" name="search_menu_title">"חיפוש"</string>
     <string msgid="2869576371154716097" name="status_bar_notification_info_overflow">"‎999+‎"</string>
 </resources>

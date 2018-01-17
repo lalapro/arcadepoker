@@ -4,6 +4,23 @@
             "outputFile": "/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/incremental/mergeDebugAndroidTestResources/merged.dir/values-el/values-el.xml",
             "map": [
                 {
+                    "source": "/Users/admin/.gradle/caches/transforms-1/files-1.1/play-services-basement-11.8.0.aar/dbb289a6e36d4d1687800a9897b21a40/res/values-el/values.xml",
+                    "from": {
+                        "startLines": "4",
+                        "startColumns": "0",
+                        "startOffsets": "283",
+                        "endColumns": "222",
+                        "endOffsets": "505"
+                    },
+                    "to": {
+                        "startLines": "42",
+                        "startColumns": "4",
+                        "startOffsets": "4568",
+                        "endColumns": "222",
+                        "endOffsets": "4786"
+                    }
+                },
+                {
                     "source": "/Users/admin/.gradle/caches/transforms-1/files-1.1/support-compat-27.0.1.aar/5bcfb9dbc3fe2e2cc842226144a6645f/res/values-el/values-el.xml",
                     "from": {
                         "startLines": "2",
@@ -13,11 +30,28 @@
                         "endOffsets": "151"
                     },
                     "to": {
-                        "startLines": "43",
+                        "startLines": "51",
                         "startColumns": "4",
-                        "startOffsets": "4653",
+                        "startOffsets": "5538",
                         "endColumns": "100",
-                        "endOffsets": "4749"
+                        "endOffsets": "5634"
+                    }
+                },
+                {
+                    "source": "/Users/admin/.gradle/caches/transforms-1/files-1.1/play-services-ads-11.8.0.aar/a537d6e27488b8b148fa56ecb49b7401/res/values-el/values.xml",
+                    "from": {
+                        "startLines": "4,5,6,7,8,9,10",
+                        "startColumns": "0,0,0,0,0,0,0",
+                        "startOffsets": "235,310,445,510,576,666,790",
+                        "endColumns": "74,134,64,65,89,123,78",
+                        "endOffsets": "309,444,509,575,665,789,868"
+                    },
+                    "to": {
+                        "startLines": "43,44,45,46,47,48,49",
+                        "startColumns": "4,4,4,4,4,4,4",
+                        "startOffsets": "4791,4870,5009,5078,5148,5242,5370",
+                        "endColumns": "78,138,68,69,93,127,82",
+                        "endOffsets": "4865,5004,5073,5143,5237,5365,5448"
                     }
                 },
                 {
@@ -30,11 +64,11 @@
                         "endOffsets": "218,329,446,531,636,762,850,936,1021,1132,1242,1344,1455,1564,1672,1832,1932,2017"
                     },
                     "to": {
-                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,42",
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,50",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "105,223,334,451,536,641,767,855,941,1026,1137,1247,1349,1460,1569,1677,1837,4568",
+                        "startOffsets": "105,223,334,451,536,641,767,855,941,1026,1137,1247,1349,1460,1569,1677,1837,5453",
                         "endColumns": "117,110,116,84,104,125,87,85,84,110,109,101,110,108,107,159,99,84",
-                        "endOffsets": "218,329,446,531,636,762,850,936,1021,1132,1242,1344,1455,1564,1672,1832,1932,4648"
+                        "endOffsets": "218,329,446,531,636,762,850,936,1021,1132,1242,1344,1455,1564,1672,1832,1932,5533"
                     }
                 },
                 {

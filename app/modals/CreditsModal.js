@@ -16,7 +16,7 @@ export default class CreditsModal extends React.Component {
     let url = 'http://www.jonathanbyuen.com'
     Linking.canOpenURL(url).then(supported => {
       if (!supported) {
-        Alert.alert('Can\'t handle url: ' + url);
+        // Alert.alert('Can\'t handle url: ' + url);
       } else {
         return Linking.openURL(url);
       }
@@ -34,19 +34,6 @@ export default class CreditsModal extends React.Component {
       }
     ).start(() => this.animate())
   }
-  // <Animated.View
-  //         style={{
-  //           marginLeft: movingMargin,
-  //           marginTop: 10,
-  //           height: 30,
-  //           width: 40,
-  //           backgroundColor: 'orange'}} />
-
-
-  // const movingMargin = this.animatedValue.interpolate({
-  //   inputRange: [0, 0.5, 1],
-  //   outputRange: [0, 300, 0]
-  // })
 
   render() {
     const movingMargin = this.animatedValue.interpolate({

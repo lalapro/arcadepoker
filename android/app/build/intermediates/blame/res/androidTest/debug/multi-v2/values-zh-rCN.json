@@ -4,6 +4,23 @@
             "outputFile": "/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/incremental/mergeDebugAndroidTestResources/merged.dir/values-zh-rCN/values-zh-rCN.xml",
             "map": [
                 {
+                    "source": "/Users/admin/.gradle/caches/transforms-1/files-1.1/play-services-basement-11.8.0.aar/dbb289a6e36d4d1687800a9897b21a40/res/values-zh-rCN/values.xml",
+                    "from": {
+                        "startLines": "4",
+                        "startColumns": "0",
+                        "startOffsets": "287",
+                        "endColumns": "157",
+                        "endOffsets": "444"
+                    },
+                    "to": {
+                        "startLines": "42",
+                        "startColumns": "4",
+                        "startOffsets": "3908",
+                        "endColumns": "157",
+                        "endOffsets": "4061"
+                    }
+                },
+                {
                     "source": "/Users/admin/.gradle/caches/transforms-1/files-1.1/support-compat-27.0.1.aar/5bcfb9dbc3fe2e2cc842226144a6645f/res/values-zh-rCN/values-zh-rCN.xml",
                     "from": {
                         "startLines": "2",
@@ -13,11 +30,11 @@
                         "endOffsets": "151"
                     },
                     "to": {
-                        "startLines": "43",
+                        "startLines": "51",
                         "startColumns": "4",
-                        "startOffsets": "3986",
+                        "startOffsets": "4622",
                         "endColumns": "100",
-                        "endOffsets": "4082"
+                        "endOffsets": "4718"
                     }
                 },
                 {
@@ -47,11 +64,28 @@
                         "endOffsets": "196,291,391,473,570,676,752,828,906,1002,1098,1193,1290,1385,1483,1632,1726,1804"
                     },
                     "to": {
-                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,42",
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,50",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "105,201,296,396,478,575,681,757,833,911,1007,1103,1198,1295,1390,1488,1637,3908",
+                        "startOffsets": "105,201,296,396,478,575,681,757,833,911,1007,1103,1198,1295,1390,1488,1637,4544",
                         "endColumns": "95,94,99,81,96,105,75,75,77,95,95,94,96,94,97,148,93,77",
-                        "endOffsets": "196,291,391,473,570,676,752,828,906,1002,1098,1193,1290,1385,1483,1632,1726,3981"
+                        "endOffsets": "196,291,391,473,570,676,752,828,906,1002,1098,1193,1290,1385,1483,1632,1726,4617"
+                    }
+                },
+                {
+                    "source": "/Users/admin/.gradle/caches/transforms-1/files-1.1/play-services-ads-11.8.0.aar/a537d6e27488b8b148fa56ecb49b7401/res/values-zh-rCN/values.xml",
+                    "from": {
+                        "startLines": "4,5,6,7,8,9,10",
+                        "startColumns": "0,0,0,0,0,0,0",
+                        "startOffsets": "239,300,373,433,493,557,627",
+                        "endColumns": "60,72,59,59,63,69,61",
+                        "endOffsets": "299,372,432,492,556,626,688"
+                    },
+                    "to": {
+                        "startLines": "43,44,45,46,47,48,49",
+                        "startColumns": "4,4,4,4,4,4,4",
+                        "startOffsets": "4066,4131,4208,4272,4336,4404,4478",
+                        "endColumns": "64,76,63,63,67,73,65",
+                        "endOffsets": "4126,4203,4267,4331,4399,4473,4539"
                     }
                 }
             ]

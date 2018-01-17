@@ -1,6 +1,7 @@
 // ♦, ♣, ♥, ♠
 
 const HANDANIMATIONS = {
+  'fiveOfAKind': require('../assets/hands/fiveOfAKind.png'), 
   'royalFlush': require('../assets/hands/royalFlush.png'),
   'straightFlush': require('../assets/hands/straightFlush.png'),
   'fourOfAKind': require('../assets/hands/fourOfAKind.png'),

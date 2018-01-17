@@ -17,6 +17,14 @@
     <string msgid="3421042268587513524" name="abc_shareactionprovider_share_with">"Бөлүшүү"</string>
     <string msgid="3300176832234831527" name="abc_shareactionprovider_share_with_application">"<ns1:g id="APPLICATION_NAME">%s</ns1:g> аркылуу бөлүшүү"</string>
     <string msgid="1603543279005712093" name="abc_toolbar_collapse_description">"Жыйнап коюу"</string>
+    <string msgid="2518680582564677258" name="common_google_play_services_unknown_issue">"<ns1:g id="APP_NAME">%1$s</ns1:g> колдонмосунун Google Play кызматтары менен иштөөдө көйгөй чыкты. Кайра аракет кылыңыз."</string>
+    <string msgid="368094699078615544" name="s1">"Сүрөттү сактоо"</string>
+    <string msgid="4550830452390689489" name="s2">"Жарнамадан Сүрөт галереясына сүрөт сакталсынбы?"</string>
+    <string msgid="2435407834265420668" name="s3">"Кабыл алуу"</string>
+    <string msgid="9167523597401839819" name="s4">"Баш тартуу"</string>
+    <string msgid="1566682516266724847" name="s5">"Жылнаама окуясын түзүү"</string>
+    <string msgid="5996672174517137271" name="s6">"Жарнамада жылнаама окуясы түзүлсүнбү?"</string>
+    <string msgid="7163549807207034258" name="s7">"Жарнаманы сынап көрүңүз"</string>
     <string msgid="146198913615257606" name="search_menu_title">"Издөө"</string>
     <string msgid="2869576371154716097" name="status_bar_notification_info_overflow">"999+"</string>
 </resources>

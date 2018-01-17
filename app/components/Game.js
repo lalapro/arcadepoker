@@ -7,13 +7,16 @@ import shuffledDeck from '../helpers/shuffledDeck';
 import calculateScore from '../helpers/calculateScore';
 import handAnimations from '../helpers/handAnimations';
 import cardImages from '../helpers/cardImages';
+
 import HelpModal from '../modals/HelpModal';
 import HallOfFameModal from '../modals/HallOfFame';
 import GameOverModal from '../modals/GameOverModal';
 import facebookLogin from '../helpers/facebookLogin';
 import database from '../firebase/db.js';
 import initializeSounds from '../helpers/initializeSounds';
-import CreditsModal from '../modals/CreditsModal'
+import CreditsModal from '../modals/CreditsModal';
+import StatsModal from '../modals/StatsModal';
+import TutorialModal from '../modals/TutorialModal';
 import moment from 'moment';
 import {
   AdMobBanner,
@@ -22,6 +25,7 @@ import {
   AdMobRewarded,
 } from 'react-native-admob'
 import KEYS from '../../keys.js';
+import uniqueId from 'react-native-unique-id';
 
 const {height, width} = Dimensions.get('window');
 
@@ -55,6 +59,7 @@ export default class Game extends React.Component {
       hofModal: false,
       blinky: false,
       gameOverModal: false,
+      statsModal: false,
       totalscore: 0,
       highscore: 0,
       newChallenger: 0,
@@ -62,8 +67,12 @@ export default class Game extends React.Component {
       soundBytes: undefined,
       grabTileResponders: false,
       easterEggs: [],
-      isAndroid: false,
-      animatedCake: []
+      animatedCake: [],
+      android: false,
+      iPhone5s: false,
+      wildTiles: [],
+      challenger: {},
+      maximumLeaderBoardSpots: false
     }
     this._panResponder = PanResponder.create({
       onMoveShouldSetPanResponder:(evt, gestureState) => this.state.gameStarted,
@@ -116,10 +125,24 @@ export default class Game extends React.Component {
 
 
   async componentDidMount() {
-    console.log('JABRONIIIII')
-    let adBlock = await AsyncStorage.getItem('adBlock');
-    if (adBlock === 'true') this.setState({adBlock: true});
-    if (Platform.OS === 'android') this.setState({isAndroid: true})
+    let reset = await AsyncStorage.getItem('reset');
+    if (reset === null) {
+      AsyncStorage.removeItem('highscore');
+      AsyncStorage.removeItem('fbId');
+      AsyncStorage.removeItem('fbName');
+      AsyncStorage.removeItem('highscore');
+      AsyncStorage.removeItem('personalStats');
+      AsyncStorage.removeItem('__uniqueId');
+      AsyncStorage.removeItem('gamesPlayed');
+      AsyncStorage.setItem('reset', 'done');
+      Alert.alert('The scoring system has been changed, tap on the little alien guy for more details!');
+    }
+    let adblock = await AsyncStorage.getItem('adBlock');
+    if (adblock === 'true') this.setState({adBlock: true});
+
+    if (width <= 320) this.setState({iPhone5s: true});
+    if (Platform.OS === 'android') this.setState({android: true})
+
     let sound = await AsyncStorage.getItem('sound');
     if (sound === null) {
       this.setState({sound: 'on'})
@@ -127,6 +150,7 @@ export default class Game extends React.Component {
       this.setState({sound});
     }
     this.updateScoreFromAsyncStorage();
+    this.updateUniquePlayer();
     this.setState({blinky: true});
     this.insertCoin = setInterval(this.blinky.bind(this), 750)
     let SOUNDS = initializeSounds();
@@ -135,11 +159,31 @@ export default class Game extends React.Component {
     })
   }
 
+  async updateUniquePlayer() {
+    let timestamp = moment().format('MMMM Do YYYY, h:mm:ss a');
+    let stats = await AsyncStorage.getItem('personalStats');
+    let deviceId = await AsyncStorage.getItem('__uniqueId');
+    let games = await AsyncStorage.getItem('gamesPlayed');
+    let fbName = await AsyncStorage.getItem('fbName');
+    let fbId = await AsyncStorage.getItem('fbId');
+    let highscore = await AsyncStorage.getItem('highscore')
+    stats = JSON.parse(stats);
+    if (deviceId !== null) {
+      database.uniquePlayers.child(deviceId).child('hands').set(stats);
+      database.uniquePlayers.child(deviceId).child('games').set(games);
+      database.uniquePlayers.child(deviceId).child('timestamp').set(timestamp);
+    }
+    if (fbName !== null && fbId !== null) {
+      database.uniquePlayers.child(deviceId).child('fbName').set(fbName);
+      database.uniquePlayers.child(deviceId).child('fbId').set(fbId);
+    }
+    if (highscore !== null) {
+      database.uniquePlayers.child(deviceId).child('highscore').set(highscore);
+    }
+  }
 
   blinky() {
-    this.setState({
-      blinky: !this.state.blinky
-    })
+    this.setState({ blinky: !this.state.blinky })
   }
 
   loginToFacebookFromHomeScreen() {
@@ -173,12 +217,15 @@ export default class Game extends React.Component {
       totalscore: 0,
       newChallenger: 0,
       easterEggs: [],
-      animatedCake: []
+      animatedCake: [],
+      wildtTiles: [],
+      challenger: {},
+      maximumLeaderBoardSpots: false
     }, () => {
       this.setState({
         restart: false
       })
-      this.playSound('gameloaded')
+      this.playSound('gameloaded');
     })
     this.insertCoin = setInterval(this.blinky.bind(this), 750)
   }
@@ -188,7 +235,7 @@ export default class Game extends React.Component {
     if (this.state.selectedTiles.indexOf(key) === -1) {
       this.playSound('select');
       this.setState({
-        selectedTiles: [...this.state.selectedTiles, key]
+        selectedTiles: [...this.state.selectedTiles, key],
       })
     }
     this.setState({
@@ -198,20 +245,36 @@ export default class Game extends React.Component {
   }
 
   setLayout(pos, obj) {
-    this.state.tileResponders[pos] = obj;
-    this.setState({
-      tileResponders: this.state.tileResponders,
-    })
-    let length = Object.keys(this.state.tileResponders).length;
-    if(length === 13) {
+    if (this.state.grabTileResponders === false) {
+      this.state.tileResponders[pos] = obj;
       this.setState({
-        grabTileResponders: true
+        tileResponders: this.state.tileResponders,
       })
+      let length = Object.keys(this.state.tileResponders).length;
+      if(length === 13) {
+        this.setState({
+          grabTileResponders: true
+        })
+      }
     }
+  }
+
+  async storeToAsyncStorage(hand) {
+    let personalStats = await AsyncStorage.getItem('personalStats');
+    if (personalStats === null) {
+      personalStats = "{}";
+    }
+    personalStats = JSON.parse(personalStats);
+    personalStats[hand[0]] ? personalStats[hand[0]]++ : personalStats[hand[0]] = 1;
+    personalStats = JSON.stringify(personalStats);
+    AsyncStorage.setItem('personalStats', personalStats);
+
+
   }
 
   destroy() {
     this.state.completedHands.push(calculateScore(this.state.chosenCards))
+    this.storeToAsyncStorage(calculateScore(this.state.chosenCards));
     hand = calculateScore(this.state.chosenCards);
 
     this.playSound('tileDrop');
@@ -231,9 +294,11 @@ export default class Game extends React.Component {
       // connected to scoring animation and storing KEY TILES
       setTimeout(() => {this.setState({
         pressed: false,
-        hoverHand: []
-      })}, 750)
+        hoverHand: [],
+        wildTiles: []
+      })}, 850)
     });
+    this.checkGameOver()
   }
 
   addEmptyTiles(tile) {
@@ -245,19 +310,29 @@ export default class Game extends React.Component {
   }
 
   checkGameOver() {
-    if (this.state.emptyTiles.length === 5 || this.state.completedHands.length === 10) {
+    if (this.state.emptyTiles.length >= 5 || this.state.completedHands.length >= 10) {
       this.gameOver();
     }
   }
 
-  gameOver() {
-    setTimeout(() => this.switchModal('game over'), 500)
+  async gameOver() {
+    this.updateUniquePlayer();
+    this.checkHallOfFame();
+    let games = await AsyncStorage.getItem('gamesPlayed');
+    if (games === null) {
+      games = 1
+    } else {
+      games = Number(games) + 1;
+    }
+    AsyncStorage.setItem('gamesPlayed', games.toString());
+    setTimeout(() => this.switchModal('game over'), 750)
   }
 
   updateScore() {
     if (this.state.totalscore > this.state.highscore) {
       let highscore = this.state.totalscore.toString();
-      this.setState({highscore})
+      this.setState({highscore});
+      AsyncStorage.setItem('highscore', highscore);
     }
   }
 
@@ -277,41 +352,62 @@ export default class Game extends React.Component {
         chosenCards: [],
         selectedTiles: [],
         hoverHand: [],
+        wildTiles: [],
         currentTile: null
       }, () => {
-        this.setState({
-          destroy: false
-        })
+        this.setState({ destroy: false })
       })
     }
   }
 
-  addToChosenCards(card) {
+  addToChosenCards(card, key) {
+    // Alert.alert('hi');
     let alreadyChosen = this.state.chosenCards.indexOf(card);
     if (alreadyChosen === -1 && this.state.chosenCards.length < 5) {
+      if (card.value.slice(0,1) === '0') {
+        this.setState({
+          wildTiles: [...this.state.wildTiles, key]
+        })
+      }
       this.setState({
         chosenCards: [...this.state.chosenCards, card],
         hoverHand: [...this.state.hoverHand, card]
       })
     }
+
+    if (card.value.slice(0,1) === '0' && !this.state.wildTiles.includes(key)) {
+      this.setState({
+        chosenCards: [...this.state.chosenCards, card],
+        hoverHand: [...this.state.hoverHand, card],
+        wildTiles: [...this.state.wildTiles, key]
+      })
+    }
+    // }
   }
 
-  startGame() {
-    clearInterval(this.insertCoin)
-    this.setState({
-      gameStarted: true,
-      animateStartOfGame: true
-    }, () => {
-      this.playSound('startGame')
+  async startGame() {
+    let deviceId = await AsyncStorage.getItem('__uniqueId');
+    if (deviceId === null) {
+      uniqueId().then(id => this.setState({uniqueId: id}));
+      this.switchModal('tutorial');
+    }
+    clearInterval(this.insertCoin);
+    if (this.state.gameStarted === false) {
       this.setState({
-        animateStartOfGame: false
+        gameStarted: true,
+        animateStartOfGame: true
+      }, () => {
+        this.playSound('startGame')
+        this.setState({
+          animateStartOfGame: false
+        })
       })
-    })
-    setTimeout(() => {
-      this.setState({
-        showScore: true
-      })
-    }, 450)
+      setTimeout(() => {
+        this.setState({
+          showScore: true
+        })
+      }, 450)
+    }
   }
 
 
@@ -322,13 +418,17 @@ export default class Game extends React.Component {
       this.switchModal('hof')
     } else if (game === 'challenger') {
       this.switchModal('challenger', challenger)
-    }  else {
+    } else if (game === 'tutorial') {
+      this.switchModal('tutorial');
+    } else {
       this.setState({
         helpModal: false,
         mainModal: false,
         hofModal: false,
         gameOverModal: false,
-        creditsModal: false
+        creditsModal: false,
+        statsModal: false,
+        tutorialModal: false
       })
     }
   }
@@ -342,10 +442,14 @@ export default class Game extends React.Component {
         mainModal: true
       })
     } else if (modal === 'help') {
-      setTimeout(() => {
-        this.setState({
-          helpModal: true
-        })}, 450)
+      if (this.state.gameStarted) {
+        setTimeout(() => {
+          this.setState({
+            helpModal: true
+          })}, 450)
+      } else {
+        this.setState({helpModal: true})
+      }
     } else if (modal === 'hof') {
       setTimeout(() => {
         this.setState({
@@ -353,7 +457,6 @@ export default class Game extends React.Component {
         })}, 450)
     } else if (modal === 'game over') {
       setTimeout(() => {
-        this.playSound('win');
         this.setState({
           gameOverModal: true
         })}, 450)
@@ -364,12 +467,35 @@ export default class Game extends React.Component {
           newChallenger: challenger
         })}, 450)
     } else if (modal === 'WIP') {
-      this.setState({creditsModal: true})
+      setTimeout(() => {
+        this.setState({
+          creditsModal: true
+        })}, 450)
+    } else if (modal === 'stats') {
+      setTimeout(() => {
+        this.setState({
+          statsModal: true
+        })}, 450)
+    } else if (modal === 'tutorial') {
+      setTimeout(() => {
+        this.setState({
+          tutorialModal: true
+        })}, 450)
     }
   }
 
   startDuel(room) {
-    this.switchModal('WIP');
+    if (Platform.OS === 'android') {
+      Alert.alert('Multiplayer not available for android yet! Sorry!')
+    } else {
+      clearInterval(this.insertCoin)
+      if (room){
+        this.props.navigation.navigate('BlitzJoin')
+      } else {
+        if (this.state)
+        this.props.navigation.navigate('Blitz', {sound: this.state.sound});
+      }
+    }
   }
 
   playSound(byte) {
@@ -385,10 +511,14 @@ export default class Game extends React.Component {
         sound.tileDropSound.play();
       } else if (byte === 'reset') {
         sound.resetSound.play();
-      } else if (byte === 'win') {
-        sound.winSound.play();
       } else if (byte === 'gameloaded') {
         sound.gameLoaded.play();
+      } else if (byte === 'win') {
+        sound.winSound.play();
+      } else if (byte === 'lose') {
+        sound.loseSound.play();
+      } else if (byte === 'unlock') {
+        sound.unlockSound.play();
       }
     }
   }
@@ -462,19 +592,21 @@ export default class Game extends React.Component {
     }
 
     if (easterEgg === 'CAKE') {
+      this.playSound('unlock');
       this.animateCake();
     } else if (easterEgg === 'ADPOKE') {
+      this.playSound('unlock');
       this.adBlock();
     }
   }
 
   async adBlock() {
-    let adBlock = AsyncStorage.getItem('adblock');
+    let adBlock = await AsyncStorage.getItem('adBlock');
     if (adBlock === 'true') {
-      AsyncStorage.removeItem('adblock');
+      AsyncStorage.removeItem('adBlock');
       this.setState({adBlock: false})
     } else {
-      AsyncStorage.setItem('adblock', 'true');
+      AsyncStorage.setItem('adBlock', 'true');
       this.setState({adBlock: true})
     }
   }
@@ -501,9 +633,95 @@ export default class Game extends React.Component {
     Animated.stagger(100, animations).start()
   }
 
+  async checkHallOfFame() {
+    let deviceId = await AsyncStorage.getItem('__uniqueId');
+    let personalLeaderBoard = [];
+    let totalscore = this.state.totalscore;
+    database.highscores.limitToLast(100).once('value', (snap) => {
+      if (snap.val()) {
+        let leaderBoard = Object.entries(snap.val()).reverse();
+        let newLeaderBoard = [];
+        let validToAddToLeaderBoard = true;
+        // console.log(leaderBoard)
+        leaderBoard.forEach((scoreEntry, idx) => {
+          let keys = Object.keys(scoreEntry[1]) // get all instances of score
+
+          for(let i = 0; i < keys.length; i++) { // for each key, store into array
+            if (newLeaderBoard.length < 100) {
+              let eachUser = scoreEntry[1][keys[i]];
+              if (eachUser[0] === deviceId) {
+                let timestamp = Object.keys(scoreEntry[1])[i];
+                personalLeaderBoard.push(eachUser.concat(scoreEntry[0]).concat(idx).concat(timestamp))
+              }
+              newLeaderBoard.push([scoreEntry[0], eachUser]);
+            }
+          }
+        })
+        leaderBoard = newLeaderBoard;
+        // console.log(personalLeaderBoard);
+        // first check if personalleaderboard has 5 entries
+        if (personalLeaderBoard.length >= 5) {
+          validToAddToLeaderBoard = false
+          let position;
+          for (let i = personalLeaderBoard.length - 1; i >= 0; i--) {
+            if (Number(totalscore) > Number(personalLeaderBoard[i][2])) {
+              let score = personalLeaderBoard[i][2];
+              let timestamp = personalLeaderBoard[i][4];
+              database.highscores.child(score).child(timestamp).remove();
+              validToAddToLeaderBoard = true;
+              break;
+            }
+          }
+        }
+        if (validToAddToLeaderBoard) {
+          let position;
+          for (let i = 0; i < leaderBoard.length; i++) {
+            if (Number(totalscore) > Number(leaderBoard[i][0])) {
+              position = i + 1;
+              this.setState({
+                challenger: {
+                  rank: position,
+                  score: totalscore
+                }
+              })
+              break;
+            }
+          }
+          if (leaderBoard.length < 100 && position === undefined) {
+            position = leaderBoard.length + 1;
+            // console.log(position, 'leaderboard does not have 100');
+            this.props.playSound('win');
+            // this.hereComesANewChallenger(position);
+            this.setState({
+              challenger: {
+                rank: position,
+                score: totalscore
+              }
+            })
+          }
+        } else {
+          this.setState({
+            maximumLeaderBoardSpots: true
+          })
+        }
+      } else {
+        // console.log(1, 'first place');
+        this.props.playSound('win');
+        this.setState({
+          challenger: {
+            rank: position,
+            score: totalscore
+          }
+        })
+      }
+    })
+  }
+
 
   render() {
-
+    var modalHeight;
+    // const boxes = Object.values(this.state.tileResponders);
+    this.state.maximumLeaderBoardSpots ? modalHeight = "40%" : modalHeight = "30%"
 
     return (
       <View style={[styles.container, {backgroundColor: 'black'}]}>
@@ -541,15 +759,21 @@ export default class Game extends React.Component {
         ) : (null)}
         {!this.state.gameStarted ? (
           <View style={{flex: 1}}>
-            <View style={{flex: 1, flexDirection: 'row', zIndex: 100, justifyContent: 'space-between', width: "40%"}}>
+            <View style={{flex: 1, flexDirection: 'row', zIndex: 100, justifyContent: 'space-between', width: "60%"}}>
               <TouchableOpacity onPress={() => this.loginToFacebookFromHomeScreen()}>
                 <Image source={require('../assets/icons/facebook.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => this.startDuel()}>
+                <Image source={require('../assets/icons/bolt.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => this.switchModal('help')}>
+                <Image source={require('../assets/icons/info.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => this.switchModal('hof')}>
                 <Image source={require('../assets/icons/trophy.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => this.startDuel()}>
-                <Image source={require('../assets/icons/info.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
+              <TouchableOpacity onPress={() => this.switchModal('stats')}>
+                <Image source={require('../assets/icons/stats.png')} style={{top: 15, width: 40, height: 40, resizeMode: 'contain'}}/>
               </TouchableOpacity>
             </View>
           </View>
@@ -588,7 +812,7 @@ export default class Game extends React.Component {
               ) : (
                 this.state.hoverHand.map((card, i) => {
                   let imageSize = 85;
-                  if (this.state.isAndroid) imageSize = 55
+                  if (this.state.iPhone5s || this.state.android) imageSize = 65
                   if (i%2 === 0) {
                     return (
                       <Image source={cardImages[card.value]}
@@ -642,23 +866,17 @@ export default class Game extends React.Component {
             </View>
             </Modal>
             <Modal
-              isVisible={this.state.helpModal}
-              animationIn={'slideInUp'}
-              animationOut={'slideOutDown'}
-            >
-              <View style={[styles.otherModal, {height: "80%", backgroundColor: 'white'}]}>
-                <HelpModal close={this.closeModal.bind(this)}/>
-              </View>
-            </Modal>
-            <Modal
               isVisible={this.state.gameOverModal}
               animationIn={'slideInUp'}
               animationOut={'slideOutDown'}
             >
-              <View style={[styles.otherModal, {height: "30%"}]}>
+              <View style={[styles.otherModal, {height: modalHeight}]}>
                 <GameOverModal
                   close={this.closeModal.bind(this)}
                   totalscore={this.state.totalscore}
+                  playSound={this.playSound.bind(this)}
+                  challenger={this.state.challenger}
+                  maximumLeaderBoardSpots={this.state.maximumLeaderBoardSpots}
                 />
               </View>
             </Modal>
@@ -678,6 +896,17 @@ export default class Game extends React.Component {
           </View>
         </Modal>
         <Modal
+          isVisible={this.state.statsModal}
+          animationIn={'slideInUp'}
+          animationOut={'slideOutDown'}
+        >
+          <View style={[styles.otherModal, {height: "70%"}]}>
+            <StatsModal
+              close={this.closeModal.bind(this)}
+            />
+          </View>
+        </Modal>
+        <Modal
           isVisible={this.state.creditsModal}
           animationIn={'slideInUp'}
           animationOut={'slideOutDown'}
@@ -688,8 +917,27 @@ export default class Game extends React.Component {
             />
           </View>
         </Modal>
-
-        <View style={styles.gameContainer} {...this._panResponder.panHandlers} ref="mycomp">
+        <Modal
+          isVisible={this.state.tutorialModal}
+          animationIn={'slideInUp'}
+          animationOut={'slideOutDown'}
+        >
+          <View style={[styles.otherModal, {height: "65%"}]}>
+            <TutorialModal
+              close={this.closeModal.bind(this)}
+            />
+          </View>
+        </Modal>
+        <Modal
+          isVisible={this.state.helpModal}
+          animationIn={'slideInUp'}
+          animationOut={'slideOutDown'}
+        >
+          <View style={[styles.otherModal, {height: "80%", backgroundColor: 'white'}]}>
+            <HelpModal close={this.closeModal.bind(this)}/>
+          </View>
+        </Modal>
+        <View style={styles.gameContainer} {...this._panResponder.panHandlers} ref="mycomp" onTouchEnd={this.startGame.bind(this)}>
           {this.state.startingTiles.map((tiles, i) => (
             <HexGrid
               deck={this.state.deck}
