@@ -3,6 +3,8 @@ import database from '../firebase/db';
 const FBSDK = require('react-native-fbsdk');
 const { LoginManager, AccessToken } = FBSDK;
 const axios = require('axios');
+import uniqueId from 'react-native-unique-id';
+
 
 
 
@@ -28,12 +30,11 @@ export default facebookLogin = async (status) => {
         }
       },
       function(error) {
-        Alert.alert('Login fail with error: ' + error);
+        // Alert.alert('Login fail with error: ' + error);
       }
     );
   } else {
     // check if token is valid....
-    console.log('getting INTO HERE IN FACEBOOKSS')
     const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
     const user = await response.json();
     if (user.error) { // if error exists grab another token
@@ -50,6 +51,14 @@ updateData = async (highscore, token) => {
   const user = await response.json();
   const response2 = await fetch(`https://graph.facebook.com/${user.id}/friends?access_token=${token}`)
   const friends = await response2.json();
+  let deviceId;
+  uniqueId().then(id => deviceId = id);
+
+  let duelWins = await AsyncStorage.getItem('duelWins');
+  let blitzWins = await AsyncStorage.getItem('blitzWins');
+
+  duelWins === null ? duelWins = 0 : duelWins = Number(duelWins);
+  blitzWins === null ? blitzWins = 0 : blitzWins = Number(blitzWins);
 
   AsyncStorage.setItem('fbId', user.id);
   AsyncStorage.setItem('fbName', user.name);
@@ -60,16 +69,47 @@ updateData = async (highscore, token) => {
 
   return userRef.once('value', snap => {
     let highscoreInDB = snap.val();
-    if (highscore > highscoreInDB) {
+    if (Number(highscore) > Number(highscoreInDB)) {
       userRef.set(highscore);
       AsyncStorage.setItem('highscore', highscore.toString());
-    } else if (highscoreInDB > highscore) {
+    } else if (Number(highscoreInDB) > Number(highscore)) {
       highscore = highscoreInDB;
       AsyncStorage.setItem('highscore', highscoreInDB.toString());
     }
     user.highscore = highscore;
   }).then(res => {
-    return user;
+
+    if (Platform.OS === 'android') return user
+    const promises = [];
+    let personalPic;
+    return getFBPics(user.id).then(pic => {
+      personalPic = pic
+    }).then(wait => {
+      friends.data.forEach((friend) => {
+        promises.push(getFBPics(friend.id));
+      })
+
+      return Promise.all(promises).then(fbPics => {
+        friends.data.forEach((friend, i) => {
+          friend.profilePic = fbPics[i];
+        })
+
+        database.fbFriends.child(user.id).child('highscore').once('value', snap => {
+          database.fbFriends.child(user.id).set({
+            name: user.name,
+            friends: [friends.data],
+            highscore: highscore,
+            deviceId: deviceId,
+            fbPic: personalPic,
+            duelWins: duelWins,
+            blitzWins: blitzWins
+          })
+          finished = true;
+        })
+      }).then(res => {
+        return user
+      })
+    })
   })
 
   //TODO FOR BLITZ MODe

@@ -1,23 +1,23 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, TouchableOpacity, Image} from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableOpacity, Image, Linking} from 'react-native';
 import calculateScore from '../helpers/calculateScore';
 
 export default class HelpModal extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      fontLoaded: false,
       hands: [
-        ["Royal Flush", 2000],
-        ["Straight Flush", 1500],
-        ["Four  of  a  Kind", 1000],
-        ["Full House", 500],
-        ["Flush", 250],
-        ["Straight", 150],
-        ["Three  of  a  Kind", 75],
-        ["Two  Pair", 50],
-        ["Pair", 25],
-        ["High  Card", 10],
+        ['Five  of  a  Kind', 3000],
+        ["Royal Flush", 2500],
+        ["Straight Flush", 2000],
+        ["Four  of  a  Kind", 1750],
+        ["Full House", 1500],
+        ["Flush", 1250],
+        ["Straight", 1000],
+        ["Three  of  a  Kind", 750],
+        ["Two  Pair", 500],
+        ["Pair", 250],
+        ["High  Card", 100],
       ],
       blinky: false,
       handSelected: null,
@@ -44,9 +44,20 @@ export default class HelpModal extends React.Component {
     })
   }
 
-  backToGame() {
+  navigateToSite() {
+    let url = 'https://lalapro.github.io/arcadepoker/'
+    Linking.canOpenURL(url).then(supported => {
+      if (!supported) {
+        // Alert.alert('Can\'t handle url: ' + url);
+      } else {
+        return Linking.openURL(url);
+      }
+    })
+  }
+
+  backToGame(modal) {
     clearInterval(this.blinking);
-    this.props.close();
+    this.props.close(modal);
   }
 
   render() {
@@ -54,14 +65,23 @@ export default class HelpModal extends React.Component {
     return (
       <View style={{flex: 1, width: "100%", height: "100%", backgroundColor: 'black', padding: 25}}>
         <View style={{flex: 1, justifyContent:'center', alignItems: 'center'}}>
-          <Text style={[styles.font, {fontSize: 25, textDecorationLine: 'underline'}]}>
+          <Text style={[styles.font, {fontSize: 35, textDecorationLine: 'underline'}]}>
             How to play
           </Text>
         </View>
         <View style={{flex: 0.5, justifyContent:'center', alignItems: 'center'}}>
-          <Text style={[styles.font, {fontSize: 20}]}>
-            Drag  5 cards
-          </Text>
+          <TouchableOpacity onPress={() => this.backToGame('tutorial')}>
+            <Text style={[styles.font, {fontSize: 20, color: 'lightgreen'}]}>
+              show  tutorial
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={{flex: 0.5, justifyContent:'center', alignItems: 'center'}}>
+          <TouchableOpacity onPress={this.navigateToSite.bind(this)}>
+            <Text style={[styles.font, {fontSize: 18, color: 'gold'}]}>
+              Developer  Website
+            </Text>
+          </TouchableOpacity>
         </View>
         <View style={{flex: 6, justifyContent: 'center'}}>
           <View style={styles.line}>
@@ -159,6 +179,23 @@ const styles = StyleSheet.create({
 })
 
 const HANDS = {
+  'Five  of  a  Kind': [
+    {
+      highlight: require("../assets/cards/wildBlack-highlight.png")
+    },
+    {
+      highlight: require("../assets/cards/heart5-highlight.png")
+    },
+    {
+      highlight: require("../assets/cards/spades5-highlight.png")
+    },
+    {
+      highlight: require("../assets/cards/clubs5-highlight.png")
+    },
+    {
+      highlight: require("../assets/cards/diamond5-highlight.png")
+    },
+  ],
   'Royal Flush': [
     {
       highlight: require("../assets/cards/spades10-highlight.png")

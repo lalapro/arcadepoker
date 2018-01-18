@@ -23,6 +23,9 @@ export default initializeSounds = () => {
   gameLoaded = new Sound('gameloaded.wav', Sound.MAIN_BUNDLE, (error) => {
     if (error) { return;}
   });
+  unlockSound = new Sound('unlock.wav', Sound.MAIN_BUNDLE, (error) => {
+    if (error) { return;}
+  });
 
 
   return {
@@ -32,6 +35,7 @@ export default initializeSounds = () => {
     resetSound,
     winSound,
     loseSound,
-    gameLoaded
+    gameLoaded,
+    unlockSound
   }
 }

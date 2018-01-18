@@ -33,7 +33,7 @@ for (let i = 0; i < 13; i++) {
   placeholders.push({
     value: "",
     image: require("../assets/cards/empty.png"),
-    highlight: require("../assets/cards/empty.png")
+    highlight: require("../assets/cards/empty-highlight.png")
   })
 }
 
@@ -304,6 +304,23 @@ export default shuffledDeck = (mode) => {
 
   ];
 
+
+  let wildCards = [
+    {
+      value: "0★",
+      image: require("../assets/cards/wildBlack.png"),
+      highlight: require("../assets/cards/wildBlack-highlight.png")
+    },
+    {
+      value: "0☆",
+      image: require("../assets/cards/wildRed.png"),
+      highlight: require("../assets/cards/wildRed-highlight.png")
+    }
+  ]
+  if (mode === 'temp') {
+    return DECK
+  }
+
   if (mode === 'blitz') {
     let doubleDeck = [];
     for (let i = 0; i < 2; i++) {
@@ -315,6 +332,7 @@ export default shuffledDeck = (mode) => {
   } else if (mode === 'blanks') {
     return placeholders
   } else {
+    DECK.push(wildCards[getRandomInt(0, 2)]);
     return shuffle(DECK).concat(placeholders)
   }
 }

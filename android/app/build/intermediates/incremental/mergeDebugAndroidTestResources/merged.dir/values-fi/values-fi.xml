@@ -40,6 +40,14 @@
     <string gender="unknown" name="com_facebook_smart_login_confirmation_continue_as">Jatka nimellä %1$s</string>
     <string gender="unknown" name="com_facebook_smart_login_confirmation_title">Vahvista sisäänkirjautuminen</string>
     <string gender="unknown" name="com_facebook_tooltip_default">Sinä päätät - valitse mitkä tiedot haluat jakaa sovelluksille</string>
+    <string msgid="2518680582564677258" name="common_google_play_services_unknown_issue">"Sovelluksella <ns1:g id="APP_NAME">%1$s</ns1:g> on ongelmia Google Play Palveluiden kanssa. Yritä uudelleen."</string>
+    <string msgid="368094699078615544" name="s1">"Tallenna kuva"</string>
+    <string msgid="4550830452390689489" name="s2">"Myönnetäänkö mainokselle oikeus tallentaa kuva galleriaan?"</string>
+    <string msgid="2435407834265420668" name="s3">"Hyväksy"</string>
+    <string msgid="9167523597401839819" name="s4">"Hylkää"</string>
+    <string msgid="1566682516266724847" name="s5">"Luo kalenteritapahtuma"</string>
+    <string msgid="5996672174517137271" name="s6">"Myönnetäänkö mainokselle oikeus luoda kalenteritapahtuma?"</string>
+    <string msgid="7163549807207034258" name="s7">"Testimainos"</string>
     <string msgid="146198913615257606" name="search_menu_title">"Haku"</string>
     <string msgid="2869576371154716097" name="status_bar_notification_info_overflow">"999+"</string>
 </resources>

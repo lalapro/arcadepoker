@@ -17,6 +17,6 @@ database.fbFriends = firebase.database().ref('/fbfriends');
 database.highscores = firebase.database().ref('/highscores');
 database.gameRooms = firebase.database().ref('/gameRooms');
 database.blitzGame = firebase.database().ref('/blitzGame');
-database.test = firebase.database().ref('/test');
+database.uniquePlayers = firebase.database().ref('/uniquePlayers');
 
 export default database;

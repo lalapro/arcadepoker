@@ -1,4 +1,4 @@
-#Mon Jan 08 00:43:49 EST 2018
-base.0=/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/dexMerger/debug/2096
+#Sun Jan 14 01:03:00 EST 2018
+base.0=/Users/admin/Arcade Poker/arcadepoker/android/app/build/intermediates/transforms/dexMerger/debug/83
 path.0=classes.dex
 renamed.0=classes.dex

@@ -1,10 +1,13 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, AsyncStorage, TextInput, Alert } from 'react-native';
+import { Platform, Dimensions, StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, AsyncStorage, TextInput, Alert } from 'react-native';
 import facebookLogin from '../helpers/facebookLogin';
 import database from '../firebase/db'
 import moment from 'moment';
 import uniqueId from 'react-native-unique-id';
+const {height, width} = Dimensions.get('window');
 
+
+const ALPHABETS = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
 
 export default class HallOfFame extends React.Component {
@@ -23,14 +26,15 @@ export default class HallOfFame extends React.Component {
       fakeText: '',
       positionToInject: -1,
       isMounted: false,
-      submitted: false
+      submitted: false,
+      iPhone5s: false,
+      android: false
     }
   }
 
   async componentDidMount() {
-    uniqueId().then(id => this.setState({uniqueId: id}))
-    .catch(err => console.log(err));
-
+    if (Platform.OS === 'android') this.setState({android: true})
+    if (width === 320) this.setState({iPhone5s: true})
 
     this.setState({
       isMounted: true,
@@ -40,6 +44,7 @@ export default class HallOfFame extends React.Component {
 
   async getHighscores() {
     let deviceId = await AsyncStorage.getItem('__uniqueId');
+    this.setState({uniqueId: deviceId});
 
 
     let newChallenger = this.props.newChallenger;
@@ -127,7 +132,7 @@ export default class HallOfFame extends React.Component {
 
   getFriendStats() {
     facebookLogin().then(user => {
-      if (user.id !== undefined) {
+      if (user !== undefined) {
         this.setState({ownerName: user.name})
         this.props.updateScore(user);
         this.getScoresFromFriends(user.id, user.name, user.highscore);
@@ -195,18 +200,18 @@ export default class HallOfFame extends React.Component {
       let highscore = this.state.newChallenger.score;
       let name = this.state.fakeText;
       let timestamp = moment().format('MMMM Do YYYY, h:mm:ss a');
-      if (name === ''){
+      if (name === '') {
         let random = ['magikarp', 'oddish', 'squirtle', 'jabroni', 'bulbasaur'];
         let index = this.getRandomIndex(0, random.length);
         name = random[index];
       }
-      scoreToSave = [deviceId, name]
+      scoreToSave = [deviceId, name];
+      uniqueSave = [name, highscore];
       database.highscores.child(highscore).child(timestamp).set(scoreToSave);
       this.setState({submitted:true}, () => this.props.close('over'))
 
     } else {
       clearInterval(this.insertName);
-      console.log('closing?')
       this.setState({isMounted: false})
       this.props.close();
     }
@@ -257,6 +262,7 @@ export default class HallOfFame extends React.Component {
   }
 
   checkIfOwner(ownerCheck) {
+
     let deviceId = this.state.uniqueId;
     // console.log(deviceId);
     if (Array.isArray(ownerCheck)) {
@@ -283,6 +289,7 @@ export default class HallOfFame extends React.Component {
     if (!num) return '';
     let digits = num.toString();
     let lastDigit = digits[digits.length - 1]
+
     if (lastDigit === '1' && digits.length === 1) {
       return (
         <View key={num} style={{flexDirection: 'row'}}>
@@ -344,17 +351,38 @@ export default class HallOfFame extends React.Component {
       >
         <View style={[styles.box, {width: "100%"}]}>
           {this.state.leaderBoard.map((hs, i) => (
-            this.arcadifyRank(i + 1, hs)
+            <View style={{flex: 1}} key={i*10}>
+              {this.arcadifyRank(i + 1, hs)}
+            </View>
           ))}
         </View>
-        <View style={[styles.box, {width: "100%", flex: 2}]}>
-          {this.state.leaderBoard.map((hs, i) => (
-            <Text style={[styles.font, {fontSize: 14, color: this.checkIfOwner(hs)}]} key={i}>
-              {this.arcadifyScore(hs[0])}
-            </Text>
-          ))}
+        <View style={[styles.box, {width: "100%", flex: 2, zIndex: 1}]}>
+          {this.state.leaderBoard.map((hs, i) => {
+            if (i < 10) {
+              return (
+                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: "100%", height: "100%"}} key={i}>
+                  <Text style={[styles.font, {fontSize: 15, color: 'black'}]}>
+                    1
+                  </Text>
+                  <Text style={[styles.font, {fontSize: 15, color: this.checkIfOwner(hs)}]}>
+                    {this.arcadifyScore(hs[0])}
+                  </Text>
+                  <Image
+                    source={require('../assets/icons/trophy.png')}
+                    style={{left: -5, width: 10, height: 10, resizeMode: 'contain'}}
+                  />
+                </View>
+              )
+            } else {
+              return (
+                <Text style={[styles.font, {fontSize: 15, color: this.checkIfOwner(hs)}]} key={i}>
+                  {this.arcadifyScore(hs[0])}
+                </Text>
+              )
+            }
+          })}
         </View>
-        <View style={[styles.box, {width: "100%", alignItems: 'flex-start'}]}>
+        <View style={[styles.box, {width: "100%", alignItems: 'flex-start', zIndex: 3, height: '100%'}]}>
           {this.state.leaderBoard.map((hs, i) => {
             if (i === this.state.positionToInject) {
               return (
@@ -383,23 +411,31 @@ export default class HallOfFame extends React.Component {
                 )
               )
             }
-            if (i < 10) {
+            let name = hs[1][1];
+            let emoji = false;
+            name.codePointAt(0).toString().length >= 6 ? emoji = name : null
+            name = name.split('');
+            if (emoji) {
               return (
-                <View key={i} style={{flexDirection: 'row'}}>
-                  <Image
-                    source={require('../assets/icons/trophy.png')}
-                    style={{top:2, left: -15, width: 10, height: 10, resizeMode: 'contain', position: 'absolute'}}
-                  />
-                  <Text style={[styles.font, {fontSize: 14, color: this.checkIfOwner(hs)}]} key={i}>
-                      {hs[1][1]}
-                  </Text>
-                </View>
+                <Text style={[styles.font, {fontSize: 12, color: this.checkIfOwner(hs)}]} key={i}>
+                  {emoji}
+                </Text>
               )
             } else {
               return (
-                <Text style={[styles.font, {fontSize: 14, color: this.checkIfOwner(hs)}]} key={i}>
-                  {hs[1][1]}
-                </Text>
+                <View style={{flexDirection: 'row', flex: 1}} key={i}>
+                  {name.map((char, idx) => {
+                    if (ALPHABETS.includes(char.toLowerCase())) {
+                      return <Text style={[styles.font, {fontSize: 14, color: this.checkIfOwner(hs)}]} key={idx}>
+                        {char}
+                      </Text>
+                    } else {
+                      return <Text style={[styles.font, {fontSize: 11.5, color: this.checkIfOwner(hs)}]} key={idx}>
+                        {char}
+                      </Text>
+                    }
+                  })}
+                </View>
               )
             }
           })}
@@ -455,69 +491,83 @@ export default class HallOfFame extends React.Component {
 
   render() {
     return(
-      this.state.loadReady ? (
-        <View style={styles.container}>
-          <View style={[styles.box, {backgroundColor:'black'}]}>
+      <View style={styles.container}>
+        <View style={[styles.box, {backgroundColor:'black'}]}>
+          {this.state.iPhone5s ? (
+            <Text style={[styles.font, {fontSize: 30}]}>
+              highscores
+            </Text>
+          ) : (
             <Text style={styles.font}>
               highscores
             </Text>
+          )}
+        </View>
+        <View style={[styles.box, {flex: 0.8, flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'black', alignItems: 'flex-start'}]}>
+          <View style={[styles.box, {backgroundColor: this.state.board2, borderRadius: 4}]}>
+            <Text style={[styles.font, {fontSize: 25, color: this.state.board1}]} onPress={() => this.switchBoard('Top 100')}>
+              Top 100
+            </Text>
           </View>
-          <View style={[styles.box, {flex: 0.8, flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'black', alignItems: 'flex-start'}]}>
-            <View style={[styles.box, {backgroundColor: this.state.board2, borderRadius: 4}]}>
-              <Text style={[styles.font, {fontSize: 25, color: this.state.board1}]} onPress={() => this.switchBoard('Top 100')}>
-                Top 100
-              </Text>
-            </View>
-            <View style={[styles.box, {backgroundColor: this.state.board1, borderRadius: 4}]}>
-              <Text style={[styles.font, {fontSize: 25, color: this.state.board2}]} onPress={() => this.switchBoard('Friends')}>
-                Friends
-              </Text>
-            </View>
+          <View style={[styles.box, {backgroundColor: this.state.board1, borderRadius: 4}]}>
+            <Text style={[styles.font, {fontSize: 25, color: this.state.board2}]} onPress={() => this.switchBoard('Friends')}>
+              Friends
+            </Text>
           </View>
-          <View style={[styles.box, {flex: 0.5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', width: "80%"}]}>
-            <View>
-              <Text style={[styles.font, {fontSize: 23, textDecorationLine: 'underline'}]}>
-                Rank
-              </Text>
-            </View>
-            <View>
-              <Text style={[styles.font, {fontSize: 23, textDecorationLine: 'underline'}]}>
-                Score
-              </Text>
-            </View>
-            <View>
-              <Text style={[styles.font, {fontSize: 23, textDecorationLine: 'underline'}]}>
-                Name
-              </Text>
-            </View>
+        </View>
+        <View style={[styles.box, {flex: 0.5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', width: "80%"}]}>
+          <View>
+            <Text style={[styles.font, {fontSize: 23, textDecorationLine: 'underline'}]}>
+              Rank
+            </Text>
           </View>
+          <View>
+            <Text style={[styles.font, {fontSize: 23, textDecorationLine: 'underline'}]}>
+              Score
+            </Text>
+          </View>
+          <View>
+            <Text style={[styles.font, {fontSize: 23, textDecorationLine: 'underline'}]}>
+              Name
+            </Text>
+          </View>
+        </View>
+        {this.state.loadReady ? (
           <View style={{flex: 6, backgroundColor: 'black', position: 'relative', width: "100%"}}>
             {this.state.currentBoard === 'Top 100' ? this.leaderBoardRender() : this.friendLeaderBoardRender()}
           </View>
-          <View style={styles.box}>
+        ) : (
+          <View style={[styles.box, {flex: 6}]}>
+            <Text style={[styles.font, {color: 'white'}]}>
+              Loading...
+            </Text>
+          </View>
+        )}
+        <View style={styles.box}>
+          {this.state.iPhone5s || this.state.android ? (
+            <TouchableOpacity onPress={() => this.close()}>
+              <Text style={[styles.font, {fontSize: 30}]}>
+                Close
+              </Text>
+            </TouchableOpacity>
+          ) : (
             <TouchableOpacity onPress={() => this.close()}>
               <Text style={styles.font}>
                 Close
               </Text>
             </TouchableOpacity>
-            {this.state.positionToInject >= 0 ? (
-              <TextInput
-                ref={"textInput"}
-                onChangeText={(fakeText) => this.enterName(fakeText)}
-                value={this.state.fakeText}
-                autoFocus={true}
-              />
-            ) : (null)}
-          </View>
+          )}
+          {this.state.positionToInject >= 0 ? (
+            <TextInput
+              ref={"textInput"}
+              onChangeText={(fakeText) => this.enterName(fakeText)}
+              value={this.state.fakeText}
+              autoFocus={true}
+            />
+          ) : (null)}
         </View>
-      ) : (
-        <View style={styles.box}>
-          <Text style={[styles.font, {color: 'white'}]}>
-            Loading...
-          </Text>
-        </View>
+      </View>
       )
-    )
   }
 }
 
@@ -542,57 +592,3 @@ const styles = StyleSheet.create({
     color: 'white'
   }
 })
-
-
-// if (fbId === null) {
-//   console.log('asking for permission...')
-//   const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('183752602209264', {
-//     permissions: ['public_profile', 'user_friends', 'user_photos'],
-//   });
-//   if (type === 'success') {
-//     // Get the user's name using Facebook's Graph API
-//     const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
-//     const user = await response.json()
-//
-//     AsyncStorage.setItem('fbId', user.id);
-//     AsyncStorage.setItem('fbName', user.name);
-//     this.setState({ownerName: user.name})
-//     highscore = highscore || 0;
-//
-//     console.log(highscore, 'highscore from async...')
-//     const response2 = await fetch(`https://graph.facebook.com/${user.id}/friends?access_token=${token}`)
-//     const friends = await response2.json();
-//
-//     const promises = [];
-//
-//     friends.data.forEach((friend) => {
-//       promises.push(this.getFBPics(friend.id));
-//     })
-//     Promise.all(promises).then(fbPics => {
-//       friends.data.forEach((friend, i) => {
-//         friend.profilePic = fbPics[i];
-//       })
-//
-//       //TODO do logic to check if highscore is greater than what is stored in database...
-//       this.props.database.ref('/fbfriends').child(user.id).child('highscore').once('value', snap => {
-//         console.log(snap.val(), 'highscore from fb....')
-//         if (snap.val() > highscore) {
-//           highscore = snap.val();
-//           AsyncStorage.setItem('highscore', highscore.toString())
-//         }
-//
-//         this.props.database.ref('/fbfriends').child(user.id).set({
-//           name: user.name,
-//           friends: [friends.data],
-//           highscore: highscore
-//         }).then(res => {
-//           this.props.updateScore(user.id);
-//           this.getScoresFromFriends(user.id, user.name, highscore);
-//         })
-//       })
-//       console.log('is this happening first?')
-//     })
-//   }
-// } else {
-//   this.getScoresFromFriends(fbId, fbName, highscore)
-// }

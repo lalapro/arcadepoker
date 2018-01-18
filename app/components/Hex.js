@@ -1,6 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, PanResponder, Animated, Dimensions, TouchableWithoutFeedback, Alert } from 'react-native';
-import { keyTiles } from '../helpers/tileLogic'
+import { Platform, StyleSheet, Text, View, Image, PanResponder, Animated, Dimensions, TouchableWithoutFeedback, Alert } from 'react-native';
+import { keyTiles } from '../helpers/tileLogic';
+import CARDIMAGES from '../helpers/cardImages';
+import CARDIMAGESHIGHLIGHT from '../helpers/cardImagesHighlight'
 const {height, width} = Dimensions.get('window');
 
 export default class HexGrid extends React.Component {
@@ -16,6 +18,7 @@ export default class HexGrid extends React.Component {
         marginBottom: -27,
         zIndex: 120,
       },
+      android: false
     };
   }
 
@@ -33,12 +36,14 @@ export default class HexGrid extends React.Component {
   componentWillReceiveProps(oldProps) {
     if (oldProps.selectedTiles.indexOf(this.state.hexPosition) !== -1) {
       this.setState({isHighlighted: true});
-      this.props.add(this.props.card);
+      this.props.add(this.props.card, this.state.hexPosition);
     } else {
       this.setState({isHighlighted: false});
     }
-    if(oldProps.card.value === "" && keyTiles.includes(this.state.hexPosition) && oldProps.hoverHand.length > 0) {
-      this.props.addEmpty(this.state.hexPosition)
+    if (oldProps.card) {
+      if(oldProps.card.value === "" && keyTiles.includes(this.state.hexPosition) && oldProps.hoverHand.length > 0) {
+        this.props.addEmpty(this.state.hexPosition)
+      }
     }
 
   }
@@ -48,14 +53,20 @@ export default class HexGrid extends React.Component {
     return (
       this.state.isHighlighted ? (
         <Animated.View style={[this.state.cardStyle, this.props.animate]}>
-            <Image
-              source={this.props.card.highlight} style={{width: 85, height: 85, resizeMode: 'contain'}}/>
+            {this.props.card ? (
+              <Image source={CARDIMAGESHIGHLIGHT[this.props.card.value]} style={{width: 85, height: 85, resizeMode: 'contain'}}/>
+            ) : (
+              <Image source={require('../assets/cards/empty-highlight.png')} style={{width: 85, height: 85, resizeMode: 'contain'}}/>
+            )}
         </Animated.View>
       ) : (
         <Animated.View
           style={[this.state.cardStyle, this.props.animate]} >
-            <Image
-              source={this.props.card.image} style={{width: 85, height: 85, resizeMode: 'contain'}}/>
+          {this.props.card ? (
+            <Image source={CARDIMAGES[this.props.card.value]} style={{width: 85, height: 85, resizeMode: 'contain'}}/>
+          ) : (
+            <Image source={require('../assets/cards/empty.png')} style={{width: 85, height: 85, resizeMode: 'contain'}}/>
+          )}
         </Animated.View>
       )
     )
