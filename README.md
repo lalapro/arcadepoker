@@ -23,7 +23,7 @@ Compete with your friends and put your name onto the leaderboard!
 
 ## Screenshots
 <p align="center">
-  <img src="https://github.com/waldyr/Sublime-Installer/blob/master/sublime_text.png?raw=true" alt="Sublime's custom image"/>
+  <img src="./arcadepokergif.gif" alt="Sublime's custom image"/>
 </p>
 <div style="width:100%"> 
   <img src="https://i.imgur.com/g6reX7S.jpg" width="20%"/>
