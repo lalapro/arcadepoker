@@ -22,10 +22,9 @@ Compete with your friends and put your name onto the leaderboard!
 
 
 ## Screenshots
-
-<div style="display: block; margin-left: auto; margin-right: auto">
+<p align="center>
   <img src="./arcadepokergif.gif" width="30%"/>
-</div>
+</p>
 <div style="width:100%"> 
   <img src="https://i.imgur.com/g6reX7S.jpg" width="20%"/>
   <img src="https://i.imgur.com/M6yfAnC.png" width="20%"/>
