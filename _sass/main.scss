@@ -1,0 +1,35 @@
+@charset "utf-8";
+
+$header-font-family: 'Contrail One', cursive;
+$base-font-family: 'Open Sans', sans-serif;
+$base-horizontal-margin: 32px;
+
+$primary: #1f4452;
+$secondary: #e6eebd;
+$header-color: darkcyan;
+
+$on-mini:          400px !default;
+$on-small:          600px !default;
+$on-medium:        800px !default;
+$on-large:        960px !default;
+
+@mixin media-query($device) {
+  @media screen and (max-width: $device) {
+    @content;
+  }
+}
+
+$prefix-list: ('-webkit-', '-moz-', '-o-', '-ms-');
+@mixin with-prefix($properties) {
+  @each $property, $value in $properties {
+    @each $prefix in $prefix-list {
+      #{$prefix + $property}: $value;
+    }
+    #{$property}: $value;
+  }
+}
+
+@import
+  "main/base",
+  "main/layout"
+;

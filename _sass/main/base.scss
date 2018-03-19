@@ -1,0 +1,36 @@
+html, body {
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6, p, ol {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+ol {
+  margin-left: 1em;
+}
+
+li {
+  margin: 16px 0;
+  list-style-position: outside;
+}
+
+a {
+  color: cadetblue;
+  text-decoration: none;
+  @include with-prefix((transition: all 250ms ease));
+
+  &:hover {
+    filter: brightness(0.7);
+  }
+
+  &:active {
+    filter: brightness(0.4);
+  }
+}
+
+.app {
+  position: relative;
+}
