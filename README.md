@@ -23,7 +23,7 @@ Compete with your friends and put your name onto the leaderboard!
 
 ## Screenshots
 <p align="center">
-  <img src="./arcadepokergif.gif" alt="Sublime's custom image"/>
+  <img src="./arcadepokergif.gif" alt="Gameplay gif" width="30%"/>
 </p>
 <div style="width:100%"> 
   <img src="https://i.imgur.com/g6reX7S.jpg" width="20%"/>
