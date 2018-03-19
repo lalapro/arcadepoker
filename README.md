@@ -24,7 +24,7 @@ Compete with your friends and put your name onto the leaderboard!
 ## Screenshots
 
 <div style="width:100%">
-  <img src="./arcadepokergif.gif" width="20%" alt="GAMEPLAY"/>
+  <img src="./arcadepokergif.gif" width="30%"/>
   <img src="https://i.imgur.com/g6reX7S.jpg" width="20%"/>
   <img src="https://i.imgur.com/M6yfAnC.png" width="20%"/>
   <img src="https://i.imgur.com/jH9JpUa.png" width="20%"/>
