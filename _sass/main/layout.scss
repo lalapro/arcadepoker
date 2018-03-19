@@ -111,7 +111,7 @@
   display: flex;
   flex-direction: column;
   z-index: 1;
-  width: 100%; 
+  width: 100%;
   background-color: white;
 }
 
@@ -174,20 +174,21 @@
 
 .desc__divider {
   width: 100%;
-  height: 60px;
-  background-image: -webkit-linear-gradient(150deg, rgb(0, 89, 149) 50%, rgb(141, 198, 255) 50%);
+  height: 900px;
+  // background-image: url("../../webassets/base/admob.png");
+  // -webkit-linear-gradient(150deg, rgb(0, 89, 149) 50%, rgb(141, 198, 255) 50%);
 
-  @include media-query($on-medium) {
-    height: 24px;
-  }
-
-  @include media-query($on-small) {
-    width: initial;
-    height: 1px;
-    background-image: none;
-    border-bottom: 1px solid lightgrey;
-    margin: 0 16px;
-  }
+  // @include media-query($on-medium) {
+  //   height: 24px;
+  // }
+  //
+  // @include media-query($on-small) {
+  //   width: initial;
+  //   height: 1px;
+  //   background-image: none;
+  //   border-bottom: 1px solid lightgrey;
+  //   margin: 0 16px;
+  // }
 }
 
 /* Normal body version */
@@ -254,8 +255,8 @@
 
 .desc__item-desc {
   padding: 16px 20px;
-  font-family: 'Open Sans', sans-serif;
-  font-size: 16px;
+  font-family: 'ArcadeClassic';
+  font-size: 27px;
   text-align: center;
   align-self: center;
 }
@@ -323,7 +324,7 @@
   font-size: 18px;
   align-self: center;
   text-align: center;
-  
+
   @include media-query($on-small) {
     font-size: 14px;
   }
