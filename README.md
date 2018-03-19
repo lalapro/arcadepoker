@@ -21,12 +21,12 @@ Arcade Poker is a fun new twist on the traditional video poker game!!
 Compete with your friends and put your name onto the leaderboard!
 
 
-## Screenshotss
+## Screenshots
 
 <div style="width:100%">
   <img src="https://i.imgur.com/ttJK9z3.gif" width="20%"/>
-  <img src="https://i.imgur.com/g6reX7S.jpg" width="20%"/>
-  <img src="https://i.imgur.com/M6yfAnC.png" width="20%"/>
+  <img src="https://i.imgur.com/ttJK9z3.gif" width="20%"/>
+  <img src="https://i.imgur.com/ttJK9z3.gif" width="20%"/>
   <img src="https://i.imgur.com/jH9JpUa.png" width="20%"/>
   <img src="https://i.imgur.com/UYdaxKs.png" width="20%"/>
 </div>
