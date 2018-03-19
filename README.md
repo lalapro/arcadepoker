@@ -23,7 +23,7 @@ Compete with your friends and put your name onto the leaderboard!
 
 ## Screenshots
 
-<div style="display: flex; flex: 1; flex-direction: column; justify-content: center; align-items: center; width: 100%">
+<div style="display: block; margin-left: auto; margin-right: auto">
   <img src="./arcadepokergif.gif" width="30%"/>
 </div>
 <div style="width:100%"> 
