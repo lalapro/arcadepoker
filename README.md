@@ -25,9 +25,9 @@ Compete with your friends and put your name onto the leaderboard!
 <p align="center">
   <img src="./arcadepokergif.gif" alt="Gameplay gif" width="30%"/>
 </p>
-<div style="width:100%"> 
-  <img src="https://i.imgur.com/g6reX7S.jpg" width="20%"/>
-  <img src="https://i.imgur.com/M6yfAnC.png" width="20%"/>
-  <img src="https://i.imgur.com/jH9JpUa.png" width="20%"/>
-  <img src="https://i.imgur.com/UYdaxKs.png" width="20%"/>
-</div>
+<p align="center">
+  <img src="https://i.imgur.com/g6reX7S.jpg" alt="Screenshot 1" width="20%"/>
+  <img src="https://i.imgur.com/M6yfAnC.png" alt="Screenshot 2" width="20%"/>
+  <img src="https://i.imgur.com/jH9JpUa.png" alt="Screenshot 3" width="20%"/>
+  <img src="https://i.imgur.com/UYdaxKs.png" alt="Screenshot 4" width="20%"/>
+</p>
