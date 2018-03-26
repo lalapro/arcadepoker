@@ -31,7 +31,7 @@ a {
 
 @font-face {
   font-family: 'ArcadeClassic';
-  src: URL('./ArcadeClassic.ttf') format('ttf');
+  src: URL('./ArcadeClassic.ttf') format('truetype');
 }
 
 /* NavBar */
